@@ -1,11 +1,5 @@
-/* ==========================================================================
-   S3 — INDEPENDENT ASSESSMENT
-   docs/spec/CURRENT_CANONICAL_SPEC_v2.0.md §9 · CLAUDE_IMPLEMENTATION_LOCK_v2.1.md §14, §20
-   ========================================================================== */
 
-/* Batch 3.7 — overflow:hidden removed with the full-bleed media placeholder
-   it was clipping (v2.1 §11.5 B). Nothing in this section is wider than its
-   column now; the guard returns with the real photograph. */
+
 .s3-independent {
   background: var(--bg-base);
   color: var(--text-primary);
@@ -18,10 +12,6 @@
   gap: 6%;
 }
 
-/* The row keeps its flex container so the approved v2.1 §14 Image 2
-   composition (image LEFT ~54%, text RIGHT ~40%) can be restored by
-   re-adding the media element after the content — DOM order alone places
-   it correctly in this RTL document, with no CSS `order` needed. */
 .s3-independent__content {
   flex: 1 1 auto;
   min-width: 0;
@@ -36,11 +26,6 @@
   color: var(--text-primary);
 }
 
-/* Support line + LOOK SECOND statement are bespoke S3-only sizes (20px /
-   28px) from v2.1 §20, not part of the shared type-scale tokens — so
-   unlike the tokenized elements above/below, they stay constant across
-   breakpoints rather than inventing an unlocked mobile size (matching the
-   precedent set by .s2-role__marker, the same 20px bespoke case in S2). */
 .s3-independent__support {
   margin-block-start: 24px;
   font-size: 20px;

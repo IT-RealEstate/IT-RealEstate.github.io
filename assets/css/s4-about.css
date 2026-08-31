@@ -1,7 +1,4 @@
-/* ==========================================================================
-   S4 — ABOUT / AUTHORITY
-   docs/spec/CURRENT_CANONICAL_SPEC_v2.0.md §10 · CLAUDE_IMPLEMENTATION_LOCK_v2.1.md §14, §21
-   ========================================================================== */
+
 
 .s4-about {
   background: var(--bg-deep);
@@ -15,10 +12,6 @@
   gap: 10%;
 }
 
-/* DOM order is [content, portrait] — as in S1/S3, this puts content on the
-   right and the portrait on the left in this RTL document (v2.1 §14
-   Portrait: text column right 58%, portrait left 32%, remaining 10%
-   breathing space), with no CSS `order` needed. */
 .s4-about__content {
   flex: 1 1 auto;
   min-width: 0;

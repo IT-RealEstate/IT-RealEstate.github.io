@@ -353,6 +353,9 @@
         lead_id: state.lead_id,
         source: attribution ? attribution.source() : '',
         cta_location: attribution ? attribution.ctaLocation() : '',
+        // OD-3.8-04 — measurement only. Not a form field, not shown back to
+        // the visitor, and never treated as an order.
+        service_interest: attribution ? attribution.serviceInterest() : '',
         browser_context: detectBrowserContext(),
         damage_type: state.damage_type,
         case_state: state.case_state,

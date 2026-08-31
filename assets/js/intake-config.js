@@ -27,14 +27,8 @@
 //
 // endpointUrl is empty on purpose. intake.js checks it at the top of
 // attemptPersist() and returns before issuing any fetch, so nothing a
-// visitor types on /check/ ever leaves their browser - no name, phone,
-// email or description reaches Google or any other service.
-//
-// The visitor sees the approved controlled-failure state with the phone
-// fallback, which is the honest outcome for a build that cannot save a
-// lead. Do NOT paste the live Apps Script URL back in here: this build is
-// for visual review only. Lead capture is restored in the production
-// repository, together with the REQUEST_TOKEN value.
+// visitor types on /check/ ever leaves their browser. Do NOT paste the
+// live Apps Script URL back in: this build is for visual review only.
 // ---------------------------------------------------------------------
 window.INTAKE_CONFIG = {
   endpointUrl: '',

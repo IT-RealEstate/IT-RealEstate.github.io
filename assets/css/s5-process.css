@@ -1,7 +1,4 @@
-/* ==========================================================================
-   S5 — ENTRY PROCESS / PRICING
-   docs/spec/CURRENT_CANONICAL_SPEC_v2.0.md §11 · CLAUDE_IMPLEMENTATION_LOCK_v2.1.md §22
-   ========================================================================== */
+
 
 .s5-process {
   background: var(--bg-base);
@@ -18,9 +15,6 @@
   max-width: var(--measure-head);
 }
 
-/* 24px/400 matches the shared --size-lede token exactly (same value S1's
-   own lede uses), so — unlike S3/S4's bespoke sizes — this reuses the
-   token and gets its already-approved mobile scaling for free. */
 .s5-process__lede {
   margin-block-start: 24px;
   font-family: var(--font-sans);
@@ -40,12 +34,6 @@
   gap: 48px;
 }
 
-/* IBM Plex Mono is reserved for these three numbers only (v2.1 hard
-   constraint) but isn't self-hosted yet — nothing rendered it before S5
-   existed (see tokens.css). Rather than add a font asset/network request
-   outside this batch's scope, --font-mono resolves through its existing
-   system-monospace fallback stack, exactly as tokens.css already
-   anticipated. Zero third-party requests either way. */
 .s5-process__number {
   font-family: var(--font-mono);
   font-size: 44px;
@@ -61,8 +49,6 @@
   color: var(--text-primary);
 }
 
-/* Bespoke 17px, matching the identical non-tokenized value already used
-   for S4's proof-point descriptions. */
 .s5-process__step-desc {
   margin-block-start: 12px;
   font-size: 17px;
@@ -70,10 +56,6 @@
   color: var(--text-secondary);
 }
 
-/* Bespoke 28px/400 — the same locked non-tokenized size as S3's LOOK
-   SECOND statement. Skim-Layer element: sized/weighted to read on its own
-   without the surrounding paragraph, but plain text — no background,
-   border, or pill, so it never reads as a discount badge. */
 .s5-process__price {
   margin-block-start: 24px;
   font-size: 28px;
@@ -90,9 +72,6 @@
   color: var(--text-secondary);
 }
 
-/* Compensation model — MODEL §3.1/C-05 canonical wording, placed after the
-   three steps. Body-tier weight: it is a fact about how the fee works, not
-   a Skim-Layer claim, so it must stay quieter than the 700 price above it. */
 .s5-process__model {
   margin-block-start: 56px;
   max-width: var(--measure-body);
@@ -101,9 +80,6 @@
   color: var(--text-secondary);
 }
 
-/* Secondary link to the full price list on /damage/#pricing — anti
-   "hidden price" (MODEL §9). Secondary by construction: plain underlined
-   text, never a .btn, so it can't compete with the primary CTA. */
 .s5-process__pricing-link {
   margin-block-start: 16px;
   font-size: var(--size-microcopy);

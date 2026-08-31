@@ -1,20 +1,5 @@
-/* ==========================================================================
-   Persistent sticky brand header
-   Locked decision — see CLAUDE.md → Locked business data → Brand / navigation
-   Not a chapter-navigation menu. Always visible (no hide-on-scroll); only
-   transitions between a full and compact size/opacity state.
-   ========================================================================== */
 
-/* Batch 3.7 — the bar's height moved from .site-header to
-   .site-header__inner. The navigation panel (OD-3.7-02) is a child of the
-   header so it inherits the sticky context, but it is absolutely
-   positioned against the header box at top:100%. With the height on the
-   header itself, `top:100%` would have resolved against a box that the
-   panel is trying to sit below — and any panel taller than the bar would
-   have been measured into the sticky element. Putting the height on the
-   inner bar keeps the header box exactly one bar tall whether the menu is
-   open or closed, so opening the menu never reflows the page or covers
-   content the header wasn't already covering. */
+
 .site-header {
   position: sticky;
   inset-block-start: 0;
@@ -22,12 +7,6 @@
   background: var(--bg-base);
 }
 
-/* The hairline sits on the INNER bar, not on .site-header. With
-   box-sizing:border-box it is then inside the 72px, exactly as it was when
-   .site-header itself carried the height — moving it out would have made
-   the bar 73px and quietly broken the locked 72/58 pair. It also puts the
-   rule between the bar and the menu panel, which is where it belongs when
-   the panel is open. */
 .site-header__inner {
   height: var(--header-height);
   border-block-end: 1px solid var(--hairline-dark);
@@ -52,34 +31,6 @@
   min-width: 0;
 }
 
-/* Batch 3.5-R1 — the visible symbol, not just its box.
-   The derived asset is a full-composition downscale of the approved source,
-   so its canvas carries baked padding: the mark's own ink occupies only
-   60.4% of its width and 83.8% of its height. At the former 48x48 box that
-   left a 28.5x30.0 visible mark against a 38.5px text block — the Owner's
-   "too small and thin". Sizing the box to 60px (height follows the
-   intrinsic 192:148 ratio -> 46.25px) puts the visible mark at 36.0x37.5,
-   i.e. spanning the two-line brand block. .brand is still taller than the
-   image, so neither the 72px header nor the 58px compact header changes
-   height. The asset itself was re-derived from the untouched source at
-   192x148 (was 144x111) by the same Batch 3.5 method, because a 60px box
-   at DPR3 needs 180 device pixels and the 144px raster would have had to
-   upscale — see the Batch 3.5-R1 report.
-
-   mix-blend-mode is compositing, not a filter/shadow/glow: the source's
-   background is fully opaque near-black, and `lighten` takes the per-channel
-   max against the header's own --bg-base, so every pixel darker than
-   #080A0C resolves to exactly #080A0C. That removes the rectangle edge
-   (measured residual at the box border: <=+3/255) instead of enlarging it.
-   The mark's own strokes are all lighter than --bg-base and pass through
-   untouched — no recolouring, no redrawing, no change to the raster. */
-/* Batch 3.7 — 60px -> 68px (+13.3%, inside the 12-15% owner range).
-   object-fit:contain fits by width, so inline-size alone drives the
-   visible mark; the intrinsic 192:148 ratio puts the rendered height at
-   52.4px. Both header states are taller than that (72px full, 58px
-   compact), and the height now lives on .site-header__inner as a fixed
-   value, so a taller logo cannot push either state open — the enlargement
-   is purely optical, exactly as the owner decision requires. */
 .brand__symbol {
   inline-size: 68px;
   block-size: auto;
@@ -112,14 +63,6 @@
   white-space: nowrap;
 }
 
-/* Explicit, narrow brand-mark exception to the no-cyan-on-text rule —
-   applies only to this one word in the nav wordmark. See CLAUDE.md → Hard
-   constraints. Never reuse .brand__accent-word outside the brand lockup.
-
-   Batch 3.5-R3 — this is the only selector allowed to read
-   --brand-wordmark-accent. It is a dedicated token, not --accent: --accent
-   keeps #0E789A for step numbers, hairlines and interactive detail, and is
-   unchanged. */
 .brand__accent-word {
   color: var(--brand-wordmark-accent);
 }
@@ -140,20 +83,6 @@
   .brand__secondary { transition: none; }
 }
 
-/* Batch 3.5-R1 — the tagline's physical edges.
-   .brand__text is a flex column, so .brand__secondary's BOX already spans the
-   full 137.17px of the line above it; only its glyphs were narrower
-   (131.91px), which left the physical left edge of "עצמאית" 5.26px short of
-   the physical left edge of "שמאות" while the right edges already matched.
-   15px -> 15.6px scales the glyph run by exactly 137.17/131.91 = 1.0399, so
-   both edges land on the brand line without stretching spaces, justifying
-   text, or tracking Hebrew (CLAUDE.md keeps Hebrew letter-spacing at 0).
-   max-height follows the taller line box so the is-compact collapse still has
-   a real value to animate from.
-
-   Desktop tier only: below 768px the brand line is 18px and the tagline is
-   already 39% wider than it, so no natural type size makes those two edges
-   meet — see the Batch 3.5-R1 report. */
 @media (min-width: 768px) {
   .brand__secondary {
     font-size: 15.6px;
@@ -173,12 +102,6 @@
   flex: none;
 }
 
-/* Batch 3.5-R1 — the number reads as an action, not as metadata.
-   It was 15px/400 in --text-secondary (8.92:1). Now 16px/500 in
-   --text-primary (17.04:1), both existing tokens and an existing weight. It
-   stays clearly secondary to the primary CTA, which is a filled pill; this
-   is still plain text with no background. Hover moves to an underline
-   because the colour is already at the top of the token scale. */
 .site-header__phone {
   font-family: var(--font-sans);
   font-size: 16px;
@@ -191,12 +114,6 @@
   text-underline-offset: 3px;
 }
 
-/* Touch target — accessibility spec §13 (44x44 project minimum, which
-   names "contact actions"). Type size is unchanged at 15px; only the hit
-   box grows, via the flex row's spare vertical space inside the 72px
-   header. The mobile case is handled separately below (Batch 3.1-R1) —
-   it needed the row heights and the inner padding rebalanced, not just a
-   taller box. */
 @media (min-width: 768px) {
   .site-header__phone {
     display: inline-flex;
@@ -205,17 +122,6 @@
   }
 }
 
-/* ---- Menu button — Batch 3.7 / OD-3.7-02 ------------------------------- */
-
-/* A real <button>, separate from the brand lockup (which stays a plain link
-   to the home page and is never the menu control).
-
-   No icon. CLAUDE.md's hard constraints ban decorative icons, and next to a
-   visible "תפריט" label a hamburger glyph would be exactly that — the label
-   already names the control. Open/closed is carried by aria-expanded for
-   assistive tech and, for sighted users, by the panel itself plus the
-   pressed treatment below. Both use existing tokens; no new colour, no
-   badge, no shadow. */
 .site-header__menu-btn {
   display: inline-flex;
   align-items: center;
@@ -243,16 +149,6 @@
   border-color: var(--hairline-dark);
 }
 
-/* ---- Menu panel -------------------------------------------------------- */
-
-/* Absolutely positioned against the header box, which is exactly one bar
-   tall (see the .site-header note at the top of this file), so opening the
-   menu never changes the header's height or reflows the page beneath it.
-
-   [hidden] is the single source of truth for visibility: the panel's own
-   display value is declared only in the :not([hidden]) rule, so the
-   attribute can never be overridden by this stylesheet — a failure mode
-   that silently breaks the whole control. */
 .site-menu {
   position: absolute;
   inset-inline: 0;
@@ -266,11 +162,6 @@
   display: block;
 }
 
-/* margin-block, NOT the `margin: 0` shorthand: this element also carries
-   .wrap, whose margin-inline:auto is what centres the panel's content on
-   the same 1200px column as the header bar above it. The shorthand reset
-   that inline value and left the list flush to the viewport's end edge —
-   120px out of alignment with the brand at 1440px. */
 .site-menu__list {
   list-style: none;
   margin-block: 0;
@@ -279,8 +170,6 @@
   flex-direction: column;
 }
 
-/* 48px, comfortably over the project's 44px floor (accessibility spec §13);
-   the row spans the full panel width, so the hit box is the whole line. */
 .site-menu__link {
   display: flex;
   align-items: center;
@@ -291,15 +180,13 @@
   color: var(--text-primary);
 }
 .site-menu__link:hover {
-  color: var(--brand-wordmark-accent);
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 .site-menu__list li + li .site-menu__link {
   border-block-start: 1px solid var(--hairline-dark);
 }
 
-/* Desktop lays the same list out as one horizontal row — same DOM, same
-   order, no second markup path. The hairline divider between items has no
-   place in a row, so it becomes an inline gap instead. */
 @media (min-width: 768px) {
   .site-menu__list {
     flex-direction: row;
@@ -316,65 +203,26 @@
   }
 }
 
-/* Background must not scroll while the panel is open (OD-3.7-02). Set on
-   <body> by main.js and removed on close. */
 body.menu-open {
   overflow: hidden;
 }
 
-/* ---- Mobile ------------------------------------------------------------ */
-
-/* Batch 3.7 rebuild. The Batch 3.1/3.5 composition here was a two-cluster
-   flex row (brand right, phone-over-CTA left) with a stacked fallback under
-   348px, all of it sized around the header CTA carrying the full canonical
-   string "בדיקת התאמה ראשונית ללא עלות". That string is what forced the
-   old geometry: it wrapped to two or three lines, and the measured header
-   ran 101px at 375-452, 119px at 348-357 and 173px at <=347 — the last two
-   over the owner's ~112px ceiling, and 173px is a quarter of a 320x568
-   screen spent on the header.
-
-   OD-3.7-01 replaces that label with "צור קשר". At ~80px the CTA no longer
-   drives the layout, so the clusters are gone and the bar is a plain
-   2x2 grid: brand + menu on row 1, phone + CTA on row 2. Both rows are
-   real rows at every width from 320 to 767 — no stacked fallback, no
-   width-band special cases, and the three width bands the old rules
-   needed (347/357/452) collapse into one.
-
-   grid-template-areas follows the writing direction, so in this RTL
-   document column 1 is the right-hand column: brand and phone sit at the
-   start edge, menu and CTA at the end edge. */
 @media (max-width: 767px) {
   .site-header__inner,
   .site-header.is-compact .site-header__inner {
     display: grid;
-    /* Brand column is max-content and the ACTION column is the flexible
-       one — deliberately that way round. The brand's two lines are nowrap
-       glyph text: compressing that column doesn't reflow it, it clips it
-       (measured at 320px with the columns the other way round, the subtitle
-       lost 2px to an ellipsis). The action column holds a pill button and a
-       phone number whose padding can absorb a few pixels without any glyph
-       moving, so it is the safe place for the shortfall to land. */
     grid-template-columns: max-content minmax(0, 1fr);
     grid-template-areas:
       "brand menu"
       "phone cta";
     align-items: center;
     height: auto;
-    /* 46px brand row + 44px action row + 12px padding + 2px row gap + the
-       1px hairline = 105px at every width from 320 to 767, against the
-       owner's ~112px ceiling. Both rows are built from 44px touch targets,
-       which carry their own optical breathing room, so the tight padding
-       reads as deliberate rather than cramped. */
     row-gap: 2px;
     column-gap: 8px;
     padding-block: 6px;
     padding-inline: 12px;
   }
 
-  /* display:contents lets the three actions become direct grid items of the
-     bar, so each can be placed in the row it belongs to without adding a
-     wrapper element or a second DOM path. Same technique .brand__text
-     already uses below. */
   .site-header__actions {
     display: contents;
   }
@@ -392,9 +240,6 @@ body.menu-open {
   .brand__divider {
     display: none;
   }
-  /* Batch 3.7 — 52px -> 59px (+13.5%). Rendered height 45.5px, which is
-     what sets the 46px brand row; the bar's own height is auto here, so
-     the two 23px text rows and the mark stay in lockstep. */
   .brand__symbol {
     grid-column: 1;
     grid-row: 1 / 3;
@@ -421,8 +266,6 @@ body.menu-open {
     white-space: nowrap;
     align-self: start;
   }
-  /* The mobile lockup keeps its subtitle permanently (Batch 3.1's approved
-     override), so the desktop full->compact fade is cancelled here. */
   .site-header.is-compact .brand__secondary {
     opacity: 1;
     max-height: none;
@@ -442,11 +285,6 @@ body.menu-open {
     min-block-size: 44px;
   }
 
-  /* Scoped to the mobile header only — components.css's own .btn--compact
-     keeps its canonical tablet/desktop treatment untouched. white-space is
-     nowrap now rather than normal: at "צור קשר" the label is ~55px and has
-     no reason to wrap, and allowing it to would reintroduce the variable
-     row height the old geometry was built around. */
   .site-header__actions .btn--compact {
     grid-area: cta;
     justify-self: end;

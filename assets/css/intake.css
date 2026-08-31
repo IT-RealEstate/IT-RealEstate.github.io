@@ -1,19 +1,9 @@
-/* ==========================================================================
-   Intake — /check · post-CTA branching form (Batch 6A)
-   docs/intake/GOOGLE-SHEETS-WHATSAPP-HANDOFF-v2.1-CORRECTED.md (data contract)
-   docs/legal/LEGAL_PAGE_IMPLEMENTATION_SPEC_v1.0.md §2 (privacy notice)
-   docs/accessibility/ACCESSIBILITY_IMPLEMENTATION_SPEC_v1.0.md §17–24 (forms)
-   Same visual system as the One Pager (tokens.css/base.css/components.css);
-   no new colors, no cards, no badges — see CLAUDE.md → Hard constraints.
-   ========================================================================== */
+
 
 [hidden] {
   display: none !important;
 }
 
-/* Visually hidden but still in the accessibility tree — used for radio-
-   group <legend> text that's redundant on screen because the step's
-   visible <h2> already says the same thing (a11y spec §4.11 / §17). */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -26,6 +16,7 @@
   border: 0;
 }
 
+.intake-form textarea:focus-visible,
 .intake-form input:focus-visible,
 .intake-btn-back:focus-visible {
   outline: 2px solid var(--focus-ring);
@@ -33,12 +24,19 @@
   border-radius: 2px;
 }
 
-/* ── Header — minimal text link back to the One Pager. Not the sticky
-   brand nav component (out of scope this batch): no logo image, no
-   scroll states, no phone/CTA cluster. ── */
 .intake-header {
-  padding-block: 24px;
+  padding-block: 20px;
   border-block-end: 1px solid var(--hairline-dark);
+}
+
+.intake-header__in {
+  max-width: var(--measure-body);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
 }
 .intake-header__brand {
   position: relative;
@@ -49,14 +47,6 @@
   color: var(--text-primary);
 }
 
-/* Touch target — accessibility spec §13 (44x44 project minimum). The
-   wordmark's own box is ~31px at 18px/500, so the hit area is extended by an
-   overlay rather than by growing the box: type size, weight, colour and the
-   header's composition are all untouched, and the header does not get taller.
-   The extension is absorbed entirely by .intake-header's existing 24px
-   padding-block, and this header contains no other control, so there is
-   nothing for the larger target to steal from. min-block-size on the overlay
-   (not a fixed height) keeps it correct if the wordmark ever wraps. */
 .intake-header__brand::after {
   content: "";
   position: absolute;
@@ -68,13 +58,26 @@
   width: 100%;
 }
 
+.intake-header__phone {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 44px;
+  flex: none;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+.intake-header__phone:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .intake-main {
   padding-block: 56px 96px;
 }
 
-/* ── No-JS / JS-failure fallback — visible by default, hidden only once
-   intake.js positively confirms it initialized. Mirrors the fail-open
-   pattern in base.css's [data-reveal], inverted: default = visible. ── */
 .intake-fallback,
 .intake-app {
   max-width: var(--measure-body);
@@ -98,7 +101,6 @@
   margin-block-start: 28px;
 }
 
-/* ── Form shell ── */
 .intake-form__title {
   font-family: var(--font-sans);
   font-weight: 300;
@@ -125,9 +127,6 @@
   line-height: var(--lh-statement);
   color: var(--text-primary);
 }
-/* Programmatic-only focus target (a11y spec §22.6) — no visible outline
-   artifact from the browser's default focus ring on a non-interactive
-   heading; the real focus indicator lives on the controls themselves. */
 .intake-step__title:focus-visible {
   outline: none;
 }
@@ -138,7 +137,6 @@
   border: 0;
   margin-block-start: 28px;
 }
-
 
 .intake-options {
   margin-block-start: 12px;
@@ -168,7 +166,6 @@
   accent-color: var(--text-primary);
 }
 
-
 .intake-error {
   margin-block-start: 8px;
   font-size: var(--size-microcopy);
@@ -192,17 +189,6 @@
   color: var(--text-primary);
 }
 
-/* Component-scoped field boundary. NOT --hairline-dark: that token is
-   rgba(236,238,239,0.14), which composites to 1.38:1 against --bg-base —
-   fine for decorative rules (section dividers, option separators, the
-   header border), but this underline is the ONLY thing indicating a text
-   input exists here (border:0 + background:transparent), so it is an
-   essential UI component boundary under WCAG 2.2 §1.4.11 and needs 3:1.
-   Same #ECEEEF as the decorative token, raised to 0.40 alpha => 3.39:1 on
-   --bg-base / 3.47:1 on --bg-deep. Deliberately scoped to this selector so
-   decorative hairlines elsewhere are untouched, and deliberately far below
-   the [aria-invalid] and :focus-visible treatments (both 17:1) so resting,
-   invalid and focused states stay clearly distinguishable. */
 .intake-field__input {
   --intake-field-border: rgba(236, 238, 239, 0.40);
 
@@ -256,9 +242,6 @@
   color: var(--text-primary);
 }
 
-/* ── Privacy notice — Legal spec §2.1, exact wording for resolved tokens.
-   15px / --text-secondary per spec; separated from the fields above with
-   the same hairline-rule pattern the footer disclaimer uses. ── */
 .intake-legal {
   margin-block-start: 40px;
   padding-block-start: 28px;
@@ -286,12 +269,6 @@
   color: var(--text-secondary);
 }
 
-/* ── Dev-only post-validation status (Batch 6A never submits anything).
-   Deliberately plain and dashed — never styled like the real success
-   state the Handoff spec defines, so it can't be mistaken for one. ── */
-
-/* Off-screen, not display:none — see the HTML comment above the markup
-   for why. Never shown to a real user regardless of viewport. */
 .intake-honeypot {
   position: absolute;
   inset-inline-start: -9999px;
@@ -309,9 +286,6 @@
   color: var(--text-secondary);
 }
 
-/* The one genuinely blocking async state on this page — restrained like
-   everything else (no card, no icon, no red), distinguished from the
-   sending status by weight/hierarchy rather than color alone. */
 .intake-submit-error {
   margin-block-start: 28px;
   padding-block-start: 20px;
@@ -362,11 +336,6 @@
   }
 }
 
-/* ==========================================================================
-   schema v5 additions (Batch 3.3)
-   ========================================================================== */
-
-/* Lede under the form H1 — Content Spec §8 form contract. */
 .intake-form__lede {
   margin-block-start: 14px;
   max-width: var(--measure-body);
@@ -375,10 +344,6 @@
   color: var(--text-secondary);
 }
 
-/* Helper text — Content Spec §8.10.3. Sits between the label and the control
-   so a screen reader meets it in reading order, and is wired via
-   aria-describedby so it is announced with the field rather than stranded.
-   Not a placeholder: §8.10.2 forbids placeholders on every field. */
 .intake-field__help {
   margin-block-start: 6px;
   font-size: var(--size-microcopy);
@@ -386,17 +351,12 @@
   color: var(--text-secondary);
 }
 
-/* The one optional field. Inherits the input treatment; only the things a
-   textarea needs differently are set here. */
 .intake-field__textarea {
   resize: vertical;
   min-height: 88px;
   line-height: var(--lh-body);
 }
 
-/* Approved Success State — Content Spec §9. Replaces the form in place, so
-   it reuses the form's own measure and rhythm rather than introducing a
-   second layout idiom. No badge, no icon, no card (v2.1 §27). */
 .intake-success {
   max-width: var(--measure-body);
 }
@@ -417,13 +377,6 @@
   color: var(--text-secondary);
 }
 
-/* ==========================================================================
-   BETA BUILD ONLY — review notice
-   Not part of the production stylesheet. Uses existing tokens only
-   (--bg-graphite / --text-primary / --hairline-dark): no new colour, no
-   badge treatment, no shadow. It has to be impossible to miss and still
-   read as a system notice rather than as marketing.
-   ========================================================================== */
 .beta-notice {
   margin: 0;
   padding: 14px var(--gutter);
@@ -437,9 +390,5 @@
   text-align: center;
 }
 @media (max-width: 767px) {
-  .beta-notice {
-    font-size: 15px;
-    padding-block: 12px;
-    text-align: start;
-  }
+  .beta-notice { font-size: 15px; padding-block: 12px; text-align: start; }
 }

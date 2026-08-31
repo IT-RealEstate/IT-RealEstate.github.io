@@ -2,9 +2,7 @@
 #
 # Disallow everything: this build exists for visual review on real devices
 # and must never appear in a search result. Every page additionally carries
-# <meta name="robots" content="noindex, nofollow"> so that a crawler which
-# ignores this file still gets the instruction from the page itself.
-#
-# No Sitemap line: this build ships no sitemap.xml.
+# <meta name="robots" content="noindex, nofollow"> so a crawler that ignores
+# this file still gets the instruction from the page itself.
 User-agent: *
 Disallow: /

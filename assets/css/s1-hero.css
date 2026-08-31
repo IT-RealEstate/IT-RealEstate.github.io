@@ -1,12 +1,5 @@
-/* ==========================================================================
-   S1 — HERO
-   docs/spec/CURRENT_CANONICAL_SPEC_v2.0.md §7 · CLAUDE_IMPLEMENTATION_LOCK_v2.1.md §14, §18
-   ========================================================================== */
 
-/* Batch 3.7 — min-height:100svh removed (v2.1 §11.5 A). It was sized for a
-   Hero carrying a full-height photograph beside the text; with the media
-   placeholder gone it only guaranteed empty space below the CTA. The
-   section is now sized by its own content plus explicit padding. */
+
 .s1-hero {
   background: var(--bg-base);
   color: var(--text-primary);
@@ -20,10 +13,6 @@
   gap: 40px;
 }
 
-/* The row keeps its flex container so v2.1 §14's Hero composition can be
-   restored by re-adding the media element after the content: in this RTL
-   document DOM order alone puts content right and image left, so visual
-   and reading order agree with no CSS `order`. */
 .s1-hero__content {
   flex: 1 1 auto;
   min-width: 0;

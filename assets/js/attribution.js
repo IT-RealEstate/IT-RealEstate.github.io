@@ -157,7 +157,18 @@
   // CTA provenance. Recorded at click time on whichever page the CTA lives,
   // so the intake can report which CTA produced the session. Only values in
   // the persistence contract's closed enum are stored.
-  var CTA_LOCATIONS = ['hero', 'mid', 'closing', 'sticky'];
+  // 'pricing' added in Batch 3.8 (OD-3.8-04) for the per-route CTAs in the
+  // /damage/ pricing area. MUST stay in step with CTA_LOCATION_VALUES in
+  // apps-script/Code.gs: that server REJECTS THE WHOLE LEAD on an unknown
+  // cta_location, so a value added here and not there loses leads.
+  var CTA_LOCATIONS = ['hero', 'mid', 'closing', 'sticky', 'pricing'];
+
+  // OD-3.8-04. Which priced route prompted the click. A MEASUREMENT and
+  // conversation signal only: it is never shown back to the visitor, never
+  // presented as a purchase or a booking, and there is deliberately no
+  // service-selection field in the form. The suitable service is still
+  // decided in the qualification call (MODEL §10).
+  var SERVICE_INTERESTS = ['remote_feasibility', 'full_damage_case', 'insurer_gap_review'];
 
   // source_page is the pathname of the page the CTA was actually clicked on
   // (Content Spec §17.1), captured at click time and stored BEFORE the
@@ -166,10 +177,18 @@
   // navigate to `/damage/` and convert there, and the two values then differ.
   // Unlike the campaign keys this is last-touch, not first-touch: it answers
   // "which page produced this lead", so a later CTA click overwrites it.
-  function recordCtaLocation(value) {
+  function recordCtaLocation(value, serviceInterest) {
     if (CTA_LOCATIONS.indexOf(value) === -1) return;
     var record = load() || {};
     record.cta_location = value;
+    // Written only when the CTA actually carries one, and cleared otherwise,
+    // so a later click from a non-pricing CTA cannot leave a stale route
+    // attached to the lead.
+    if (serviceInterest && SERVICE_INTERESTS.indexOf(serviceInterest) !== -1) {
+      record.service_interest = serviceInterest;
+    } else {
+      delete record.service_interest;
+    }
     var sourcePage = cleanSourcePage(window.location.pathname || '/');
     if (sourcePage) {
       record.source_page = sourcePage;
@@ -183,7 +202,7 @@
     var nodes = document.querySelectorAll('[data-cta-location]');
     Array.prototype.forEach.call(nodes, function (el) {
       el.addEventListener('click', function () {
-        recordCtaLocation(el.getAttribute('data-cta-location'));
+        recordCtaLocation(el.getAttribute('data-cta-location'), el.getAttribute('data-service-interest'));
       });
     });
   }
@@ -197,6 +216,10 @@
     ctaLocation: function () {
       var r = load() || {};
       return CTA_LOCATIONS.indexOf(r.cta_location) === -1 ? '' : r.cta_location;
+    },
+    serviceInterest: function () {
+      var r = load() || {};
+      return SERVICE_INTERESTS.indexOf(r.service_interest) === -1 ? '' : r.service_interest;
     },
     recordCtaLocation: recordCtaLocation
   };

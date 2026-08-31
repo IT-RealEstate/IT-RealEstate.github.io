@@ -1,14 +1,5 @@
-/* ==========================================================================
-   Design tokens — canonical v2.1 execution lock
-   docs/spec/CLAUDE_IMPLEMENTATION_LOCK_v2.1.md §4, §6–§11
-   ========================================================================== */
 
-/* Self-hosted fonts — zero third-party requests (Legal Spec I6, extended
-   sitewide per Batch 1.1). Source: official @ibm/plex-sans-hebrew npm
-   package v1.1.0 (SIL OFL-1.1), see assets/fonts/IBM-Plex-Sans-Hebrew-LICENSE.txt.
-   Only the weights actually used are shipped — IBM Plex Mono is not
-   self-hosted yet because no rendered element uses it until S5 exists;
-   --font-mono below still resolves via its fallback stack until then. */
+
 @font-face {
   font-family: "IBM Plex Sans Hebrew";
   font-style: normal;
@@ -32,7 +23,6 @@
 }
 
 :root {
-  /* Color — v2.1 §4, exact tokens, no additions */
   --bg-base: #080A0C;
   --bg-deep: #111518;
   --bg-graphite: #1A2024;
@@ -42,29 +32,13 @@
   --hairline-dark: rgba(236, 238, 239, 0.14);
   --focus-ring: #ECEEEF;
 
-  /* Header-scoped exception, approved override — see CLAUDE.md → Locked
-     business data → Brand / navigation. --accent itself never becomes a
-     CTA color anywhere else on the site; this is a distinct, slightly
-     darkened value from the same blue family used ONLY by the mobile
-     header CTA background, chosen so text-primary text on top of it
-     clears WCAG AA (4.5:1) — #0E789A itself only reaches ~4.33:1. */
   --header-cta-blue: #0D7293;
 
-  /* Sanctioned brand-wordmark token — Owner decision, Batch 3.5-R3.
-     Applies ONLY to the word "שמאות" inside the "טביב שמאות" wordmark.
-     It does NOT replace --accent, which stays #0E789A for its structural
-     role, and it must not be reused as a general page accent without a new
-     owner decision. At --accent's own 3.94:1 against --bg-base the accent
-     word read optically smaller and thinner than "טביב" at identical
-     metrics; #1F8EB1 reaches 5.25:1 and matches its perceived weight
-     without changing font size, weight or baseline. */
   --brand-wordmark-accent: #1F8EB1;
 
-  /* Typography — v2.1 §6 */
   --font-sans: "IBM Plex Sans Hebrew", "Heebo", system-ui, -apple-system, "Segoe UI", "Arial Hebrew", sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  /* Type scale — desktop (>=1024px), v2.1 §8 */
   --size-hero-h1: 72px;
   --lh-hero-h1: 1.08;
   --size-section-h: 48px;
@@ -85,22 +59,18 @@
   --measure-body: 640px;
   --measure-statement: 620px;
 
-  /* Layout — v2.1 §11 */
   --page-max: 1200px;
   --gutter: 20px;
 
-  /* Motion — v2.1 §28 */
   --motion-duration: 400ms;
   --motion-easing: ease-out;
   --motion-distance: 10px;
   --motion-stagger-max: 80ms;
 
-  /* Nav */
   --header-height: 72px;
   --header-height-compact: 58px;
 }
 
-/* Tablet — 768–1023px, v2.1 §10 (interpolation between mobile and desktop) */
 @media (min-width: 768px) {
   :root {
     --gutter: 40px;
@@ -123,26 +93,15 @@
   }
 }
 
-/* Desktop — v2.1 §11 */
 @media (min-width: 1024px) {
   :root {
     --gutter: 72px;
   }
 }
 
-/* Mobile — <=767px, v2.1 §9 */
 @media (max-width: 767px) {
   :root {
     --gutter: 20px;
-    /* Batch 3.7 — 40px -> 32px (-20%, the shallow end of the owner's
-       20-25% band). At 40px the /damage/ H1 took four lines at 375-390px
-       and pushed the paragraph and CTA below the fold; 32px brings it to
-       three there and holds it at four on 320px, which is the stated
-       target. -20% rather than -25% because 30px would have dropped the
-       homepage H1's second line to a two-word line — the brief's
-       "no orphaned single word" constraint bites before the size floor
-       does. Line-height opens 1.12 -> 1.16 to keep the tighter block
-       legible at the smaller size. */
     --size-hero-h1: 32px;
     --lh-hero-h1: 1.16;
     --size-section-h: 30px;

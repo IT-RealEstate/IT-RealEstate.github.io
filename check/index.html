@@ -20,25 +20,17 @@
   <a class="skip" href="#main">דילוג לתוכן</a>
 
   <header class="intake-header">
-    <a class="intake-header__brand" href="/">טביב שמאות</a>
+    <div class="intake-header__in">
+      <a class="intake-header__brand" href="/">טביב שמאות</a>
+      <a class="intake-header__phone" href="tel:+972552617625" dir="ltr" aria-label="חיוג לטביב שמאות: 055-2617625">055-2617625</a>
+    </div>
   </header>
-
-  <!-- BETA BUILD ONLY. Placed above <main> deliberately: .intake-fallback
-       is visible by default and .intake-app only after intake.js confirms
-       it initialised, so a notice inside either one would be missing from
-       the other state. Here it is present before the form in every path,
-       including JavaScript disabled. Owner wording, exact. -->
-  <p class="beta-notice" role="status">גרסת בדיקה: הטופס מוצג לצורך ביקורת ואינו שולח או שומר פרטים.</p>
 
 
   <main id="main" class="intake-main">
 
-    <!-- Default-visible fallback. intake.js hides this and reveals
-         .intake-app only after it has positively confirmed it initialized
-         — accessibility spec §30, "if Intake JavaScript cannot initialize,
-         show a plain accessible fallback state with direct contact
-         options." With JS disabled entirely this block simply never gets
-         hidden, which is exactly the desired behavior. -->
+      <p class="beta-notice">גרסת בדיקה: הטופס מוצג לצורך ביקורת ואינו שולח או שומר פרטים.</p>
+
     <div class="intake-fallback" data-intake-fallback>
       <h1 class="intake-fallback__title">לא ניתן לטעון את הבדיקה המקוונת כרגע</h1>
       <p class="intake-fallback__body">אפשר ליצור קשר ישירות ולהמשיך משם.</p>
@@ -51,7 +43,6 @@
         <h1 class="intake-form__title">בדיקת התאמה ראשונית</h1>
         <p class="intake-form__lede">ללא עלות. כדי להבין אם שמאי רכוש הוא בעל המקצוע הרלוונטי בשלב הנוכחי.</p>
 
-        <!-- STEP 1 — DAMAGE TYPE (Content Spec §8.1, label §8.10.1) -->
         <section class="intake-step" data-step="1" hidden>
           <p class="intake-step__progress">שלב 1 מתוך 3</p>
           <h2 class="intake-step__title" tabindex="-1">סוג הנזק</h2>
@@ -74,8 +65,6 @@
           </div>
         </section>
 
-        <!-- STEP 2 — CASE STATE (Content Spec §8.2; replaces the retired
-             event_stage. Internal values are never shown to the user.) -->
         <section class="intake-step" data-step="2" hidden>
           <p class="intake-step__progress">שלב 2 מתוך 3</p>
           <h2 class="intake-step__title" tabindex="-1">מצב המקרה</h2>
@@ -100,8 +89,6 @@
           </div>
         </section>
 
-        <!-- STEP 3 — CONTACT DETAILS. Labels §8.10.1, helper text §8.10.3,
-             autocomplete/inputmode §8.3. No placeholders anywhere (§8.10.2). -->
         <section class="intake-step" data-step="3" hidden>
           <p class="intake-step__progress">שלב 3 מתוך 3</p>
           <h2 class="intake-step__title" tabindex="-1">פרטי התקשרות</h2>
@@ -124,12 +111,6 @@
             <p class="intake-error" id="email-error"></p>
           </div>
 
-          <!-- property_city — free text with the §8.4 fallback. The suggestion
-               layer is NOT implemented in this batch: no authoritative Israeli
-               government/CBS locality dataset could be obtained (see the batch
-               report). Free-text entry is the approved fallback and works on
-               its own; a suggestion list can be layered on later without
-               changing this field's name, label or validation. -->
           <div class="intake-field">
             <label class="intake-field__label" for="property_city">יישוב הנכס</label>
             <p class="intake-field__help" id="property_city-help">היישוב שבו נמצא הנכס. לא נדרשת כתובת מלאה.</p>
@@ -137,8 +118,6 @@
             <p class="intake-error" id="property_city-error"></p>
           </div>
 
-          <!-- short_description — the only optional field. Marked in the label
-               itself (§8.10.4); no minlength, no AI autocomplete (§8.5). -->
           <div class="intake-field">
             <label class="intake-field__label" for="short_description">תיאור קצר — לא חובה</label>
             <p class="intake-field__help" id="short_description-help">כמה מילים, אם יש משהו שחשוב שנדע מראש.</p>
@@ -146,41 +125,17 @@
             <p class="intake-error" id="short_description-error"></p>
           </div>
 
-          <!-- Honeypot (Handoff spec §10.2) — off-screen, not display:none,
-               so unsophisticated bots that skip hidden fields still fill
-               it. tabindex="-1" and aria-hidden keep it fully out of the
-               keyboard and accessibility tree for real users. A filled
-               value is treated server-side as abuse; nothing is written. -->
           <div class="intake-honeypot" aria-hidden="true">
             <label for="website">Website</label>
             <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
           </div>
 
-          <!--
-            Legal Spec §2.1 rights line. PRIVACY_EMAIL is RESOLVED (MP-1)
-            and now renders in the spec's exact PRIVACY_EMAIL-then-
-            PHONE_DISPLAY order. The address is a temporary MVP mailbox
-            and may later move to a domain-based one; it appears in exactly
-            two places sitewide (here and, once published, /legal/), so a
-            future swap is a two-file change with no copy rewrite.
-
-            STILL NOT DEPLOY-READY. Two separate blockers remain, both
-            outside this block:
-              1. /legal/ is not published, so the link below is dead —
-                 Legal Spec I2 treats a dead link in the notice as a §11
-                 breach at the moment of collection.
-              2. LEGAL_NAME is unresolved. §2.1 requires the data
-                 controller's exact legal name here; the line below still
-                 carries the trade name "טביב שמאות". Not substituted
-                 unilaterally — an invented legal name is worse than a
-                 tracked gap.
-          -->
           <div class="intake-legal">
-            <p>מסירת הפרטים היא מרצון. בלעדיהם לא נוכל לבחון את הפנייה ולא נוכל לחזור אליכם.</p>
-            <p>הפרטים משמשים את טביב שמאות, שמאות רכוש, אך ורק לבחינת הפנייה וליצירת קשר בנוגע למקרה.</p>
-            <p>הם נשמרים בשירותי Google, וההמשך בוואטסאפ מתבצע בשירותי Meta — שני ספקים שעשויים לעבד מידע גם מחוץ לישראל.</p>
+            <p>בגרסת הבדיקה הזו הטופס אינו נשלח לשום שרת ואינו מגיע אלינו.</p>
+            <p>מה שתקלידו נשמר זמנית בדפדפן שלכם בלבד, כדי שההתקדמות לא תאבד אם תרעננו את העמוד. סגירת החלון מוחקת אותו.</p>
+            <p>מדיניות הפרטיות ותנאי השימוש יפורסמו לפני ההשקה.</p>
             <p>
-              אפשר לפנות אלינו בכל עת לעיין בפרטים, לתקן אותם או לבקש למחוק אותם:
+              לשאלות:
               <a href="mailto:ido89t@gmail.com" dir="ltr">ido89t@gmail.com</a> ·
               <a href="tel:+972552617625" dir="ltr">055-2617625</a>
             </p>
@@ -191,12 +146,7 @@
             <button type="submit" class="btn">שליחת פרטים</button>
           </div>
 
-          <p class="intake-legal__validity">בשליחה אתם מאשרים את מדיניות הפרטיות ותנאי השימוש, כולל שמירה ועיבוד בשירותי ענן מחוץ לישראל.</p>
 
-          <!-- Async submit lifecycle (Batch 6B). "Sending" and the
-               dev/success status are polite live regions (accessibility
-               spec §23); the failure state is role="alert" since it is
-               the one genuinely blocking condition here. -->
           <p class="intake-sending" role="status" aria-live="polite" data-sending-status hidden>שולחים את הפרטים…</p>
 
           <div class="intake-submit-error" role="alert" data-submit-error tabindex="-1" hidden>
@@ -209,11 +159,6 @@
 
       </form>
 
-      <!-- Approved Success State — Content Spec §9, APPROVED_OWNER_COPY
-           (Batch 2.3C-LOCK, Item 16). Verbatim: no SLA, no promise the case
-           was accepted, no claim a check was already performed (C-65).
-           AUTO_WHATSAPP_HANDOFF = DISABLED (§22) — nothing opens WhatsApp;
-           the flow ends here. intake.js hides the form and reveals this. -->
       <section class="intake-success" data-intake-success tabindex="-1" role="status" aria-live="polite" hidden>
         <h1 class="intake-success__title">הפרטים התקבלו</h1>
         <p class="intake-success__body">נחזור אליכם לבדיקת התאמה ראשונית ללא עלות. בשיחה נבין מה קרה, מה כבר בוצע, ואם שמאי רכוש הוא בעל המקצוע הרלוונטי בשלב הנוכחי.</p>

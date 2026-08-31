@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>הדף לא נמצא — טביב שמאות</title>
+  <meta name="robots" content="noindex, nofollow">
+
+  <link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/brand/favicon-32.png">
+  <link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
+
+  <link rel="stylesheet" href="/assets/css/tokens.css">
+  <link rel="stylesheet" href="/assets/css/base.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="/assets/css/footer.css">
+
+  <style>
+    .nf {
+      min-height: 70svh;
+      display: flex;
+      align-items: center;
+      background: var(--bg-base);
+      color: var(--text-primary);
+      padding-block: 96px;
+    }
+    /* --text-secondary, NOT --accent. --accent is 3.94:1 against --bg-base,
+       under the 4.5:1 floor for normal-size text, and CLAUDE.md scopes it to
+       structure (hairlines, markers) rather than text. --brand-wordmark-accent
+       would pass but is sanctioned for the brand wordmark alone. */
+    .nf__code {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      letter-spacing: 0.08em;
+    }
+    .nf__title {
+      margin-block-start: 20px;
+      font-family: var(--font-sans);
+      font-weight: 300;
+      font-size: var(--size-section-h);
+      line-height: var(--lh-section-h);
+      max-width: var(--measure-head);
+    }
+    .nf__body {
+      margin-block-start: 20px;
+      max-width: var(--measure-body);
+      font-size: var(--size-body);
+      line-height: var(--lh-body);
+      color: var(--text-secondary);
+    }
+    .nf__links {
+      margin-block-start: 36px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px 28px;
+    }
+    .nf__link {
+      display: inline-flex;
+      align-items: center;
+      min-block-size: 44px;
+      font-family: var(--font-sans);
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--text-primary);
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+    /* NOT --brand-wordmark-accent — locked to .brand__accent-word alone. */
+    .nf__link:hover { text-decoration-thickness: 2px; }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">דילוג לתוכן</a>
+
+  <main id="main" class="nf">
+    <div class="wrap">
+      <p class="nf__code">404</p>
+      <h1 class="nf__title">הדף לא נמצא</h1>
+      <p class="nf__body">ייתכן שהכתובת השתנתה, או שהקישור שהגעתם ממנו כבר אינו מעודכן.</p>
+
+      <div class="nf__links">
+        <a class="nf__link" href="/">לעמוד הראשי</a>
+        <a class="nf__link" href="/damage/">נזקי רכוש</a>
+        <a class="nf__link" href="/check/">בדיקת התאמה ראשונית</a>
+        <a class="nf__link" href="tel:+972552617625" dir="ltr">055-2617625</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap site-footer__inner">
+      <div class="site-footer__top">
+        <div class="site-footer__identity">
+          <p class="site-footer__brand">טביב שמאות</p>
+          <p class="site-footer__role">עידו טביב · שמאי רכוש</p>
+        </div>
+      </div>
+      <p class="site-footer__disclaimer">המשרד אינו מספק ייעוץ משפטי או ביטוחי.</p>
+    </div>
+  </footer>
+</body>
+</html>

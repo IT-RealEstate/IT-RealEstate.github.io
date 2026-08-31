@@ -141,21 +141,17 @@
     );
   }
 
-  // Accordions — Batch 3.7 / OD-3.7-04.
-  // The <details> ship CLOSED in the markup, because that is the state the
-  // spec mandates for mobile — so the narrow viewport, where a post-load
-  // reflow is most expensive, gets none: nothing here runs below 768px.
-  // Desktop has the room to show the answers, so they are expanded there.
-  // Closed is a safe default in both directions: <details> needs no
-  // JavaScript to open, and its panel content stays in the DOM either way,
-  // so nothing is unreachable if this never runs.
-  // Evaluated once on load, not bound to a resize listener: re-collapsing a
-  // section a reader has already opened because they rotated the device
-  // would lose their place.
-  if (window.matchMedia('(min-width: 768px)').matches) {
-    Array.prototype.forEach.call(
-      document.querySelectorAll('[data-expand-desktop]'),
-      function (el) { el.open = true; }
-    );
-  }
+  // Accordions — Batch 3.7 / OD-3.7-04, amended after the 31.08 QA pass.
+  //
+  // They now ship closed at EVERY width, so no JavaScript runs here at all
+  // and this block is gone. Previously main.js expanded them at >=768px;
+  // measured on /damage/ at 1363px that made the FAQ section 948px tall
+  // with all five answers open at once, which is exactly the "long and
+  // sparse, hard to scan" problem the same pass flagged elsewhere.
+  //
+  // Closed is also the safer default in both directions: <details> needs
+  // no script to open, its panel content stays in the DOM either way, so
+  // nothing is unreachable to a reader, to find-in-page, or to a crawler.
+  // The owner decision only ever required "closed by default on mobile";
+  // desktop-open was an implementation choice, and it is withdrawn.
 })();

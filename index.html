@@ -7,21 +7,11 @@
   <title>טביב שמאות — עידו טביב, שמאי רכוש</title>
   <meta name="description" content="שמאי רכוש עצמאי לבדיקה מטעמכם, בנפרד מהגוף המשלם. בדיקת התאמה ראשונית ללא עלות, לפני שמחליטים איך להמשיך.">
 
-  <!--
-    LAUNCH GATE: {{DOMAIN}} is unresolved (no final domain assigned yet —
-    same gate as docs/legal/legal.html's own {{DOMAIN}} token). Do not
-    substitute a guessed domain. Resolve canonical/og:url/og:image together
-    with the legal page's {{DOMAIN}} token before indexable production
-    launch.
-  -->
   <meta property="og:type" content="website">
   <meta property="og:locale" content="he_IL">
   <meta property="og:site_name" content="טביב שמאות">
   <meta property="og:title" content="טביב שמאות — עידו טביב, שמאי רכוש">
   <meta property="og:description" content="שמאי רכוש עצמאי לבדיקה מטעמכם, בנפרד מהגוף המשלם. בדיקת התאמה ראשונית ללא עלות, לפני שמחליטים איך להמשיך.">
-  <!-- og:image intentionally omitted: OWNER ASSET REQUIRED — no 1200x630
-       share image exists yet (see docs/spec known-gaps: no licensed
-       photography sourced). Add og:image once one is supplied/approved. -->
   <meta name="twitter:card" content="summary">
 
   <link rel="icon" type="image/svg+xml" href="assets/brand/favicon.svg">
@@ -29,17 +19,6 @@
   <link rel="apple-touch-icon" href="assets/brand/apple-touch-icon.png">
 
 
-  <!-- Batch 3.7 — font preload, a CLS fix.
-       All three weights render above the fold on both pages (300 headline,
-       400 body, 500 CTA/labels). With font-display:swap and no preload the
-       browser paints the fallback first and reflows the whole hero when the
-       webfont arrives; on /damage/, whose Hero is now text-only, that
-       measured 0.083 CLS at 375px. Discovering these three files from
-       tokens.css costs a stylesheet round-trip first — the preload removes
-       it, so the real face is available for the first paint.
-       Three same-origin 34KB files, already fetched on every load: this
-       changes their priority, not the number of requests. No new asset, no
-       third-party origin (Legal Spec I6 still holds). -->
   <link rel="preload" href="assets/fonts/IBMPlexSansHebrew-Light.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/IBMPlexSansHebrew-Regular.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/IBMPlexSansHebrew-Medium.woff2" as="font" type="font/woff2" crossorigin>
@@ -89,10 +68,6 @@
       </div>
     </div>
 
-    <!-- Navigation menu — Batch 3.7 / OD-3.7-02. Separate from the brand
-         lockup, which stays a plain link to the home page. Every target is
-         an existing route or an existing id on /damage/ (dmg-process,
-         pricing, dmg-faq) — no new or duplicated IDs were introduced. -->
     <nav id="site-menu" class="site-menu" data-menu aria-label="ניווט ראשי" hidden>
       <ul class="site-menu__list wrap">
         <li><a class="site-menu__link" href="/">ראשי</a></li>
@@ -107,13 +82,11 @@
 
   <main id="main">
 
+      <p class="beta-notice beta-notice--page">גרסת בדיקה: האתר מוצג לצורך ביקורת. הטופס אינו שולח פרטים.</p>
+
     <section id="s1-hero" class="section s1-hero" aria-labelledby="hero-title">
       <div class="wrap s1-hero__inner">
         <div class="s1-hero__content">
-          <!-- Orphan guard — see the matching note in damage/index.html.
-               Binds the last two words so "המשלם." does not take a line of
-               its own (it did at every width from 348 to 767). No character
-               of the approved H1 changes and no break is forced. -->
           <h1 id="hero-title" class="s1-hero__title">
             <span class="line">שמאי רכוש.</span>
             <span class="line">מטעמך, בנפרד מהגוף&#160;המשלם.</span>
@@ -130,11 +103,6 @@
           <p class="s1-hero__reassurance">לבדוק לפני שמחליטים.</p>
         </div>
 
-        <!-- OWNER ASSET STILL REQUIRED — Hero damage photo (v2.1 §14 Image 1). Per Batch 3.7 (v2.1 §11.5 B) the
-             empty placeholder container that stood here was removed rather
-             than shipped: with no photograph it rendered as a blank panel,
-             which reads as a failed image, not as composition. The slot
-             returns under v2.1 §14/§15/§16 when a real asset is approved. -->
       </div>
     </section>
 
@@ -173,11 +141,6 @@
           <p class="s3-independent__body">כאשר הגוף שבוחן את היקף הנזק הוא גם הגוף שנושא בתשלום התביעה, יש היגיון בכך שזו לא תהיה ההערכה המקצועית היחידה בתיק.</p>
         </div>
 
-        <!-- OWNER ASSET STILL REQUIRED — S3 damage photo (v2.1 §14 Image 2). Per Batch 3.7 (v2.1 §11.5 B) the
-             empty placeholder container that stood here was removed rather
-             than shipped: with no photograph it rendered as a blank panel,
-             which reads as a failed image, not as composition. The slot
-             returns under v2.1 §14/§15/§16 when a real asset is approved. -->
       </div>
     </section>
 
@@ -208,11 +171,6 @@
           </div>
         </div>
 
-        <!-- OWNER ASSET STILL REQUIRED — S4 portrait of עידו טביב — no stock or generated substitute is permitted. Per Batch 3.7 (v2.1 §11.5 B) the
-             empty placeholder container that stood here was removed rather
-             than shipped: with no photograph it rendered as a blank panel,
-             which reads as a failed image, not as composition. The slot
-             returns under v2.1 §14/§15/§16 when a real asset is approved. -->
       </div>
     </section>
 
@@ -263,11 +221,6 @@
           <p class="s6-urgency__body">נזק יכול להמשיך להתפתח, ממצאים משתנים, ותיקון לפני תיעוד עלול להעלים מידע מכריע.</p>
         </div>
 
-        <!-- OWNER ASSET STILL REQUIRED — S6 non-water damage photo (v2.1 §14 Image 3). Per Batch 3.7 (v2.1 §11.5 B) the
-             empty placeholder container that stood here was removed rather
-             than shipped: with no photograph it rendered as a blank panel,
-             which reads as a failed image, not as composition. The slot
-             returns under v2.1 §14/§15/§16 when a real asset is approved. -->
       </div>
 
       <div class="wrap s6-urgency__bottom">
