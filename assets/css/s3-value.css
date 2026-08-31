@@ -1,0 +1,29 @@
+
+
+.s3-value {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  padding-block: 0 100px;
+}
+
+.s3-value__inner {
+  max-width: var(--measure-statement);
+  padding-block-start: 36px;
+  border-block-start: 1px solid var(--hairline-dark);
+}
+
+.s3-value__body {
+  font-size: 17px;
+  line-height: var(--lh-body);
+  color: var(--text-secondary);
+}
+
+@media (max-width: 767px) {
+  .s3-value {
+    padding-block-end: 74px;
+  }
+  .s3-value__inner {
+    max-width: none;
+    padding-block-start: 32px;
+  }
+}
