@@ -141,6 +141,136 @@
     );
   }
 
+  // Services — progressive disclosure. Batch 3.9 / Content Spec §0.6.
+  //
+  // Three states per service: A (closed — name + one value line) →
+  // B (content open — what it includes / what you get / what it excludes)
+  // → C (price visible). The two transitions are deliberately separate:
+  // opening the content never reveals the price, and revealing the price
+  // never opens the form. Only the CTA link leaves the page.
+  //
+  // No network request fires on either transition (§0.6, §9). The events go
+  // into the SAME sessionStorage record attribution.js already keeps, and
+  // reach the server only if the visitor actually submits the form.
+  //
+  // Cards are independent: opening one never closes another, nothing
+  // scrolls, and focus never moves on its own.
+  var serviceCards = document.querySelectorAll('[data-service]');
+  if (serviceCards.length) {
+    var SVC_KEY = 'svc_ui_v1';
+    var HINT_CLOSED = 'לחצו להצגת תוכן השירות';
+    var HINT_OPEN = 'לחצו לסגירת תוכן השירות';
+    var PRICE_SHOW = 'הצגת המחיר';
+    var PRICE_HIDE = 'הסתרת המחיר';
+    var attribution = window.ATTRIBUTION;
+
+    // Which panels are open is UI state, not attribution, so it lives under
+    // its own key — never mixed into the record that travels with a lead.
+    // §0.6: "מצב החשיפה נשמר לאורך ה-session" — coming back from /check/ must not
+    // force the visitor to reopen everything.
+    var loadSvcState = function () {
+      var parsed = null;
+      try {
+        var raw = sessionStorage.getItem(SVC_KEY);
+        parsed = raw ? JSON.parse(raw) : null;
+      } catch (e) {
+        parsed = null;
+      }
+      return {
+        body: parsed && Object.prototype.toString.call(parsed.body) === '[object Array]' ? parsed.body : [],
+        price: parsed && Object.prototype.toString.call(parsed.price) === '[object Array]' ? parsed.price : []
+      };
+    };
+
+    var svcState = loadSvcState();
+
+    var saveSvcState = function () {
+      try {
+        sessionStorage.setItem(SVC_KEY, JSON.stringify(svcState));
+      } catch (e) {
+        // Private mode / quota: the panels still work, they just won't be
+        // restored on the next page. Never a reason to block the control.
+      }
+    };
+
+    var setMember = function (list, id, on) {
+      var i = list.indexOf(id);
+      if (on && i === -1) { list.push(id); }
+      if (!on && i !== -1) { list.splice(i, 1); }
+    };
+
+    var logSvc = function (eventName, id) {
+      if (attribution && typeof attribution.recordServiceEvent === 'function') {
+        attribution.recordServiceEvent(eventName, id);
+      }
+    };
+
+    Array.prototype.forEach.call(serviceCards, function (card) {
+      var id = card.getAttribute('data-service');
+      var toggle = card.querySelector('[data-svc-toggle]');
+      var body = card.querySelector('[data-svc-body]');
+      var reveal = card.querySelector('[data-svc-reveal]');
+      var price = card.querySelector('[data-svc-price]');
+      var hint = card.querySelector('.svc__hint');
+      var cta = card.querySelector('[data-service-interest]');
+      if (!id || !toggle || !body) { return; }
+
+      // `record` is false while restoring: replaying a saved state is not a
+      // new interaction and must not inflate the event log.
+      var setBody = function (open, record) {
+        body.hidden = !open;
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (hint) { hint.textContent = open ? HINT_OPEN : HINT_CLOSED; }
+        setMember(svcState.body, id, open);
+        saveSvcState();
+        if (open && record) { logSvc('service_details_open', id); }
+      };
+
+      var setPrice = function (open, record) {
+        if (!reveal || !price) { return; }
+        price.hidden = !open;
+        reveal.setAttribute('aria-expanded', open ? 'true' : 'false');
+        // The control stays put and becomes its own opposite. Hiding it
+        // instead would drop focus to <body> for anyone who pressed it with
+        // a keyboard, and §0.6 forbids a surprising focus change.
+        reveal.textContent = open ? PRICE_HIDE : PRICE_SHOW;
+        setMember(svcState.price, id, open);
+        saveSvcState();
+        if (open && record) { logSvc('service_price_reveal', id); }
+      };
+
+      toggle.addEventListener('click', function () {
+        setBody(toggle.getAttribute('aria-expanded') !== 'true', true);
+      });
+
+      if (reveal && price) {
+        reveal.addEventListener('click', function () {
+          setPrice(reveal.getAttribute('aria-expanded') !== 'true', true);
+        });
+      }
+
+      // The CTA is an ordinary link to /check/. attribution.js records
+      // cta_location + service_interest on the same click; this only adds
+      // the event to the interaction log. Nothing here cancels the
+      // navigation, and nothing here presents the click as a purchase.
+      if (cta) {
+        cta.addEventListener('click', function () {
+          logSvc('service_cta_click', id);
+        });
+      }
+
+      // Restore. The price panel lives inside the body panel, so a restored
+      // price implies a restored body — otherwise the saved state would be
+      // unreachable.
+      if (svcState.price.indexOf(id) !== -1) {
+        setBody(true, false);
+        setPrice(true, false);
+      } else if (svcState.body.indexOf(id) !== -1) {
+        setBody(true, false);
+      }
+    });
+  }
+
   // Accordions — Batch 3.7 / OD-3.7-04, amended after the 31.08 QA pass.
   //
   // They now ship closed at EVERY width, so no JavaScript runs here at all

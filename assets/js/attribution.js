@@ -163,12 +163,47 @@
   // cta_location, so a value added here and not there loses leads.
   var CTA_LOCATIONS = ['hero', 'mid', 'closing', 'sticky', 'pricing'];
 
-  // OD-3.8-04. Which priced route prompted the click. A MEASUREMENT and
-  // conversation signal only: it is never shown back to the visitor, never
+  // Which priced service prompted the interaction. A MEASUREMENT and
+  // conversation signal only: never shown back to the visitor, never
   // presented as a purchase or a booking, and there is deliberately no
   // service-selection field in the form. The suitable service is still
   // decided in the qualification call (MODEL §10).
-  var SERVICE_INTERESTS = ['remote_feasibility', 'full_damage_case', 'insurer_gap_review'];
+  // Batch 3.9 (model v2): the single execution service split in two, so
+  // full_damage_case -> appraisal_only + appraisal_managed, and
+  // insurer_gap_review -> insurer_gap. Must stay in step with
+  // SERVICE_INTEREST_VALUES in apps-script/Code.gs.
+  var SERVICE_INTERESTS = ['appraisal_only', 'appraisal_managed', 'remote_feasibility', 'insurer_gap'];
+
+  // Interaction log for the services section. Kept in the SAME sessionStorage
+  // record the rest of attribution uses — no new store, no new library, and
+  // deliberately NO network request when a panel opens or a price is
+  // revealed. It travels with the lead only when the form is submitted.
+  var SERVICE_EVENTS = ['service_details_open', 'service_price_reveal', 'service_cta_click'];
+
+  function recordServiceEvent(eventName, serviceId) {
+    if (SERVICE_EVENTS.indexOf(eventName) === -1) return;
+    if (SERVICE_INTERESTS.indexOf(serviceId) === -1) return;
+    var record = load() || {};
+    var log = typeof record.service_log === 'string' && record.service_log
+      ? record.service_log.split(',')
+      : [];
+    // Order is the signal, so append rather than de-duplicate; cap the list
+    // so a visitor toggling panels cannot grow the record without bound.
+    if (log.length < 40) {
+      log.push(eventName.replace('service_', '') + ':' + serviceId);
+      record.service_log = log.join(',');
+    }
+    if (eventName === 'service_price_reveal') {
+      var revealed = typeof record.service_price_revealed === 'string' && record.service_price_revealed
+        ? record.service_price_revealed.split(',')
+        : [];
+      if (revealed.indexOf(serviceId) === -1 && revealed.length < 8) {
+        revealed.push(serviceId);
+        record.service_price_revealed = revealed.join(',');
+      }
+    }
+    save(record);
+  }
 
   // source_page is the pathname of the page the CTA was actually clicked on
   // (Content Spec §17.1), captured at click time and stored BEFORE the
@@ -221,6 +256,21 @@
       var r = load() || {};
       return SERVICE_INTERESTS.indexOf(r.service_interest) === -1 ? '' : r.service_interest;
     },
+    // Was the price of the service the visitor acted on actually revealed?
+    // Lets the call start from what they already know, instead of quoting a
+    // number at someone who never asked to see one.
+    servicePriceRevealed: function () {
+      var r = load() || {};
+      var interest = SERVICE_INTERESTS.indexOf(r.service_interest) === -1 ? '' : r.service_interest;
+      if (!interest) return '';
+      var revealed = (r.service_price_revealed || '').split(',');
+      return revealed.indexOf(interest) === -1 ? 'false' : 'true';
+    },
+    serviceLog: function () {
+      var r = load() || {};
+      return typeof r.service_log === 'string' ? r.service_log : '';
+    },
+    recordServiceEvent: recordServiceEvent,
     recordCtaLocation: recordCtaLocation
   };
 })();

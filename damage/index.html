@@ -29,6 +29,16 @@
   <link rel="stylesheet" href="../assets/css/nav.css">
   <link rel="stylesheet" href="../assets/css/damage.css">
   <link rel="stylesheet" href="../assets/css/footer.css">
+
+  <noscript>
+    <style>
+      .svc__body[hidden],
+      .svc__price-box[hidden] { display: block; }
+      .svc__hint,
+      .svc__chev,
+      .svc__reveal { display: none; }
+    </style>
+  </noscript>
 </head>
 <body class="page-damage">
   <a class="skip" href="#main">דילוג לתוכן</a>
@@ -180,33 +190,168 @@
 
     <section id="pricing" class="section dmg-pricing" aria-labelledby="dmg-pricing-title">
       <div class="wrap">
-        <h2 id="dmg-pricing-title" class="dmg-pricing__title" data-reveal>מה קורה אם נדרשת עבודה מקצועית נוספת?</h2>
+        <h2 id="dmg-pricing-title" class="dmg-pricing__title" data-reveal>המחיר ידוע מראש — לא אחוז מהפיצוי</h2>
 
-        <div class="dmg-pricing__items" data-reveal>
-          <div class="dmg-pricing__item">
-            <h3 class="dmg-pricing__item-title">בדיקת כדאיות מרחוק</h3>
-            <p class="dmg-pricing__price"><bdi dir="rtl">700 ₪</bdi> כולל מע״מ</p>
-            <p class="dmg-pricing__desc">סיכום התאמה קצר בכתב.</p>
-            <p class="dmg-pricing__note">אם ממשיכים לתיק נזק מלא, הסכום מתקזז במלואו.</p>
-            <a class="dmg-pricing__cta" data-cta-location="pricing" data-service-interest="remote_feasibility" href="/check/">לבדוק אם המסלול מתאים למקרה שלי</a>
-          </div>
+        <p class="dmg-pricing__lede">שכר הטרחה נקבע מראש לפי היקף העבודה, ולא לפי גובה הנזק או הפיצוי. כך העלות אינה גדלה אוטומטית רק מפני שסכום הנזק גבוה יותר.</p>
+        <p class="dmg-pricing__lede">לא כל מקרה דורש את המסלול המלא. מתחילים בבדיקת התאמה ללא עלות, ומתקדמים רק לפי מה שהמקרה דורש.</p>
 
-          <div class="dmg-pricing__item">
-            <h3 class="dmg-pricing__item-title">תיק נזק מלא סטנדרטי</h3>
-            <p class="dmg-pricing__price"><bdi dir="rtl">4,130 ₪</bdi> כולל מע״מ</p>
-            <p class="dmg-pricing__desc">לאחר הקיזוז — יתרת תשלום: <bdi dir="rtl">3,430 ₪</bdi> כולל מע״מ</p>
-            <p class="dmg-pricing__note">מקרים שאינם סטנדרטיים מתומחרים בנפרד.</p>
-            <a class="dmg-pricing__cta" data-cta-location="pricing" data-service-interest="full_damage_case" href="/check/">לבדוק אם המסלול מתאים למקרה שלי</a>
-          </div>
+        <div class="dmg-pricing__gate" data-reveal>
+          <h3 class="dmg-pricing__gate-title">בדיקת התאמה ראשונית ללא עלות</h3>
+          <p class="dmg-pricing__gate-body">נבדוק אם שמאי רכוש רלוונטי למקרה, איזה מידע עדיין חסר ומהו המסלול המתאים להמשך.</p>
+          <a class="btn" data-cta-location="pricing" href="/check/">בדיקת התאמה למקרה שלי</a>
         </div>
 
-        <div class="dmg-pricing__alt" data-reveal>
-          <p class="dmg-pricing__alt-question">כבר קיבלת שומה או הצעת פיצוי מחברת הביטוח?</p>
-          <p class="dmg-pricing__alt-answer">בדיקת פער לאחר שומת מבטחת — <bdi dir="rtl">1,652 ₪</bdi> כולל מע״מ</p>
-          <a class="dmg-pricing__cta" data-cta-location="pricing" data-service-interest="insurer_gap_review" href="/check/">לבדוק אם המסלול מתאים למקרה שלי</a>
+        <div class="dmg-pricing__trust" data-reveal>
+          <p class="dmg-pricing__trust-lead">שמאי מטעם המבטחת אינו המילה האחרונה.</p>
+          <p class="dmg-pricing__trust-body">באירוע מכוסה, הוצאות שמאי מטעמכם עשויות להיכלל בתגמולי הביטוח — בכפוף לתנאי הפוליסה, למטרת השמאות ולנסיבות המקרה.</p>
+
+          <p class="dmg-pricing__trust-lead">לא כל מחלוקת ביטוחית צריכה להפוך להליך משפטי.</p>
+          <p class="dmg-pricing__trust-body">לעיתים חוות דעת שמאית מנומקת מאפשרת לנהל משא ומתן, לצמצם פערים ולהגיע להסכמה או לפשרה — לפני הליך משפטי יקר וממושך. כאשר נדרש עורך דין, השומה מספקת לו תשתית מקצועית.</p>
         </div>
 
-        <a class="btn" data-cta-location="mid" href="/check/">בדיקת התאמה ראשונית ללא עלות</a>
+        <div class="dmg-pricing__primary" data-reveal>
+          <article class="svc" data-service="appraisal_only">
+            <h3 class="svc__head">
+              <button type="button" class="svc__toggle" data-svc-toggle
+                      aria-expanded="false" aria-controls="svc-appraisal_only-body">
+                <span class="svc__name">חוות דעת שמאית</span>
+                <span class="svc__hint">לחצו להצגת תוכן השירות</span>
+                <span class="svc__chev" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <p class="svc__closed">בדיקה, כימות ומסמך מקצועי המרכז את הנזק ואת צורכי השיקום.</p>
+
+            <div class="svc__body" id="svc-appraisal_only-body" data-svc-body hidden>
+              <p class="svc__label">מה כולל השירות</p>
+              <ul class="svc__list">
+                <li>בחינת האירוע, המסמכים והממצאים.</li>
+                <li>תיעוד וכימות הנזק.</li>
+                <li>אומדן צורכי השיקום.</li>
+                <li>חוות דעת שמאית ממוקדת.</li>
+              </ul>
+              <p class="svc__outcome">בסיום מתקבלת חוות הדעת, ומכאן ניתן להמשיך באופן עצמאי.</p>
+              <p class="svc__excl">השירות אינו כולל ניהול שוטף מול חברת הביטוח.</p>
+
+              <button type="button" class="svc__reveal" data-svc-reveal
+                      aria-expanded="false" aria-controls="svc-appraisal_only-price">הצגת המחיר</button>
+
+              <div class="svc__price-box" id="svc-appraisal_only-price" data-svc-price hidden>
+                <p class="svc__price"><bdi dir="rtl">1,500 ₪</bdi></p>
+                <p class="svc__caveat">המחיר מתייחס לחוות דעת ממוקדת בתיק סטנדרטי. היקף חריג יתומחר מראש בהצעה נפרדת.</p>
+                <a class="svc__cta" href="/check/" data-cta-location="pricing"
+                   data-service-interest="appraisal_only">בדיקת התאמה למקרה שלי</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="svc" data-service="appraisal_managed">
+            <h3 class="svc__head">
+              <button type="button" class="svc__toggle" data-svc-toggle
+                      aria-expanded="false" aria-controls="svc-appraisal_managed-body">
+                <span class="svc__name">חוות דעת וניהול תיק סטנדרטי</span>
+                <span class="svc__hint">לחצו להצגת תוכן השירות</span>
+                <span class="svc__chev" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <p class="svc__closed">חוות דעת שמאית וליווי מקצועי בהמשך ההתנהלות מול חברת הביטוח.</p>
+
+            <div class="svc__body" id="svc-appraisal_managed-body" data-svc-body hidden>
+              <p class="svc__label">מה כולל השירות</p>
+              <ul class="svc__list">
+                <li>כל רכיבי חוות הדעת השמאית.</li>
+                <li>בחינת עמדות, תגובות ושומות מטעם המבטחת.</li>
+                <li>מענה מקצועי והשלמות במסגרת שסוכמה.</li>
+                <li>מעקב אחר ההתקדמות המקצועית של התיק.</li>
+              </ul>
+              <p class="svc__outcome">אתם נשארים מעודכנים. אני מנהל את החלק המקצועי מול חברת הביטוח.</p>
+              <p class="svc__excl">השירות אינו כולל הליך משפטי, נזק חדש או הרחבת היקף שלא סוכמה.</p>
+
+              <button type="button" class="svc__reveal" data-svc-reveal
+                      aria-expanded="false" aria-controls="svc-appraisal_managed-price">הצגת המחיר</button>
+
+              <div class="svc__price-box" id="svc-appraisal_managed-price" data-svc-price hidden>
+                <p class="svc__price"><bdi dir="rtl">4,800 ₪</bdi></p>
+                <p class="svc__caveat">המחיר מתייחס לתיק סטנדרטי. תיק מורכב, רב־צדדי או בעל היקף חריג יתומחר מראש בהצעה נפרדת.</p>
+                <p class="svc__credit">אם כבר הוכנה חוות דעת באותו אירוע, הסכום ששולם עליה יקוזז ממחיר החבילה.</p>
+                <a class="svc__cta" href="/check/" data-cta-location="pricing"
+                   data-service-interest="appraisal_managed">בדיקת התאמה למקרה שלי</a>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="dmg-pricing__diagnostic" data-reveal>
+          <article class="svc svc--diagnostic" data-service="remote_feasibility">
+            <h3 class="svc__head">
+              <button type="button" class="svc__toggle" data-svc-toggle
+                      aria-expanded="false" aria-controls="svc-remote_feasibility-body">
+                <span class="svc__name">בדיקת כדאיות מרחוק</span>
+                <span class="svc__hint">לחצו להצגת תוכן השירות</span>
+                <span class="svc__chev" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <p class="svc__closed">כשהמקרה עדיין אינו ברור, בודקים את החומר לפני שמחליטים אם נדרשת חוות דעת.</p>
+
+            <div class="svc__body" id="svc-remote_feasibility-body" data-svc-body hidden>
+              <p class="svc__label">מה כולל השירות</p>
+              <ul class="svc__list">
+                <li>בחינת תמונות, מסמכים ותיאור האירוע.</li>
+                <li>זיהוי מידע או בדיקות שעדיין חסרים.</li>
+                <li>סיכום קצר בכתב.</li>
+                <li>המלצה אם וכיצד נכון להמשיך.</li>
+              </ul>
+
+              <button type="button" class="svc__reveal" data-svc-reveal
+                      aria-expanded="false" aria-controls="svc-remote_feasibility-price">הצגת המחיר</button>
+
+              <div class="svc__price-box" id="svc-remote_feasibility-price" data-svc-price hidden>
+                <p class="svc__price"><bdi dir="rtl">700 ₪</bdi></p>
+                <p class="svc__credit">אם ממשיכים באותו אירוע לחוות דעת או לניהול תיק, הסכום מתקזז במלואו.</p>
+                <a class="svc__cta" href="/check/" data-cta-location="pricing"
+                   data-service-interest="remote_feasibility">בדיקת התאמה למקרה שלי</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="svc svc--diagnostic" data-service="insurer_gap">
+            <h3 class="svc__head">
+              <button type="button" class="svc__toggle" data-svc-toggle
+                      aria-expanded="false" aria-controls="svc-insurer_gap-body">
+                <span class="svc__name">בדיקת פער לאחר שומת מבטחת</span>
+                <span class="svc__hint">לחצו להצגת תוכן השירות</span>
+                <span class="svc__chev" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <p class="svc__closed">כאשר כבר קיימת שומה או הצעת פיצוי, בודקים מה נכלל, מה חסר והאם קיימת הצדקה להמשך.</p>
+
+            <div class="svc__body" id="svc-insurer_gap-body" data-svc-body hidden>
+              <p class="svc__label">מה כולל השירות</p>
+              <ul class="svc__list">
+                <li>בחינת השומה או הצעת הפיצוי.</li>
+                <li>השוואה למסמכים ולממצאים הקיימים.</li>
+                <li>זיהוי רכיבים שלא קיבלו מענה מספק.</li>
+                <li>מסקנה מקצועית קצרה לגבי המשך הטיפול.</li>
+              </ul>
+
+              <button type="button" class="svc__reveal" data-svc-reveal
+                      aria-expanded="false" aria-controls="svc-insurer_gap-price">הצגת המחיר</button>
+
+              <div class="svc__price-box" id="svc-insurer_gap-price" data-svc-price hidden>
+                <p class="svc__price"><bdi dir="rtl">1,500 ₪</bdi></p>
+                <p class="svc__credit">במקרה של המשך טיפול באותו אירוע, העבודה שכבר בוצעה תובא בחשבון בהצעה להמשך.</p>
+                <a class="svc__cta" href="/check/" data-cta-location="pricing"
+                   data-service-interest="insurer_gap">בדיקת התאמה למקרה שלי</a>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="dmg-pricing__close" data-reveal>
+          <p class="dmg-pricing__close-line">כל המחירים המוצגים הם המחירים הסופיים לתשלום.</p>
+          <p class="dmg-pricing__close-line">השארת פרטים אינה הזמנת חוות דעת ואינה כרוכה בתשלום.</p>
+          <p class="dmg-pricing__close-line">בשיחה נבדוק מה נדרש ונאשר את היקף העבודה לפני שמתחילים.</p>
+          <a class="btn" data-cta-location="pricing" href="/check/">בדיקת התאמה למקרה שלי</a>
+        </div>
       </div>
     </section>
 
@@ -241,7 +386,7 @@
               <span class="accordion__marker" aria-hidden="true"></span>
             </summary>
             <div class="accordion__panel">
-              <p class="dmg-faq__a">סיכום התאמה קצר בכתב, שבודק אם קיימת הצדקה מקצועית וכלכלית להמשך. אם ממשיכים לתיק נזק מלא, הסכום מתקזז במלואו.</p>
+              <p class="dmg-faq__a">סיכום התאמה קצר בכתב, שבודק אם קיימת הצדקה מקצועית וכלכלית להמשך. אם ממשיכים באותו אירוע לחוות דעת או לניהול תיק, הסכום מתקזז במלואו.</p>
             </div>
           </details>
 
@@ -251,7 +396,7 @@
               <span class="accordion__marker" aria-hidden="true"></span>
             </summary>
             <div class="accordion__panel">
-              <p class="dmg-faq__a">אפשר לבדוק מה נכנס לחישוב ומה לא, במסלול בדיקת פער נפרד (<bdi dir="rtl">1,652 ₪</bdi> כולל מע״מ).</p>
+              <p class="dmg-faq__a">אפשר לבדוק מה נכנס לחישוב ומה לא, במסלול בדיקת פער נפרד (<bdi dir="rtl">1,500 ₪</bdi>).</p>
             </div>
           </details>
 
@@ -274,7 +419,7 @@
         <p class="dmg-cta__body">כשאפשר, כדאי לתעד לפני שמשנים את מצב השטח.</p>
 
         <a id="dmg-final-cta" class="btn" data-cta-location="closing" href="/check/">בדיקת התאמה ראשונית ללא עלות</a>
-        <p class="dmg-cta__micro">השארת הפרטים אינה הזמנת חוות דעת ואינה כרוכה בתשלום. לא כל מקרה מצדיק תיק נזק מלא.</p>
+        <p class="dmg-cta__micro">השארת הפרטים אינה הזמנת חוות דעת ואינה כרוכה בתשלום. לא כל מקרה מצדיק את המסלול המלא.</p>
       </div>
     </section>
 
