@@ -1,0 +1,84 @@
+/* ==========================================================================
+   S1 — HERO
+   docs/spec/CURRENT_CANONICAL_SPEC_v2.0.md §7 · CLAUDE_IMPLEMENTATION_LOCK_v2.1.md §14, §18
+   ========================================================================== */
+
+/* Batch 3.7 — min-height:100svh removed (v2.1 §11.5 A). It was sized for a
+   Hero carrying a full-height photograph beside the text; with the media
+   placeholder gone it only guaranteed empty space below the CTA. The
+   section is now sized by its own content plus explicit padding. */
+.s1-hero {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  padding-block: 76px 94px;
+}
+
+.s1-hero__inner {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+/* The row keeps its flex container so v2.1 §14's Hero composition can be
+   restored by re-adding the media element after the content: in this RTL
+   document DOM order alone puts content right and image left, so visual
+   and reading order agree with no CSS `order`. */
+.s1-hero__content {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: var(--measure-head);
+}
+
+.s1-hero__title {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: var(--size-hero-h1);
+  line-height: var(--lh-hero-h1);
+  letter-spacing: 0;
+  color: var(--text-primary);
+  max-width: var(--measure-head);
+}
+.s1-hero__title .line {
+  display: block;
+}
+
+.s1-hero__lede {
+  margin-block-start: 26px;
+  max-width: var(--measure-body);
+  font-family: var(--font-sans);
+  font-size: var(--size-lede);
+  font-weight: 400;
+  line-height: var(--lh-lede);
+  color: var(--text-primary);
+}
+
+.s1-hero__optional {
+  margin-block-start: 18px;
+  max-width: var(--measure-body);
+}
+.s1-hero__optional p {
+  font-size: var(--size-body);
+  line-height: var(--lh-body);
+  color: var(--text-secondary);
+}
+.s1-hero__optional p + p {
+  margin-block-start: 14px;
+}
+
+.s1-hero__content .btn {
+  margin-block-start: 32px;
+}
+
+.s1-hero__reassurance {
+  margin-block-start: 12px;
+  font-size: var(--size-microcopy);
+  line-height: var(--lh-microcopy);
+  color: var(--text-secondary);
+}
+
+@media (max-width: 767px) {
+  .s1-hero {
+    padding-block: 48px 62px;
+  }
+}

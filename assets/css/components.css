@@ -1,0 +1,167 @@
+/* ==========================================================================
+   Components — buttons
+   docs/spec/CLAUDE_IMPLEMENTATION_LOCK_v2.1.md §18 (CTA), §27 (component rules)
+   ========================================================================== */
+
+/* Canonical CTA — v2.1 §18. The whole site is a continuous dark surface
+   (v2.1 §26), so there is only one button treatment, not a light/dark pair. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  padding-inline: 32px;
+  border-radius: 25px;
+  border: 0;
+  background: var(--text-primary);
+  color: var(--bg-base);
+  font-family: var(--font-sans);
+  font-size: var(--size-cta);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0;
+  white-space: nowrap;
+  transition: opacity 200ms ease;
+}
+.btn:hover {
+  opacity: 0.85;
+}
+
+/* Nav-scoped compact variant — the header bar (58–72px) has no room for a
+   50px button; same visual language, smaller footprint. Not part of the
+   v2.1 CTA spec itself, which describes the Hero/S6 full-size button.
+   Height is 44px, not the former 40px: accessibility spec §13 sets a
+   44x44 project minimum and names "CTA buttons" explicitly, with an
+   exemption only for inline links inside paragraphs. 44px still clears
+   the 58px compact header (7px each side). */
+.btn--compact {
+  height: 44px;
+  padding-inline: 22px;
+  border-radius: 22px;
+  font-size: 15px;
+}
+
+/* Very narrow phones. The locked primary CTA string is long enough that at
+   the v2.1 §18 geometry the button measures 303px, while a 320px viewport
+   leaves a 280px content box — ordinary content requiring horizontal
+   scrolling at 320 CSS px is a release blocker (accessibility spec §36).
+   Trimming the inline padding brings it back inside on one line; the
+   max-width/white-space pair is the guarantee, so that any future string
+   or font-metric change wraps rather than overflowing. Type size (17px),
+   weight, colour and pill radius are untouched, and min-block-size keeps
+   the 50px box whenever the label still fits on one line. */
+@media (max-width: 400px) {
+  .btn {
+    max-width: 100%;
+    height: auto;
+    min-block-size: 50px;
+    padding-inline: 20px;
+    padding-block: 10px;
+    white-space: normal;
+    line-height: 1.3;
+    text-align: center;
+  }
+}
+
+/* ==========================================================================
+   Accordion — Batch 3.7 / OD-3.7-04
+   Shared by the /damage/ "שתי שאלות נפרדות" pair and the FAQ.
+
+   Built on native <details>/<summary>. That is the whole point: the button
+   role, aria-expanded, keyboard operation (Enter/Space to toggle, Tab to
+   move) and the open/closed state all come from the element, with no
+   JavaScript to fail and no ARIA to keep in sync. main.js touches these
+   only once, to collapse them on first load below 768px.
+
+   The panel content is always in the DOM — collapsed, not removed — so
+   every answer remains readable to a crawler and recoverable by find-in-page.
+   ========================================================================== */
+
+.accordion {
+  border-block-end: 1px solid var(--hairline-dark);
+}
+.accordion:first-child {
+  border-block-start: 1px solid var(--hairline-dark);
+}
+
+/* The whole row is the control: full width, 44px floor (accessibility spec
+   §13), and the question and its state marker pushed to opposite edges. */
+.accordion__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-block-size: 44px;
+  padding-block: 14px;
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--font-sans);
+  font-size: var(--size-label);
+  font-weight: 500;
+  line-height: var(--lh-label);
+  color: var(--text-primary);
+}
+/* Suppresses the UA's own disclosure triangle in both engine families, so
+   the marker below is the only indicator and it can be positioned at the
+   row's end edge rather than wherever the UA puts its triangle. */
+.accordion__summary::-webkit-details-marker { display: none; }
+.accordion__summary::marker { content: ""; }
+
+.accordion__summary:hover .accordion__label {
+  color: var(--brand-wordmark-accent);
+}
+/* Focus lands on <summary>; base.css's focus-visible rule targets links,
+   buttons and [tabindex], so the ring is declared for it explicitly here
+   rather than left to the UA default. */
+.accordion__summary:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.accordion__label {
+  min-width: 0;
+}
+
+/* Open/closed indicator: a plus that loses its vertical stroke when open.
+   Two 1px hairlines in an existing token — the same hairline vocabulary the
+   rest of the page uses for structure — not a decorative icon or a glyph
+   from an icon set. It is aria-hidden: <details> already exposes the state
+   to assistive tech, so announcing it twice would be noise. */
+.accordion__marker {
+  position: relative;
+  flex: none;
+  inline-size: 14px;
+  block-size: 14px;
+}
+.accordion__marker::before,
+.accordion__marker::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: 50%;
+  inline-size: 14px;
+  block-size: 1px;
+  background: var(--text-secondary);
+}
+.accordion__marker::after {
+  transform: rotate(90deg);
+}
+.accordion[open] .accordion__marker::after {
+  opacity: 0;
+}
+
+.accordion__panel {
+  padding-block-end: 22px;
+  max-width: var(--measure-body);
+}
+
+@media (max-width: 767px) {
+  .accordion__summary {
+    font-size: var(--size-body);
+    padding-block: 13px;
+  }
+  .accordion__panel {
+    padding-block-end: 18px;
+  }
+}

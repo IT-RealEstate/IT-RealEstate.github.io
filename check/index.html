@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>לבדוק לפני שמחליטים — בדיקת התאמה | טביב שמאות</title>
+  <meta name="description" content="בדיקת התאמה ראשונית ללא עלות, לפני שמחליטים איך להמשיך.">
+
+  <link rel="icon" type="image/svg+xml" href="../assets/brand/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/brand/favicon-32.png">
+  <link rel="apple-touch-icon" href="../assets/brand/apple-touch-icon.png">
+
+  <link rel="stylesheet" href="../assets/css/tokens.css">
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/css/intake.css">
+</head>
+<body>
+  <a class="skip" href="#main">דילוג לתוכן</a>
+
+  <header class="intake-header">
+    <a class="intake-header__brand" href="/">טביב שמאות</a>
+  </header>
+
+  <!-- BETA BUILD ONLY. Placed above <main> deliberately: .intake-fallback
+       is visible by default and .intake-app only after intake.js confirms
+       it initialised, so a notice inside either one would be missing from
+       the other state. Here it is present before the form in every path,
+       including JavaScript disabled. Owner wording, exact. -->
+  <p class="beta-notice" role="status">גרסת בדיקה: הטופס מוצג לצורך ביקורת ואינו שולח או שומר פרטים.</p>
+
+
+  <main id="main" class="intake-main">
+
+    <!-- Default-visible fallback. intake.js hides this and reveals
+         .intake-app only after it has positively confirmed it initialized
+         — accessibility spec §30, "if Intake JavaScript cannot initialize,
+         show a plain accessible fallback state with direct contact
+         options." With JS disabled entirely this block simply never gets
+         hidden, which is exactly the desired behavior. -->
+    <div class="intake-fallback" data-intake-fallback>
+      <h1 class="intake-fallback__title">לא ניתן לטעון את הבדיקה המקוונת כרגע</h1>
+      <p class="intake-fallback__body">אפשר ליצור קשר ישירות ולהמשיך משם.</p>
+      <a class="btn" href="tel:+972552617625" dir="ltr">055-2617625</a>
+    </div>
+
+    <div class="intake-app" data-intake-app hidden>
+      <form class="intake-form" data-intake-form novalidate>
+
+        <h1 class="intake-form__title">בדיקת התאמה ראשונית</h1>
+        <p class="intake-form__lede">ללא עלות. כדי להבין אם שמאי רכוש הוא בעל המקצוע הרלוונטי בשלב הנוכחי.</p>
+
+        <!-- STEP 1 — DAMAGE TYPE (Content Spec §8.1, label §8.10.1) -->
+        <section class="intake-step" data-step="1" hidden>
+          <p class="intake-step__progress">שלב 1 מתוך 3</p>
+          <h2 class="intake-step__title" tabindex="-1">סוג הנזק</h2>
+
+          <fieldset class="intake-fieldset" data-group="damage_type">
+            <legend class="sr-only">סוג הנזק</legend>
+            <div class="intake-options">
+              <label class="intake-option"><input type="radio" name="damage_type" value="WATER" required aria-required="true" aria-describedby="damage_type-error"><span>מים או רטיבות</span></label>
+              <label class="intake-option"><input type="radio" name="damage_type" value="FIRE" required aria-required="true" aria-describedby="damage_type-error"><span>אש או עשן</span></label>
+              <label class="intake-option"><input type="radio" name="damage_type" value="BURGLARY" required aria-required="true" aria-describedby="damage_type-error"><span>פריצה</span></label>
+              <label class="intake-option"><input type="radio" name="damage_type" value="STORM" required aria-required="true" aria-describedby="damage_type-error"><span>סערה או מזג אוויר</span></label>
+              <label class="intake-option"><input type="radio" name="damage_type" value="STRUCTURAL" required aria-required="true" aria-describedby="damage_type-error"><span>סדקים או נזק מבני</span></label>
+              <label class="intake-option"><input type="radio" name="damage_type" value="OTHER" required aria-required="true" aria-describedby="damage_type-error"><span>אחר / לא בטוח</span></label>
+            </div>
+            <p class="intake-error" id="damage_type-error"></p>
+          </fieldset>
+
+          <div class="intake-step__nav">
+            <button type="button" class="btn" data-action="next">הבא</button>
+          </div>
+        </section>
+
+        <!-- STEP 2 — CASE STATE (Content Spec §8.2; replaces the retired
+             event_stage. Internal values are never shown to the user.) -->
+        <section class="intake-step" data-step="2" hidden>
+          <p class="intake-step__progress">שלב 2 מתוך 3</p>
+          <h2 class="intake-step__title" tabindex="-1">מצב המקרה</h2>
+
+          <fieldset class="intake-fieldset" data-group="case_state" aria-describedby="case_state-help">
+            <legend class="sr-only">מצב המקרה</legend>
+            <p class="intake-field__help" id="case_state-help">אפשר לבחור את מה שהכי קרוב.</p>
+            <div class="intake-options">
+              <label class="intake-option"><input type="radio" name="case_state" value="RECENT_DAMAGE" required aria-required="true" aria-describedby="case_state-error"><span>הנזק קרה עכשיו או לאחרונה</span></label>
+              <label class="intake-option"><input type="radio" name="case_state" value="SOURCE_UNKNOWN" required aria-required="true" aria-describedby="case_state-error"><span>מקור הנזק עדיין לא ידוע</span></label>
+              <label class="intake-option"><input type="radio" name="case_state" value="SOURCE_FIXED_DAMAGE_REMAINS" required aria-required="true" aria-describedby="case_state-error"><span>המקור אותר או תוקן ונשאר נזק</span></label>
+              <label class="intake-option"><input type="radio" name="case_state" value="ASSESSMENT_OR_OFFER_RECEIVED" required aria-required="true" aria-describedby="case_state-error"><span>כבר התקבלה שומה או הצעת פיצוי</span></label>
+              <label class="intake-option"><input type="radio" name="case_state" value="ACTIVE_DISPUTE_OR_PROCEEDING" required aria-required="true" aria-describedby="case_state-error"><span>קיים סכסוך או הליך פעיל</span></label>
+              <label class="intake-option"><input type="radio" name="case_state" value="UNSURE" required aria-required="true" aria-describedby="case_state-error"><span>איני בטוח מה מתאים</span></label>
+            </div>
+            <p class="intake-error" id="case_state-error"></p>
+          </fieldset>
+
+          <div class="intake-step__nav intake-step__nav--split">
+            <button type="button" class="intake-btn-back" data-action="back">חזרה</button>
+            <button type="button" class="btn" data-action="next">הבא</button>
+          </div>
+        </section>
+
+        <!-- STEP 3 — CONTACT DETAILS. Labels §8.10.1, helper text §8.10.3,
+             autocomplete/inputmode §8.3. No placeholders anywhere (§8.10.2). -->
+        <section class="intake-step" data-step="3" hidden>
+          <p class="intake-step__progress">שלב 3 מתוך 3</p>
+          <h2 class="intake-step__title" tabindex="-1">פרטי התקשרות</h2>
+
+          <div class="intake-field">
+            <label class="intake-field__label" for="full_name">שם מלא</label>
+            <input class="intake-field__input" type="text" id="full_name" name="full_name" autocomplete="name" required aria-required="true" aria-describedby="full_name-error">
+            <p class="intake-error" id="full_name-error"></p>
+          </div>
+
+          <div class="intake-field">
+            <label class="intake-field__label" for="phone_raw">טלפון</label>
+            <input class="intake-field__input" type="tel" id="phone_raw" name="phone_raw" autocomplete="tel" inputmode="tel" dir="ltr" required aria-required="true" aria-describedby="phone_raw-error">
+            <p class="intake-error" id="phone_raw-error"></p>
+          </div>
+
+          <div class="intake-field">
+            <label class="intake-field__label" for="email">אימייל</label>
+            <input class="intake-field__input" type="email" id="email" name="email" autocomplete="email" inputmode="email" dir="ltr" required aria-required="true" aria-describedby="email-error">
+            <p class="intake-error" id="email-error"></p>
+          </div>
+
+          <!-- property_city — free text with the §8.4 fallback. The suggestion
+               layer is NOT implemented in this batch: no authoritative Israeli
+               government/CBS locality dataset could be obtained (see the batch
+               report). Free-text entry is the approved fallback and works on
+               its own; a suggestion list can be layered on later without
+               changing this field's name, label or validation. -->
+          <div class="intake-field">
+            <label class="intake-field__label" for="property_city">יישוב הנכס</label>
+            <p class="intake-field__help" id="property_city-help">היישוב שבו נמצא הנכס. לא נדרשת כתובת מלאה.</p>
+            <input class="intake-field__input" type="text" id="property_city" name="property_city" autocomplete="address-level2" required aria-required="true" aria-describedby="property_city-help property_city-error">
+            <p class="intake-error" id="property_city-error"></p>
+          </div>
+
+          <!-- short_description — the only optional field. Marked in the label
+               itself (§8.10.4); no minlength, no AI autocomplete (§8.5). -->
+          <div class="intake-field">
+            <label class="intake-field__label" for="short_description">תיאור קצר — לא חובה</label>
+            <p class="intake-field__help" id="short_description-help">כמה מילים, אם יש משהו שחשוב שנדע מראש.</p>
+            <textarea class="intake-field__input intake-field__textarea" id="short_description" name="short_description" rows="3" spellcheck="true" aria-describedby="short_description-help short_description-error"></textarea>
+            <p class="intake-error" id="short_description-error"></p>
+          </div>
+
+          <!-- Honeypot (Handoff spec §10.2) — off-screen, not display:none,
+               so unsophisticated bots that skip hidden fields still fill
+               it. tabindex="-1" and aria-hidden keep it fully out of the
+               keyboard and accessibility tree for real users. A filled
+               value is treated server-side as abuse; nothing is written. -->
+          <div class="intake-honeypot" aria-hidden="true">
+            <label for="website">Website</label>
+            <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+          </div>
+
+          <!--
+            Legal Spec §2.1 rights line. PRIVACY_EMAIL is RESOLVED (MP-1)
+            and now renders in the spec's exact PRIVACY_EMAIL-then-
+            PHONE_DISPLAY order. The address is a temporary MVP mailbox
+            and may later move to a domain-based one; it appears in exactly
+            two places sitewide (here and, once published, /legal/), so a
+            future swap is a two-file change with no copy rewrite.
+
+            STILL NOT DEPLOY-READY. Two separate blockers remain, both
+            outside this block:
+              1. /legal/ is not published, so the link below is dead —
+                 Legal Spec I2 treats a dead link in the notice as a §11
+                 breach at the moment of collection.
+              2. LEGAL_NAME is unresolved. §2.1 requires the data
+                 controller's exact legal name here; the line below still
+                 carries the trade name "טביב שמאות". Not substituted
+                 unilaterally — an invented legal name is worse than a
+                 tracked gap.
+          -->
+          <div class="intake-legal">
+            <p>מסירת הפרטים היא מרצון. בלעדיהם לא נוכל לבחון את הפנייה ולא נוכל לחזור אליכם.</p>
+            <p>הפרטים משמשים את טביב שמאות, שמאות רכוש, אך ורק לבחינת הפנייה וליצירת קשר בנוגע למקרה.</p>
+            <p>הם נשמרים בשירותי Google, וההמשך בוואטסאפ מתבצע בשירותי Meta — שני ספקים שעשויים לעבד מידע גם מחוץ לישראל.</p>
+            <p>
+              אפשר לפנות אלינו בכל עת לעיין בפרטים, לתקן אותם או לבקש למחוק אותם:
+              <a href="mailto:ido89t@gmail.com" dir="ltr">ido89t@gmail.com</a> ·
+              <a href="tel:+972552617625" dir="ltr">055-2617625</a>
+            </p>
+          </div>
+
+          <div class="intake-step__nav intake-step__nav--split">
+            <button type="button" class="intake-btn-back" data-action="back">חזרה</button>
+            <button type="submit" class="btn">שליחת פרטים</button>
+          </div>
+
+          <p class="intake-legal__validity">בשליחה אתם מאשרים את מדיניות הפרטיות ותנאי השימוש, כולל שמירה ועיבוד בשירותי ענן מחוץ לישראל.</p>
+
+          <!-- Async submit lifecycle (Batch 6B). "Sending" and the
+               dev/success status are polite live regions (accessibility
+               spec §23); the failure state is role="alert" since it is
+               the one genuinely blocking condition here. -->
+          <p class="intake-sending" role="status" aria-live="polite" data-sending-status hidden>שולחים את הפרטים…</p>
+
+          <div class="intake-submit-error" role="alert" data-submit-error tabindex="-1" hidden>
+            <h3 class="intake-submit-error__title">לא הצלחנו לשמור את הפרטים</h3>
+            <p class="intake-submit-error__body">הפרטים שהזנת נשארו כאן. אפשר לנסות שוב בעוד רגע.</p>
+            <button type="button" class="btn" data-action="retry-submit">לנסות שוב</button>
+            <p class="intake-submit-error__fallback" data-submit-fallback hidden>אפשר גם להתקשר: <a href="tel:+972552617625" dir="ltr">055-2617625</a></p>
+          </div>
+        </section>
+
+      </form>
+
+      <!-- Approved Success State — Content Spec §9, APPROVED_OWNER_COPY
+           (Batch 2.3C-LOCK, Item 16). Verbatim: no SLA, no promise the case
+           was accepted, no claim a check was already performed (C-65).
+           AUTO_WHATSAPP_HANDOFF = DISABLED (§22) — nothing opens WhatsApp;
+           the flow ends here. intake.js hides the form and reveals this. -->
+      <section class="intake-success" data-intake-success tabindex="-1" role="status" aria-live="polite" hidden>
+        <h1 class="intake-success__title">הפרטים התקבלו</h1>
+        <p class="intake-success__body">נחזור אליכם לבדיקת התאמה ראשונית ללא עלות. בשיחה נבין מה קרה, מה כבר בוצע, ואם שמאי רכוש הוא בעל המקצוע הרלוונטי בשלב הנוכחי.</p>
+      </section>
+    </div>
+  </main>
+
+  <script src="../assets/js/attribution.js"></script>
+  <script src="../assets/js/intake-config.js"></script>
+  <script src="../assets/js/intake.js"></script>
+</body>
+</html>

@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>טביב שמאות — עידו טביב, שמאי רכוש</title>
+  <meta name="description" content="שמאי רכוש עצמאי לבדיקה מטעמכם, בנפרד מהגוף המשלם. בדיקת התאמה ראשונית ללא עלות, לפני שמחליטים איך להמשיך.">
+
+  <!--
+    LAUNCH GATE: {{DOMAIN}} is unresolved (no final domain assigned yet —
+    same gate as docs/legal/legal.html's own {{DOMAIN}} token). Do not
+    substitute a guessed domain. Resolve canonical/og:url/og:image together
+    with the legal page's {{DOMAIN}} token before indexable production
+    launch.
+  -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="he_IL">
+  <meta property="og:site_name" content="טביב שמאות">
+  <meta property="og:title" content="טביב שמאות — עידו טביב, שמאי רכוש">
+  <meta property="og:description" content="שמאי רכוש עצמאי לבדיקה מטעמכם, בנפרד מהגוף המשלם. בדיקת התאמה ראשונית ללא עלות, לפני שמחליטים איך להמשיך.">
+  <!-- og:image intentionally omitted: OWNER ASSET REQUIRED — no 1200x630
+       share image exists yet (see docs/spec known-gaps: no licensed
+       photography sourced). Add og:image once one is supplied/approved. -->
+  <meta name="twitter:card" content="summary">
+
+  <link rel="icon" type="image/svg+xml" href="assets/brand/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/brand/favicon-32.png">
+  <link rel="apple-touch-icon" href="assets/brand/apple-touch-icon.png">
+
+
+  <!-- Batch 3.7 — font preload, a CLS fix.
+       All three weights render above the fold on both pages (300 headline,
+       400 body, 500 CTA/labels). With font-display:swap and no preload the
+       browser paints the fallback first and reflows the whole hero when the
+       webfont arrives; on /damage/, whose Hero is now text-only, that
+       measured 0.083 CLS at 375px. Discovering these three files from
+       tokens.css costs a stylesheet round-trip first — the preload removes
+       it, so the real face is available for the first paint.
+       Three same-origin 34KB files, already fetched on every load: this
+       changes their priority, not the number of requests. No new asset, no
+       third-party origin (Legal Spec I6 still holds). -->
+  <link rel="preload" href="assets/fonts/IBMPlexSansHebrew-Light.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/IBMPlexSansHebrew-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/IBMPlexSansHebrew-Medium.woff2" as="font" type="font/woff2" crossorigin>
+
+  <link rel="stylesheet" href="assets/css/tokens.css">
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/nav.css">
+  <link rel="stylesheet" href="assets/css/s1-hero.css">
+  <link rel="stylesheet" href="assets/css/s2-role.css">
+  <link rel="stylesheet" href="assets/css/s3-independent.css">
+  <link rel="stylesheet" href="assets/css/s4-about.css">
+  <link rel="stylesheet" href="assets/css/s5-process.css">
+  <link rel="stylesheet" href="assets/css/s6-urgency.css">
+  <link rel="stylesheet" href="assets/css/footer.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    "name": "טביב שמאות",
+    "description": "שמאי רכוש עצמאי לבדיקה מטעמכם, בנפרד מהגוף המשלם.",
+    "telephone": "+972552617625"
+  }
+  </script>
+</head>
+<body>
+  <a class="skip" href="#main">דילוג לתוכן</a>
+
+  <header class="site-header" data-header>
+    <div class="site-header__inner wrap">
+      <a class="brand" href="/">
+        <img class="brand__symbol" src="assets/brand/tabib-logo-192.png" alt="" width="192" height="148">
+        <span class="brand__divider" aria-hidden="true"></span>
+        <span class="brand__text">
+          <span class="brand__primary">טביב <span class="brand__accent-word">שמאות</span></span>
+          <span class="brand__secondary">שמאות רכוש עצמאית</span>
+        </span>
+      </a>
+      <div class="site-header__actions">
+        <button class="site-header__menu-btn" type="button" data-menu-toggle
+                aria-expanded="false" aria-controls="site-menu">
+          תפריט
+        </button>
+        <a class="site-header__phone" href="tel:+972552617625" dir="ltr" aria-label="חיוג לטביב שמאות: 055-2617625">055-2617625</a>
+        <a class="btn btn--compact" data-cta-location="sticky" href="/check/">צור קשר</a>
+      </div>
+    </div>
+
+    <!-- Navigation menu — Batch 3.7 / OD-3.7-02. Separate from the brand
+         lockup, which stays a plain link to the home page. Every target is
+         an existing route or an existing id on /damage/ (dmg-process,
+         pricing, dmg-faq) — no new or duplicated IDs were introduced. -->
+    <nav id="site-menu" class="site-menu" data-menu aria-label="ניווט ראשי" hidden>
+      <ul class="site-menu__list wrap">
+        <li><a class="site-menu__link" href="/">ראשי</a></li>
+        <li><a class="site-menu__link" href="/damage/">נזקי רכוש</a></li>
+        <li><a class="site-menu__link" href="/damage/#dmg-process">איך זה עובד</a></li>
+        <li><a class="site-menu__link" href="/damage/#pricing">מחירים</a></li>
+        <li><a class="site-menu__link" href="/damage/#dmg-faq">שאלות נפוצות</a></li>
+        <li><a class="site-menu__link" href="/check/">צור קשר</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main">
+
+    <section id="s1-hero" class="section s1-hero" aria-labelledby="hero-title">
+      <div class="wrap s1-hero__inner">
+        <div class="s1-hero__content">
+          <!-- Orphan guard — see the matching note in damage/index.html.
+               Binds the last two words so "המשלם." does not take a line of
+               its own (it did at every width from 348 to 767). No character
+               of the approved H1 changes and no break is forced. -->
+          <h1 id="hero-title" class="s1-hero__title">
+            <span class="line">שמאי רכוש.</span>
+            <span class="line">מטעמך, בנפרד מהגוף&#160;המשלם.</span>
+          </h1>
+
+          <p class="s1-hero__lede">מלווה את הצד המקצועי של אירוע הנזק — מהבדיקה והכימות ועד לביסוס הדרישה מול הגוף המבטח.</p>
+
+          <div class="s1-hero__optional">
+            <p>בהוכחת נזק, אין פרט שולי.</p>
+          </div>
+
+          <a class="btn" data-cta-location="hero" href="/check/">בדיקת התאמה ראשונית ללא עלות</a>
+
+          <p class="s1-hero__reassurance">לבדוק לפני שמחליטים.</p>
+        </div>
+
+        <!-- OWNER ASSET STILL REQUIRED — Hero damage photo (v2.1 §14 Image 1). Per Batch 3.7 (v2.1 §11.5 B) the
+             empty placeholder container that stood here was removed rather
+             than shipped: with no photograph it rendered as a blank panel,
+             which reads as a failed image, not as composition. The slot
+             returns under v2.1 §14/§15/§16 when a real asset is approved. -->
+      </div>
+    </section>
+
+    <section id="s2-role" class="section s2-role" aria-labelledby="role-title">
+      <div class="wrap">
+        <p class="s2-role__marker">כאן נכנס שמאי הרכוש</p>
+
+        <h2 id="role-title" class="s2-role__title" data-reveal>מחבר בין הממצאים לדרך פעולה</h2>
+
+        <p class="s2-role__body">מאתר נזילות, מהנדס, קבלן או בעל מקצוע אחר נותנים כל אחד את המענה בתחום שלו. שמאי הרכוש מחבר בין הממצאים, הדוחות, העלויות וההמלצות, ומתרגם אותם לדרך פעולה ברורה.</p>
+
+        <div class="s2-role__grid" data-reveal>
+          <div class="s2-role__item">
+            <h3 class="s2-role__item-title">מה קרה</h3>
+            <p class="s2-role__item-desc">בחינת האירוע והממצאים בשטח.</p>
+          </div>
+          <div class="s2-role__item">
+            <h3 class="s2-role__item-title">מה הנזק</h3>
+            <p class="s2-role__item-desc">כימות היקף הנזק ועלויות השיקום.</p>
+          </div>
+          <div class="s2-role__item">
+            <h3 class="s2-role__item-title">מה עושים עם זה</h3>
+            <p class="s2-role__item-desc">ביסוס הדרישה מול הגוף המבטח, על בסיס כלל הממצאים והצרכים המקצועיים.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="s3-independent" class="section s3-independent" aria-labelledby="independent-title">
+      <div class="wrap s3-independent__inner">
+        <div class="s3-independent__content">
+          <h2 id="independent-title" class="s3-independent__title" data-reveal>בדיקה מטעמך מוסיפה איזון</h2>
+
+          <p class="s3-independent__statement">בנפרד מהגוף המשלם.</p>
+
+          <p class="s3-independent__body">כאשר הגוף שבוחן את היקף הנזק הוא גם הגוף שנושא בתשלום התביעה, יש היגיון בכך שזו לא תהיה ההערכה המקצועית היחידה בתיק.</p>
+        </div>
+
+        <!-- OWNER ASSET STILL REQUIRED — S3 damage photo (v2.1 §14 Image 2). Per Batch 3.7 (v2.1 §11.5 B) the
+             empty placeholder container that stood here was removed rather
+             than shipped: with no photograph it rendered as a blank panel,
+             which reads as a failed image, not as composition. The slot
+             returns under v2.1 §14/§15/§16 when a real asset is approved. -->
+      </div>
+    </section>
+
+    <section id="s4-about" class="section s4-about" aria-labelledby="about-title">
+      <div class="wrap s4-about__inner">
+        <div class="s4-about__content">
+          <h2 id="about-title" class="s4-about__name" data-reveal>עידו טביב</h2>
+          <p class="s4-about__role">שמאי רכוש</p>
+
+          <div class="s4-about__proof" data-reveal>
+            <div class="s4-about__proof-item">
+              <h3 class="s4-about__proof-title">בנייה וניהול פרויקטים</h3>
+              <p class="s4-about__proof-desc">קבלנים, ספקים, תמחור ותהליכי ביצוע.</p>
+            </div>
+            <div class="s4-about__proof-item">
+              <h3 class="s4-about__proof-title">שמאות והעמקה מקצועית</h3>
+              <p class="s4-about__proof-desc">שמאות נזקי רכוש ורקע מקצועי בבינוי.</p>
+            </div>
+            <div class="s4-about__proof-item">
+              <h3 class="s4-about__proof-title">אומדנים ותיעוד</h3>
+              <p class="s4-about__proof-desc">ממצאי שטח, מסמכים ועלויות שיקום.</p>
+            </div>
+          </div>
+
+          <div class="s4-about__reading">
+            <p>אני מגיע מרקע של ניהול פרויקטים בבנייה, עבודה עם קבלנים, תמחור ובקרת עלויות, לצד הכשרה בתחומי שמאות המקרקעין והעמקה בבנייה, תכנון, קניין ודינים.</p>
+            <p>כשמאי רכוש, אני משתמש בחיבור הזה כדי להבין את הנזק בשטח, לכמת את עלויות השיקום ולבסס את הדרישה על ממצאים מקצועיים, עקרונות בנייה והמסגרת המשפטית הרלוונטית.</p>
+          </div>
+        </div>
+
+        <!-- OWNER ASSET STILL REQUIRED — S4 portrait of עידו טביב — no stock or generated substitute is permitted. Per Batch 3.7 (v2.1 §11.5 B) the
+             empty placeholder container that stood here was removed rather
+             than shipped: with no photograph it rendered as a blank panel,
+             which reads as a failed image, not as composition. The slot
+             returns under v2.1 §14/§15/§16 when a real asset is approved. -->
+      </div>
+    </section>
+
+    <section id="s5-process" class="section s5-process" aria-labelledby="process-title">
+      <div class="wrap">
+        <h2 id="process-title" class="s5-process__title" data-reveal>מתחילים בבדיקת התאמה</h2>
+
+        <p class="s5-process__lede">
+          <span class="line">לא מתחילים מחוות דעת מלאה.</span>
+          <span class="line">קודם בודקים אם יש הצדקה להמשיך.</span>
+        </p>
+
+        <div class="s5-process__steps" data-reveal>
+          <div class="s5-process__step">
+            <p class="s5-process__number">01</p>
+            <h3 class="s5-process__step-title">שולחים את המקרה</h3>
+            <p class="s5-process__step-desc">מספרים בקצרה מה קרה ומה כבר נעשה.</p>
+          </div>
+
+          <div class="s5-process__step">
+            <p class="s5-process__number">02</p>
+            <h3 class="s5-process__step-title">בדיקת התאמה ראשונית</h3>
+            <p class="s5-process__step-desc">ללא עלות — כדי להבין אם שמאי רכוש הוא בעל המקצוע הרלוונטי בשלב הזה.</p>
+          </div>
+
+          <div class="s5-process__step">
+            <p class="s5-process__number">03</p>
+            <h3 class="s5-process__step-title">בדיקת כדאיות מרחוק</h3>
+            <p class="s5-process__price"><bdi dir="rtl">700 ₪</bdi> כולל מע״מ</p>
+            <p class="s5-process__step-desc">סיכום התאמה קצר בכתב, שבודק אם יש הצדקה מקצועית וכלכלית להמשך.</p>
+            <p class="s5-process__reassurance">אם ממשיכים לתיק נזק מלא, הסכום מתקזז במלואו.</p>
+          </div>
+        </div>
+
+        <p class="s5-process__model">שכר הטרחה נקבע מראש ואינו תלוי בסכום התביעה. איני מקבל עמלות מקבלנים או מספקים.</p>
+
+        <p class="s5-process__pricing-link">לפירוט המחירים המלא — <a href="/damage/#pricing">המחירים המלאים</a></p>
+      </div>
+    </section>
+
+    <section id="s6-urgency" class="section s6-urgency" aria-labelledby="urgency-title">
+      <div class="wrap s6-urgency__top">
+        <div class="s6-urgency__intro">
+          <h2 id="urgency-title" class="s6-urgency__title" data-reveal>מה שכבר קרה קובע מה צריך לבדוק עכשיו</h2>
+
+          <p class="s6-urgency__spatial" data-reveal>גם להמתין זו החלטה.</p>
+
+          <p class="s6-urgency__body">נזק יכול להמשיך להתפתח, ממצאים משתנים, ותיקון לפני תיעוד עלול להעלים מידע מכריע.</p>
+        </div>
+
+        <!-- OWNER ASSET STILL REQUIRED — S6 non-water damage photo (v2.1 §14 Image 3). Per Batch 3.7 (v2.1 §11.5 B) the
+             empty placeholder container that stood here was removed rather
+             than shipped: with no photograph it rendered as a blank panel,
+             which reads as a failed image, not as composition. The slot
+             returns under v2.1 §14/§15/§16 when a real asset is approved. -->
+      </div>
+
+      <div class="wrap s6-urgency__bottom">
+        <div class="s6-urgency__states" data-reveal>
+          <div class="s6-urgency__state">
+            <h3 class="s6-urgency__state-title">הנזק קרה עכשיו</h3>
+            <p class="s6-urgency__state-desc">לפני תיקון, פינוי או ייבוש, חשוב לתעד את המצב.</p>
+          </div>
+
+          <div class="s6-urgency__state">
+            <h3 class="s6-urgency__state-title">כבר הייתה בדיקה או התחיל תיקון</h3>
+            <p class="s6-urgency__state-desc">אפשר לבדוק מה נפגע ומה עדיין נדרש לשיקום.</p>
+          </div>
+
+          <div class="s6-urgency__state">
+            <h3 class="s6-urgency__state-title">כבר תיקנו, אבל הבעיה חזרה או לא נפתרה</h3>
+            <p class="s6-urgency__state-desc">בודקים מה כבר נעשה ומה נשאר פתוח.</p>
+          </div>
+
+          <div class="s6-urgency__state">
+            <h3 class="s6-urgency__state-title">כבר יש שומה, הצעה או מחלוקת</h3>
+            <p class="s6-urgency__state-desc">עוברים על החומר הקיים ובודקים מה חסר.</p>
+          </div>
+        </div>
+
+        <a id="s6-final-cta" class="btn" data-cta-location="closing" href="/check/">בדיקת התאמה ראשונית ללא עלות</a>
+
+        <p class="s6-urgency__reassurance">השארת הפרטים אינה הזמנת חוות דעת ואינה כרוכה בתשלום.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap site-footer__inner">
+      <div class="site-footer__top">
+        <div class="site-footer__identity">
+          <p class="site-footer__brand">טביב שמאות</p>
+          <p class="site-footer__role">עידו טביב · שמאי רכוש</p>
+        </div>
+
+        <div class="site-footer__contact">
+          <a class="site-footer__phone" href="tel:+972552617625" dir="ltr">055-2617625</a>
+          <a class="site-footer__email" href="mailto:ido89t@gmail.com" dir="ltr">ido89t@gmail.com</a>
+        </div>
+      </div>
+
+      <p class="site-footer__disclaimer">המשרד אינו מספק ייעוץ משפטי או ביטוחי.</p>
+
+    </div>
+  </footer>
+
+  <script src="assets/js/attribution.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

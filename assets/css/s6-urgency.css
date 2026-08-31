@@ -1,0 +1,130 @@
+/* ==========================================================================
+   S6 — CURRENT STATE / URGENCY
+   docs/spec/CURRENT_CANONICAL_SPEC_v2.0.md §12 · CLAUDE_IMPLEMENTATION_LOCK_v2.1.md §14, §16, §17, §23
+   ========================================================================== */
+
+/* Batch 3.7 — overflow:hidden removed with the full-bleed media placeholder
+   it was clipping (v2.1 §11.5 B). Nothing in this section is wider than its
+   column now; the guard returns with the real photograph. */
+.s6-urgency {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  padding-block: 118px;
+}
+
+/* Top block: narrow text column for the title/spatial-statement/body.
+   The flex row is kept so v2.1 §14's Image 3 composition (image left ~60%,
+   text right ~38%) can be restored by re-adding the media element after
+   the content — RTL alone places it, no CSS `order`. The four-states grid,
+   closing statement and
+   CTA live in a separate full-width block below rather than in this same
+   ~38% column: v2.1 §23 calls for a 2-column grid, which doesn't fit a
+   column this narrow (S4's proof points, in a similarly narrow column,
+   stayed single-column for exactly that reason). Keeping "image + intro"
+   as its own bounded block also keeps the image at a natural photo
+   height instead of stretching to match a long column of grid content. */
+.s6-urgency__top {
+  display: flex;
+  align-items: center;
+  gap: 2%;
+}
+
+.s6-urgency__intro {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: var(--measure-head);
+}
+
+.s6-urgency__title {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: var(--size-section-h);
+  line-height: var(--lh-section-h);
+  color: var(--text-primary);
+}
+
+/* Moment 2 of the page's only two intentional spatial-emphasis points
+   (v2.1 §17) — Moment 1 is the Hero composition. Exact locked desktop
+   values; mobile values below. Emphasis comes from isolation/whitespace
+   only — normal RTL alignment, no word-staggering, no sideways offset,
+   no color change (stays --text-primary, never accent). */
+.s6-urgency__spatial {
+  margin-block-start: 56px;
+  margin-block-end: 40px;
+  font-size: var(--size-statement);
+  line-height: var(--lh-statement);
+  font-weight: 400;
+  color: var(--text-primary);
+}
+
+/* v2.1 §23 locks 620px here specifically — distinct from the shared
+   640px --measure-body token, so it's hardcoded rather than reusing it. */
+.s6-urgency__body {
+  max-width: 620px;
+  font-size: var(--size-body);
+  line-height: var(--lh-body);
+  color: var(--text-secondary);
+}
+
+.s6-urgency__states {
+  margin-block-start: 64px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 56px;
+  row-gap: 44px;
+}
+
+/* Bespoke 21px — v2.1's locked value for these titles; no shared token
+   matches it exactly (22px --size-label is the nearest, not the same). */
+.s6-urgency__state-title {
+  font-family: var(--font-sans);
+  font-size: 21px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* Bespoke 17px, matching the identical non-tokenized value already used
+   for S4's proof descriptions and S5's step descriptions. */
+.s6-urgency__state-desc {
+  margin-block-start: 10px;
+  font-size: 17px;
+  line-height: var(--lh-body);
+  color: var(--text-secondary);
+}
+
+.s6-urgency__closing {
+  margin-block-start: 48px;
+  max-width: var(--measure-body);
+  font-size: var(--size-body);
+  line-height: var(--lh-body);
+  color: var(--text-primary);
+}
+
+.s6-urgency__bottom .btn {
+  margin-block-start: 56px;
+}
+
+.s6-urgency__reassurance {
+  margin-block-start: 12px;
+  font-size: var(--size-microcopy);
+  line-height: var(--lh-microcopy);
+  color: var(--text-secondary);
+}
+
+@media (max-width: 767px) {
+  .s6-urgency {
+    padding-block: 80px;
+  }
+  .s6-urgency__intro {
+    max-width: none;
+  }
+  .s6-urgency__spatial {
+    margin-block-start: 40px;
+    margin-block-end: 28px;
+  }
+  .s6-urgency__states {
+    margin-block-start: 48px;
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+}

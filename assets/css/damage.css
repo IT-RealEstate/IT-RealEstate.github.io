@@ -1,0 +1,516 @@
+/* ==========================================================================
+   /damage/ — cold-B2C conversion page
+   Section order and copy are governed by
+   docs/spec/B2C_MULTIPAGE_CONTENT_SPEC_v1.md §5 (eight beats) and §7
+   (exact copy); the S2 sequence additionally by
+   docs/spec/B2C_TRANSFORMATION_SCROLL_MOTION_SPEC_v1.md.
+   Visual system (tokens, type scale, rhythm, motion) is v2.1 throughout.
+   Styled with its own dmg-* classes rather than reusing the s1-6 selectors,
+   so a One Pager section edit can never silently reshape this page.
+   Layout patterns (image fade, statement emphasis, step grid) intentionally
+   mirror s1-hero.css / s3-independent.css / s5-process.css.
+
+   Background sequence, following v2.1 §13's alternation (and its own
+   S5/S6/footer precedent of two adjacent base surfaces before the deep
+   footer): hero base · source deep · check base · process deep ·
+   trust base · pricing deep · faq base · cta base.
+   ========================================================================== */
+
+/* ---- S1 · HERO ---------------------------------------------------------- */
+
+.dmg-hero {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  /* Batch 3.7 compression: 96/120 -> 76/94 (-21%). The overflow:hidden
+     guard went with the full-bleed media placeholder it was protecting
+     against; nothing in this section is wider than its column now. */
+  padding-block: 76px 94px;
+}
+
+.dmg-hero__inner {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.dmg-hero__content {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: var(--measure-head);
+}
+
+.dmg-hero__title {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: var(--size-hero-h1);
+  line-height: var(--lh-hero-h1);
+  color: var(--text-primary);
+  max-width: var(--measure-head);
+}
+.dmg-hero__title .line {
+  display: block;
+}
+
+/* C-72 — the single Hero paragraph (Batch 3.7 / OD-3.7-03). It replaces
+   the former Lede + Note pair, so it carries the Lede's tier: primary
+   text colour at lede size, not the Note's quieter secondary treatment. */
+.dmg-hero__body {
+  margin-block-start: 24px;
+  max-width: var(--measure-body);
+  font-size: var(--size-lede);
+  font-weight: 400;
+  line-height: var(--lh-lede);
+  color: var(--text-primary);
+}
+
+.dmg-hero__content .btn {
+  margin-block-start: 36px;
+}
+
+.dmg-hero__reassurance {
+  margin-block-start: 12px;
+  font-size: var(--size-microcopy);
+  line-height: var(--lh-microcopy);
+  color: var(--text-secondary);
+}
+
+/* ---- S2 · TRANSFORMATION SCROLL ---------------------------------------- */
+
+.dmg-source {
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  padding-block: 106px;
+}
+
+.dmg-source__title {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: var(--size-section-h);
+  line-height: var(--lh-section-h);
+  max-width: var(--measure-head);
+}
+
+/* Batch 3.7 / OD-3.7-04 — the two questions.
+   Replaces the four-beat <ol> rail. The four locked sentences are unchanged
+   and still appear in their locked order, two per question; only the
+   container changed. The rail and its accent markers went with the <ol>:
+   with the beats now grouped under two headings, sequence is carried by the
+   headings themselves, and the 01/02/03 device stays unambiguously S3's. */
+.dmg-source__questions {
+  margin-block-start: 40px;
+  max-width: var(--measure-body);
+}
+
+.dmg-source__questions .accordion__panel .dmg-source__text + .dmg-source__text {
+  margin-block-start: 12px;
+}
+
+/* The five approved states — labelled CHECKLIST for retrieval
+   (AI_SOURCEABILITY_GEO_SPEC_v1 §9). Same bullet treatment the hero list
+   used before these states moved here. */
+.dmg-source__states {
+  margin-block-start: 44px;
+  padding: 0;
+  list-style: none;
+  max-width: var(--measure-body);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 24px;
+}
+.dmg-source__states li {
+  position: relative;
+  padding-inline-start: 20px;
+  font-size: var(--size-body);
+  line-height: var(--lh-body);
+  color: var(--text-secondary);
+}
+.dmg-source__states li::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0.65em;
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+}
+
+/* ---- S2.1 · בדיקת התאמה ראשונית ---------------------------------------- */
+
+.dmg-check {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  padding-block: 94px;
+}
+
+.dmg-check__marker {
+  font-family: var(--font-sans);
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+
+.dmg-check__title {
+  margin-block-start: 18px;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: var(--size-section-h);
+  line-height: var(--lh-section-h);
+  max-width: var(--measure-head);
+}
+
+.dmg-check__body {
+  margin-block-start: 28px;
+  max-width: var(--measure-body);
+  font-size: var(--size-body);
+  line-height: var(--lh-body);
+  color: var(--text-secondary);
+}
+
+/* Removes the friction at the exact point it appears (no documents needed
+   to leave details). Quietest tier — reassurance, not a claim. */
+.dmg-check__support {
+  margin-block-start: 20px;
+  max-width: var(--measure-body);
+  font-size: var(--size-microcopy);
+  line-height: var(--lh-microcopy);
+  color: var(--text-secondary);
+}
+
+/* ---- S3 · תהליך -------------------------------------------------------- */
+
+.dmg-process {
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  padding-block: 106px;
+}
+
+.dmg-process__title {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: var(--size-section-h);
+  line-height: var(--lh-section-h);
+  max-width: var(--measure-head);
+}
+
+.dmg-process__steps {
+  margin-block-start: 48px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  /* 48px -> 32px. Narrower gutters buy each step ~16px of column, which is
+     what lets step 02's title hold "בדיקת התאמה ראשונית (ללא עלות)" on a
+     single line at 1024-1440 instead of breaking it across two. */
+  gap: 32px;
+}
+
+/* Batch 3.7 / OD-3.7-05 — two columns, two rows: the number shares row 1
+   with its title, and the description takes the title's own column on
+   row 2. That is what puts the body's start edge on the title's start
+   edge rather than on the number's, with no hard-coded indent to keep in
+   sync with the number's rendered width. */
+.dmg-process__step {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  column-gap: 0;
+  row-gap: 8px;
+  align-items: baseline;
+}
+
+/* 44px -> 17px. It was a display-scale numeral that owned a line of its
+   own and gave each step the vertical footprint of a card; at 17px it is
+   a marker beside the title. --accent stays its colour: a step number is
+   exactly the structural role the token is reserved for. */
+.dmg-process__number {
+  grid-column: 1;
+  grid-row: 1;
+  font-family: var(--font-mono);
+  font-size: 17px;
+  font-weight: 400;
+  line-height: var(--lh-label);
+  color: var(--accent);
+}
+.dmg-process__dash {
+  color: var(--text-secondary);
+  padding-inline-end: 8px;
+}
+
+.dmg-process__step-title {
+  grid-column: 2;
+  grid-row: 1;
+  font-family: var(--font-sans);
+  font-size: var(--size-label);
+  font-weight: 500;
+  line-height: var(--lh-label);
+  color: var(--text-primary);
+}
+
+/* "(ללא עלות)" — visually subordinate to the step name but a real part of
+   the heading's text, never CSS content. nowrap keeps the parenthetical
+   itself from breaking across lines; the &nbsp; before it in the markup
+   keeps it on the same line as the words it qualifies. */
+.dmg-process__free {
+  font-size: 0.78em;
+  font-weight: 400;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.dmg-process__step-desc {
+  grid-column: 2;
+  grid-row: 2;
+  font-size: 17px;
+  line-height: var(--lh-body);
+  color: var(--text-secondary);
+}
+
+/* ---- S4 · אמון ועצמאות -------------------------------------------------- */
+
+.dmg-trust {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  padding-block: 100px;
+}
+
+.dmg-trust__title {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: var(--size-section-h);
+  line-height: var(--lh-section-h);
+  max-width: var(--measure-head);
+}
+
+.dmg-trust__role {
+  margin-block-start: 8px;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+
+.dmg-trust__body {
+  margin-block-start: 28px;
+  max-width: var(--measure-body);
+  font-size: var(--size-body);
+  line-height: var(--lh-body);
+  color: var(--text-secondary);
+}
+
+/* Canonical compensation-model wording (MODEL §3.1 / C-05). Skim-Layer
+   tier: it must be readable without the surrounding paragraphs, because
+   it is the page's core independence fact. Plain text — no panel, no
+   border, so it never reads as a promotional callout. */
+.dmg-trust__model {
+  margin-block-start: 32px;
+  max-width: var(--measure-statement);
+  font-size: var(--size-statement);
+  font-weight: 400;
+  line-height: var(--lh-statement);
+  color: var(--text-primary);
+}
+
+.dmg-trust__frame {
+  margin-block-start: 20px;
+  max-width: var(--measure-body);
+  font-size: var(--size-body);
+  line-height: var(--lh-body);
+  color: var(--text-secondary);
+}
+
+/* ---- S5 · מחירים -------------------------------------------------------- */
+
+.dmg-pricing {
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  padding-block: 106px;
+}
+
+.dmg-pricing__title {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: var(--size-section-h);
+  line-height: var(--lh-section-h);
+  max-width: var(--measure-head);
+}
+
+/* Compact area, never a comparison table: two items, generous space, no
+   card/panel/border treatment (v2.1 §27) and no product-choice control. */
+.dmg-pricing__items {
+  margin-block-start: 44px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 48px;
+  max-width: 880px;
+}
+
+.dmg-pricing__item-title {
+  font-family: var(--font-sans);
+  font-size: var(--size-label);
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* Bespoke 28px/400 — the same locked non-tokenized size the One Pager's
+   S5 price uses. Skim-Layer element, never styled as a badge. */
+.dmg-pricing__price {
+  margin-block-start: 16px;
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1.3;
+  color: var(--text-primary);
+}
+
+.dmg-pricing__desc {
+  margin-block-start: 12px;
+  font-size: 17px;
+  line-height: var(--lh-body);
+  color: var(--text-secondary);
+}
+
+.dmg-pricing__note {
+  margin-block-start: 12px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* Alternative entry — deliberately NOT a third equal-weight item (C-10).
+   Separated by the shared hairline and set at body scale, so it reads as
+   a different route rather than a third product to compare. */
+.dmg-pricing__alt {
+  margin-block-start: 48px;
+  padding-block-start: 28px;
+  border-block-start: 1px solid var(--hairline-dark);
+  max-width: var(--measure-body);
+}
+
+.dmg-pricing__alt-question {
+  font-size: var(--size-body);
+  line-height: var(--lh-body);
+  color: var(--text-secondary);
+}
+
+.dmg-pricing__alt-answer {
+  margin-block-start: 8px;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--text-primary);
+}
+
+/* ---- S5.1 · FAQ --------------------------------------------------------- */
+
+.dmg-faq {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  padding-block: 94px;
+}
+
+/* Owner-approved section heading (Content Spec §7 S5.1 / §10, Item 20 —
+   Batch 3.1-R1). Added to close accessibility spec §4 rule 2: this is a
+   major page section and was previously the only one on /damage/ with no
+   heading and no accessible name. Same treatment as every other section
+   title here — no size/weight of its own. */
+.dmg-faq__title {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: var(--size-section-h);
+  line-height: var(--lh-section-h);
+  max-width: var(--measure-head);
+}
+
+/* Visible HTML only — no FAQ schema/JSON-LD until
+   AI_SOURCEABILITY_GEO_SPEC_v1 is approved. Batch 3.7 / OD-3.7-04 moved
+   this from <dl> to the shared .accordion component; the answers stay in
+   the DOM when collapsed, so a crawler and assistive tech still read every
+   one of them without interacting. */
+.dmg-faq__list {
+  margin: 0;
+  margin-block-start: 40px;
+  max-width: var(--measure-body);
+}
+
+.dmg-faq__a {
+  margin-inline: 0;
+  font-size: 17px;
+  line-height: var(--lh-body);
+  color: var(--text-secondary);
+}
+
+/* ---- S6 · CTA סופי ------------------------------------------------------ */
+
+.dmg-cta {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  padding-block: 118px;
+}
+
+/* Interrupts the page rhythm on purpose — v2.1 §31 requires this line to
+   read as a break, not as another paragraph. */
+.dmg-cta__spatial {
+  max-width: var(--measure-statement);
+  font-size: var(--size-statement);
+  font-weight: 400;
+  line-height: var(--lh-statement);
+  color: var(--text-primary);
+}
+
+.dmg-cta__body {
+  margin-block-start: 24px;
+  max-width: var(--measure-body);
+  font-size: var(--size-body);
+  line-height: var(--lh-body);
+  color: var(--text-secondary);
+}
+
+.dmg-cta .btn {
+  margin-block-start: 40px;
+}
+
+.dmg-cta__micro {
+  margin-block-start: 12px;
+  max-width: var(--measure-body);
+  font-size: var(--size-microcopy);
+  line-height: var(--lh-microcopy);
+  color: var(--text-secondary);
+}
+
+/* ---- Mobile ------------------------------------------------------------- */
+
+@media (max-width: 767px) {
+  /* Batch 3.7 compression, mobile tier — same 15-25% band as desktop.
+     Ratios between sections are preserved; only the absolute scale drops. */
+  .dmg-hero {
+    padding-block: 48px 62px;
+  }
+
+  .dmg-source { padding-block: 68px; }
+  .dmg-source__questions { margin-block-start: 28px; }
+  .dmg-source__states {
+    grid-template-columns: 1fr;
+    margin-block-start: 36px;
+  }
+
+  .dmg-check { padding-block: 62px; }
+
+  .dmg-process { padding-block: 68px; }
+  .dmg-process__steps {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    margin-block-start: 36px;
+  }
+
+  .dmg-trust { padding-block: 68px; }
+
+  .dmg-pricing { padding-block: 68px; }
+  .dmg-pricing__items {
+    grid-template-columns: 1fr;
+    gap: 36px;
+    margin-block-start: 34px;
+  }
+  .dmg-pricing__alt { margin-block-start: 36px; }
+
+  .dmg-faq { padding-block: 62px; }
+  .dmg-faq__list { margin-block-start: 28px; }
+
+  .dmg-cta { padding-block: 80px; }
+  .dmg-cta .btn { margin-block-start: 32px; }
+}

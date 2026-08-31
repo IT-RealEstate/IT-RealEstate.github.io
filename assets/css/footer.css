@@ -1,0 +1,126 @@
+/* ==========================================================================
+   Footer — minimal, quiet conclusion after S6
+   docs/spec/CURRENT_CANONICAL_SPEC_v2.0.md §37 (disclaimer copy) · §12 (Footer follows S6)
+   docs/spec/CLAUDE_IMPLEMENTATION_LOCK_v2.1.md §12 (rhythm), §13 (background)
+   ========================================================================== */
+
+.site-footer {
+  background: var(--bg-deep);
+  color: var(--text-secondary);
+  padding-block: 64px;
+}
+
+.site-footer__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+.site-footer__brand {
+  font-family: var(--font-sans);
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--text-primary);
+}
+
+.site-footer__role {
+  margin-block-start: 6px;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+
+.site-footer__contact {
+  flex: none;
+}
+
+/* Touch target — accessibility spec §13 (44x44 project minimum, "contact
+   actions"). At 20px tall this was also the one control on the page below
+   the WCAG 2.2 AA 24px web minimum. Type size stays 16px; only the hit box
+   grows. inline-flex keeps the box shrink-wrapped to the number's width
+   rather than spanning the footer column. */
+.site-footer__phone {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 44px;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+.site-footer__phone:hover {
+  color: var(--text-primary);
+}
+
+/* Same contact-action treatment and 44px hit box as the phone above it.
+   display:flex (not inline-flex) so it starts on its own line under the
+   number rather than sitting beside it. */
+.site-footer__email {
+  display: flex;
+  align-items: center;
+  min-block-size: 44px;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+.site-footer__email:hover {
+  color: var(--text-primary);
+}
+
+/* Disclaimer — quietest tier on the page, same role as the S5/S6
+   reassurance lines, so it shares their token (15px, the accessibility
+   floor for readable text). Hairline reuses the token already used for
+   the header's own bottom border; no new visual weight introduced. */
+.site-footer__disclaimer {
+  margin-block-start: 32px;
+  padding-block-start: 32px;
+  border-block-start: 1px solid var(--hairline-dark);
+  max-width: var(--measure-body);
+  font-size: var(--size-microcopy);
+  line-height: var(--lh-microcopy);
+  color: var(--text-secondary);
+}
+
+/* Batch 3.7 / OD-3.7-06 — legal link. Same quiet tier as the disclaimer
+   above it, and the same 44px contact-action hit box the footer's phone and
+   email already use (accessibility spec §13). Underlined because it is the
+   only link in a block of plain text, so colour alone must not be what
+   distinguishes it. */
+.site-footer__legal {
+  margin-block-start: 4px;
+  font-size: var(--size-microcopy);
+  line-height: var(--lh-microcopy);
+}
+.site-footer__legal a {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 44px;
+  color: var(--text-secondary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.site-footer__legal a:hover {
+  color: var(--text-primary);
+}
+
+@media (max-width: 767px) {
+  .site-footer {
+    padding-block: 48px;
+  }
+  .site-footer__top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+  }
+  .site-footer__brand {
+    font-size: 18px;
+  }
+  .site-footer__disclaimer {
+    margin-block-start: 28px;
+    padding-block-start: 24px;
+  }
+}

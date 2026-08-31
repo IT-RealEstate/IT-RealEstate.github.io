@@ -1,0 +1,67 @@
+/* ==========================================================================
+   S2 — ROLE
+   docs/spec/CURRENT_CANONICAL_SPEC_v2.0.md §8 · CLAUDE_IMPLEMENTATION_LOCK_v2.1.md §13, §19
+   ========================================================================== */
+
+.s2-role {
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  padding-block: 106px;
+}
+
+.s2-role__marker {
+  font-family: var(--font-sans);
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+
+.s2-role__title {
+  margin-block-start: 18px;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: var(--size-section-h);
+  line-height: var(--lh-section-h);
+  color: var(--text-primary);
+  max-width: var(--measure-head);
+}
+
+.s2-role__body {
+  margin-block-start: 28px;
+  max-width: var(--measure-body);
+  font-size: var(--size-body);
+  line-height: var(--lh-body);
+  color: var(--text-secondary);
+}
+
+.s2-role__grid {
+  margin-block-start: 64px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 48px;
+}
+
+.s2-role__item-title {
+  font-family: var(--font-sans);
+  font-size: var(--size-label);
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.s2-role__item-desc {
+  margin-block-start: 12px;
+  font-size: var(--size-body);
+  line-height: var(--lh-body);
+  color: var(--text-secondary);
+}
+
+@media (max-width: 767px) {
+  .s2-role {
+    padding-block: 68px;
+  }
+  .s2-role__grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    margin-block-start: 48px;
+  }
+}

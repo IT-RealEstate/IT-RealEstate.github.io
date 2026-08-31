@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>תיקנתם את הנזילות? הנזק לא בהכרח תועד — טביב שמאות</title>
+  <meta name="description" content="עצירת הנזילות ותיקון המקור הם שלב אחד. בדיקת ההיקף המלא של הנזק היא שלב נפרד. שמאי רכוש עצמאי בודק מה עדיין לא נמדד ולא תועד.">
+
+  <!--
+    LAUNCH GATE: {{DOMAIN}} unresolved — same gate as index.html and
+    docs/legal/legal.html's {{DOMAIN}} token. Do not substitute a guessed
+    domain before resolving it everywhere together.
+  -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="he_IL">
+  <meta property="og:site_name" content="טביב שמאות">
+  <meta property="og:title" content="תיקנתם את הנזילות? הנזק לא בהכרח תועד">
+  <meta property="og:description" content="עצירת הנזילות ותיקון המקור הם שלב אחד. בדיקת ההיקף המלא של הנזק היא שלב נפרד.">
+  <!-- og:image intentionally omitted — OWNER ASSET REQUIRED. The Hero photo
+       spec now lives in the comment above the Hero media slot in the body
+       (the empty placeholder container was removed in Batch 3.7). -->
+  <meta name="twitter:card" content="summary">
+
+  <link rel="icon" type="image/svg+xml" href="../assets/brand/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/brand/favicon-32.png">
+  <link rel="apple-touch-icon" href="../assets/brand/apple-touch-icon.png">
+
+
+  <!-- Batch 3.7 — font preload, a CLS fix.
+       All three weights render above the fold on both pages (300 headline,
+       400 body, 500 CTA/labels). With font-display:swap and no preload the
+       browser paints the fallback first and reflows the whole hero when the
+       webfont arrives; on /damage/, whose Hero is now text-only, that
+       measured 0.083 CLS at 375px. Discovering these three files from
+       tokens.css costs a stylesheet round-trip first — the preload removes
+       it, so the real face is available for the first paint.
+       Three same-origin 34KB files, already fetched on every load: this
+       changes their priority, not the number of requests. No new asset, no
+       third-party origin (Legal Spec I6 still holds). -->
+  <link rel="preload" href="../assets/fonts/IBMPlexSansHebrew-Light.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/IBMPlexSansHebrew-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/IBMPlexSansHebrew-Medium.woff2" as="font" type="font/woff2" crossorigin>
+
+  <link rel="stylesheet" href="../assets/css/tokens.css">
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/css/nav.css">
+  <link rel="stylesheet" href="../assets/css/damage.css">
+  <link rel="stylesheet" href="../assets/css/footer.css">
+</head>
+<body class="page-damage">
+  <a class="skip" href="#main">דילוג לתוכן</a>
+
+  <header class="site-header" data-header>
+    <div class="site-header__inner wrap">
+      <a class="brand" href="/">
+        <img class="brand__symbol" src="../assets/brand/tabib-logo-192.png" alt="" width="192" height="148">
+        <span class="brand__divider" aria-hidden="true"></span>
+        <span class="brand__text">
+          <span class="brand__primary">טביב <span class="brand__accent-word">שמאות</span></span>
+          <span class="brand__secondary">שמאות רכוש עצמאית</span>
+        </span>
+      </a>
+      <div class="site-header__actions">
+        <button class="site-header__menu-btn" type="button" data-menu-toggle
+                aria-expanded="false" aria-controls="site-menu">
+          תפריט
+        </button>
+        <a class="site-header__phone" href="tel:+972552617625" dir="ltr" aria-label="חיוג לטביב שמאות: 055-2617625">055-2617625</a>
+        <a class="btn btn--compact" data-cta-location="sticky" href="/check/">צור קשר</a>
+      </div>
+    </div>
+
+    <!-- Navigation menu — Batch 3.7 / OD-3.7-02. Separate from the brand
+         lockup, which stays a plain link to the home page. Every target is
+         an existing route or an existing id on /damage/ (dmg-process,
+         pricing, dmg-faq) — no new or duplicated IDs were introduced. -->
+    <nav id="site-menu" class="site-menu" data-menu aria-label="ניווט ראשי" hidden>
+      <ul class="site-menu__list wrap">
+        <li><a class="site-menu__link" href="/">ראשי</a></li>
+        <li><a class="site-menu__link" href="/damage/">נזקי רכוש</a></li>
+        <li><a class="site-menu__link" href="/damage/#dmg-process">איך זה עובד</a></li>
+        <li><a class="site-menu__link" href="/damage/#pricing">מחירים</a></li>
+        <li><a class="site-menu__link" href="/damage/#dmg-faq">שאלות נפוצות</a></li>
+        <li><a class="site-menu__link" href="/check/">צור קשר</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main">
+
+    <!-- S1 — הבעיה / Hero. No price, no product table, no service choice. -->
+    <section id="dmg-hero" class="section dmg-hero" aria-labelledby="dmg-hero-title">
+      <div class="wrap dmg-hero__inner">
+        <div class="dmg-hero__content">
+          <!-- The two &nbsp; bind the last two words of each line. They are
+               orphan guards, not copy: no character of the approved H1
+               changes, no line break is forced, and they apply at every
+               viewport rather than to one breakpoint. Without them the H1
+               drops a single word onto its own line ("לך." at 348-360,
+               "לבדוק." at 320-348). -->
+          <h1 id="dmg-hero-title" class="dmg-hero__title">
+            <span class="line">יש את מה שכבר אמרו&#160;לך.</span>
+            <span class="line">ויש את מה שצריך&#160;לבדוק.</span>
+          </h1>
+
+          <!-- Batch 3.7 / OD-3.7-03 — one paragraph, C-72. Replaces the
+               former Lede + Note pair, which carried the same message
+               twice. Locked wording: do not shorten, extend or rewrite.
+               It describes the scope of the service and promises no
+               approval, payment or outcome from the insurer. -->
+          <p class="dmg-hero__body">לא כל אירוע נזק מצדיק ליווי מלא. שמאי הרכוש מטעמך ממפה מה חסר ומתווה את הבדיקות, התיעוד והתיקון מול הביטוח — מהמקור ועד מלוא הנזק והשיקום.</p>
+
+          <a class="btn" data-cta-location="hero" href="/check/">בדיקת התאמה ראשונית ללא עלות</a>
+          <p class="dmg-hero__reassurance">לבדוק לפני שמחליטים.</p>
+        </div>
+
+        <!--
+          OWNER ASSET STILL REQUIRED — and, per Batch 3.7 (v2.1 §11.5 B),
+          no longer held open as an empty box. The placeholder that stood
+          here rendered as a blank panel roughly 580x680 on desktop and a
+          full-bleed 40svh strip on mobile, which reads as an image that
+          failed to load rather than as composition.
+          When the approved photograph lands, the container returns here:
+          landscape, "visible property damage, mid-event or freshly
+          discovered", distinct from the One Pager's own Hero photo, at
+          least 1920px wide, and — per OD in §4.1 of the Batch 3.7 brief —
+          occupying no more than ~44% of the row on desktop, after the
+          text/explanation/CTA on mobile, capped at 220-260px tall there,
+          with width/height or aspect-ratio set to hold layout.
+        -->
+      </div>
+    </section>
+
+    <!--
+      S2 — תפקיד שמאי הרכוש. Batch 3.7 / OD-3.7-04: the H2's own "שתי
+      שאלות נפרדות" is now literally two questions, as two native
+      details/summary disclosures. The four locked Body sentences are
+      split two-and-two between them, in their locked order, with nothing
+      added, dropped, reworded or repeated — the questions themselves are
+      navigation labels, not new professional claims.
+      No JavaScript is needed to operate them: <details> gives the button
+      semantics, aria-expanded, keyboard operation and the open/closed
+      state natively, and the panel content stays in the DOM when closed,
+      so it is readable with JS off and to a crawler either way.
+      They ship CLOSED — the state the spec mandates for mobile — so the
+      narrow viewport, where a reflow costs the most, takes none at all.
+      main.js only expands them at >=768px.
+    -->
+    <section id="dmg-source" class="section dmg-source" aria-labelledby="dmg-source-title">
+      <div class="wrap">
+        <h2 id="dmg-source-title" class="dmg-source__title" data-reveal>איתור המקור והנזק שנשאר — שתי שאלות נפרדות</h2>
+
+        <div class="dmg-source__questions" data-reveal>
+          <details class="accordion" data-expand-desktop>
+            <summary class="accordion__summary">
+              <span class="accordion__label">האם מקור הנזק אותר וטופל?</span>
+              <span class="accordion__marker" aria-hidden="true"></span>
+            </summary>
+            <div class="accordion__panel">
+              <p class="dmg-source__text">מאתר נזילות, שרברב או מומחה מתאים מאתרים ומטפלים במקור.</p>
+              <p class="dmg-source__text">זה התפקיד שלהם, וזה השלב הראשון.</p>
+            </div>
+          </details>
+
+          <details class="accordion" data-expand-desktop>
+            <summary class="accordion__summary">
+              <span class="accordion__label">מה ניזוק ומה נדרש לשיקום?</span>
+              <span class="accordion__marker" aria-hidden="true"></span>
+            </summary>
+            <div class="accordion__panel">
+              <p class="dmg-source__text">שמאי הרכוש מתעד ומכמת את הנזק שנגרם ואת עלויות ההשבה.</p>
+              <p class="dmg-source__text">תיקון המקור אינו תמיד עונה על השאלה מה ניזוק ומה צריך לתעד.</p>
+            </div>
+          </details>
+        </div>
+
+        <ul class="dmg-source__states" data-reveal>
+          <li>הנזק קרה עכשיו, לפני תיקון</li>
+          <li>כבר הגיע מאתר נזילות או בעל מקצוע</li>
+          <li>התיקון או הייבוש כבר התחילו</li>
+          <li>תיקנו — והבעיה חזרה או לא נפתרה</li>
+          <li>כבר יש שומה או הצעת פיצוי</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- S2.1 — בדיקת התאמה ראשונית. Standalone beat between the role and
+         the process (MODEL §7). H2 carries no "ללא עלות" by design: that
+         phrase opens the Body as reassurance, never as a heading/badge. -->
+    <section id="dmg-check" class="section dmg-check" aria-labelledby="dmg-check-title">
+      <div class="wrap">
+        <p class="dmg-check__marker">לפני שמתחילים</p>
+        <h2 id="dmg-check-title" class="dmg-check__title" data-reveal>בדיקת התאמה ראשונית</h2>
+        <p class="dmg-check__body">ללא עלות, מבררים בקצרה מה קרה, מה כבר בוצע והאם שמאי רכוש הוא בעל המקצוע הרלוונטי בשלב הנוכחי.</p>
+        <p class="dmg-check__support">אפשר להשאיר פרטים גם בלי לצרף מסמכים או תמונות. אם יש חומר רלוונטי, אפשר להעביר אותו בהמשך.</p>
+      </div>
+    </section>
+
+    <!-- S3 — תהליך. Exactly three steps. No price here: the 700 ₪ lives in
+         S5 only (Item 14).
+         Batch 3.7 / OD-3.7-05: each step is a two-column grid — the number
+         shares row 1 with its title, and the description sits in the title's
+         own column on row 2, so the body aligns with the start of the
+         heading rather than with the number. The em dash is the only
+         aria-hidden part; "01" is still announced.
+         "(ללא עלות)" in step 02 is real, accessible HTML inside the heading
+         — deliberately NOT CSS pseudo-content, which screen readers and
+         copy/paste treat inconsistently. It is visually smaller but it is
+         part of the step's accessible name. -->
+    <section id="dmg-process" class="section dmg-process" aria-labelledby="dmg-process-title">
+      <div class="wrap">
+        <h2 id="dmg-process-title" class="dmg-process__title" data-reveal>איך זה עובד</h2>
+
+        <div class="dmg-process__steps" data-reveal>
+          <div class="dmg-process__step">
+            <p class="dmg-process__number">01<span class="dmg-process__dash" aria-hidden="true">&#8202;—</span></p>
+            <h3 class="dmg-process__step-title">משאירים פרטים</h3>
+            <p class="dmg-process__step-desc">מתארים בקצרה מה קרה ומה כבר בוצע.</p>
+          </div>
+
+          <div class="dmg-process__step">
+            <p class="dmg-process__number">02<span class="dmg-process__dash" aria-hidden="true">&#8202;—</span></p>
+            <h3 class="dmg-process__step-title">בדיקת התאמה ראשונית&nbsp;<span class="dmg-process__free">(ללא עלות)</span></h3>
+            <p class="dmg-process__step-desc">בודקים מהו הצעד המתאים למקרה.</p>
+          </div>
+
+          <div class="dmg-process__step">
+            <p class="dmg-process__number">03<span class="dmg-process__dash" aria-hidden="true">&#8202;—</span></p>
+            <h3 class="dmg-process__step-title">רק אם נדרשת עבודה מקצועית נוספת</h3>
+            <p class="dmg-process__step-desc">מוצע השירות המתאים, במחיר שנקבע מראש.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- S4 — אמון ועצמאות. Compensation-model wording is canonical
+         (MODEL §3.1 / C-05) and must not be reworded. -->
+    <section id="dmg-trust" class="section dmg-trust" aria-labelledby="dmg-trust-title">
+      <div class="wrap">
+        <h2 id="dmg-trust-title" class="dmg-trust__title" data-reveal>עידו טביב</h2>
+        <p class="dmg-trust__role">שמאי רכוש</p>
+
+        <p class="dmg-trust__body">שמאות נזקי רכוש ורקע מקצועי בבינוי.</p>
+
+        <p class="dmg-trust__model" data-reveal>שכר הטרחה נקבע מראש ואינו תלוי בסכום התביעה. איני מקבל עמלות מקבלנים או מספקים.</p>
+
+        <p class="dmg-trust__frame">המחיר ידוע לפני שמתחילים, והוא אינו משתנה לפי הממצאים.</p>
+      </div>
+    </section>
+
+    <!-- S5 — מחירים. id="pricing" is the target of /'s secondary link.
+         Compact area, never a large comparison table. The alternative
+         entry is visually separated and is NOT a third equal-weight
+         option (C-10). No product-choice CTA. -->
+    <section id="pricing" class="section dmg-pricing" aria-labelledby="dmg-pricing-title">
+      <div class="wrap">
+        <h2 id="dmg-pricing-title" class="dmg-pricing__title" data-reveal>מה קורה אם נדרשת עבודה מקצועית נוספת?</h2>
+
+        <div class="dmg-pricing__items" data-reveal>
+          <div class="dmg-pricing__item">
+            <h3 class="dmg-pricing__item-title">בדיקת כדאיות מרחוק</h3>
+            <p class="dmg-pricing__price"><bdi dir="rtl">700 ₪</bdi> כולל מע״מ</p>
+            <p class="dmg-pricing__desc">סיכום התאמה קצר בכתב.</p>
+            <p class="dmg-pricing__note">אם ממשיכים לתיק נזק מלא, הסכום מתקזז במלואו.</p>
+          </div>
+
+          <div class="dmg-pricing__item">
+            <h3 class="dmg-pricing__item-title">תיק נזק מלא סטנדרטי</h3>
+            <p class="dmg-pricing__price"><bdi dir="rtl">4,130 ₪</bdi> כולל מע״מ</p>
+            <p class="dmg-pricing__desc">לאחר הקיזוז — יתרת תשלום: <bdi dir="rtl">3,430 ₪</bdi> כולל מע״מ</p>
+            <p class="dmg-pricing__note">מקרים שאינם סטנדרטיים מתומחרים בנפרד.</p>
+          </div>
+        </div>
+
+        <div class="dmg-pricing__alt" data-reveal>
+          <p class="dmg-pricing__alt-question">כבר קיבלת שומה או הצעת פיצוי מחברת הביטוח?</p>
+          <p class="dmg-pricing__alt-answer">בדיקת פער לאחר שומת מבטחת — <bdi dir="rtl">1,652 ₪</bdi> כולל מע״מ</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- S5.1 — FAQ. VISIBLE HTML ONLY: no FAQ schema, no JSON-LD, no
+         separate route, until AI_SOURCEABILITY_GEO_SPEC_v1 is approved.
+         Batch 3.7 / OD-3.7-04 moved this from <dl> to details/summary to
+         shorten the page. Every question and answer is verbatim what the
+         <dl> carried — structure changed, wording did not. The answers stay
+         in the DOM when collapsed, so they remain readable to a crawler and
+         to assistive tech exactly as before; only the default visual state
+         differs, and only below 768px. -->
+    <section id="dmg-faq" class="section dmg-faq" aria-labelledby="dmg-faq-title">
+      <div class="wrap">
+        <h2 id="dmg-faq-title" class="dmg-faq__title" data-reveal>שאלות נפוצות</h2>
+
+        <div class="dmg-faq__list" data-reveal>
+          <details class="accordion" data-expand-desktop>
+            <summary class="accordion__summary">
+              <span class="accordion__label">כמה עולה בדיקת ההתאמה הראשונית?</span>
+              <span class="accordion__marker" aria-hidden="true"></span>
+            </summary>
+            <div class="accordion__panel">
+              <p class="dmg-faq__a">כלום. היא ללא עלות, ומטרתה להבין אם שמאי רכוש הוא בעל המקצוע הרלוונטי בשלב שבו אתם נמצאים.</p>
+            </div>
+          </details>
+
+          <details class="accordion" data-expand-desktop>
+            <summary class="accordion__summary">
+              <span class="accordion__label">כבר הגיע מאתר נזילות. צריך גם שמאי?</span>
+              <span class="accordion__marker" aria-hidden="true"></span>
+            </summary>
+            <div class="accordion__panel">
+              <p class="dmg-faq__a">לא תמיד. מאתר נזילות מאתר ומטפל במקור; שמאי הרכוש מתעד ומכמת את הנזק שנגרם ואת עלויות ההשבה.</p>
+            </div>
+          </details>
+
+          <details class="accordion" data-expand-desktop>
+            <summary class="accordion__summary">
+              <span class="accordion__label">מה מקבלים תמורת <bdi dir="rtl">700 ₪</bdi>?</span>
+              <span class="accordion__marker" aria-hidden="true"></span>
+            </summary>
+            <div class="accordion__panel">
+              <p class="dmg-faq__a">סיכום התאמה קצר בכתב, שבודק אם קיימת הצדקה מקצועית וכלכלית להמשך. אם ממשיכים לתיק נזק מלא, הסכום מתקזז במלואו.</p>
+            </div>
+          </details>
+
+          <details class="accordion" data-expand-desktop>
+            <summary class="accordion__summary">
+              <span class="accordion__label">כבר קיבלתי שומה מחברת הביטוח. מה אפשר לעשות?</span>
+              <span class="accordion__marker" aria-hidden="true"></span>
+            </summary>
+            <div class="accordion__panel">
+              <p class="dmg-faq__a">אפשר לבדוק מה נכנס לחישוב ומה לא, במסלול בדיקת פער נפרד (<bdi dir="rtl">1,652 ₪</bdi> כולל מע״מ).</p>
+            </div>
+          </details>
+
+          <details class="accordion" data-expand-desktop>
+            <summary class="accordion__summary">
+              <span class="accordion__label">שכר הטרחה תלוי בסכום שאקבל?</span>
+              <span class="accordion__marker" aria-hidden="true"></span>
+            </summary>
+            <div class="accordion__panel">
+              <p class="dmg-faq__a">לא. שכר הטרחה נקבע מראש ואינו תלוי בסכום התביעה. איני מקבל עמלות מקבלנים או מספקים.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- S6 — CTA סופי. Leads directly to /check/: no product-choice page,
+         modal, pre-questionnaire, extra price gate or self-link. -->
+    <section id="dmg-cta" class="section dmg-cta" aria-labelledby="dmg-cta-title">
+      <div class="wrap">
+        <p id="dmg-cta-title" class="dmg-cta__spatial" data-reveal>גם להמתין זו החלטה.</p>
+        <p class="dmg-cta__body">כשאפשר, כדאי לתעד לפני שמשנים את מצב השטח.</p>
+
+        <a id="dmg-final-cta" class="btn" data-cta-location="closing" href="/check/">בדיקת התאמה ראשונית ללא עלות</a>
+        <p class="dmg-cta__micro">השארת הפרטים אינה הזמנת חוות דעת ואינה כרוכה בתשלום. לא כל מקרה מצדיק תיק נזק מלא.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap site-footer__inner">
+      <div class="site-footer__top">
+        <div class="site-footer__identity">
+          <p class="site-footer__brand">טביב שמאות</p>
+          <p class="site-footer__role">עידו טביב · שמאי רכוש</p>
+        </div>
+
+        <div class="site-footer__contact">
+          <a class="site-footer__phone" href="tel:+972552617625" dir="ltr">055-2617625</a>
+          <a class="site-footer__email" href="mailto:ido89t@gmail.com" dir="ltr">ido89t@gmail.com</a>
+        </div>
+      </div>
+
+      <p class="site-footer__disclaimer">המשרד אינו מספק ייעוץ משפטי או ביטוחי.</p>
+
+    </div>
+  </footer>
+
+  <script src="../assets/js/attribution.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>
