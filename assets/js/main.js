@@ -141,33 +141,37 @@
     );
   }
 
-  // Services — progressive disclosure. Batch 3.9 / Content Spec §0.6.
+  // Services — guided routing + progressive disclosure.
+  // Batch 3.9 / Content Spec §0.6, routed in Batch 3.11 / §0.8.
   //
-  // Three states per service: A (closed — name + one value line) →
-  // B (content open — what it includes / what you get / what it excludes)
-  // → C (price visible). The two transitions are deliberately separate:
-  // opening the content never reveals the price, and revealing the price
-  // never opens the form. Only the CTA link leaves the page.
+  // Two layers, deliberately separate:
   //
-  // No network request fires on either transition (§0.6, §9). The events go
-  // into the SAME sessionStorage record attribution.js already keeps, and
-  // reach the server only if the visitor actually submits the form.
+  //   ROUTER    state -> outcome -> the one route that matches. Answering a
+  //             question shows a route; it never reveals a price and never
+  //             records a service interest.
+  //   DISCLOSURE  per route: content open -> price revealed, each on the
+  //             visitor's own click. Only the CTA link leaves the page.
   //
-  // Cards are independent: opening one never closes another, nothing
-  // scrolls, and focus never moves on its own.
+  // A price therefore needs four deliberate acts: identify the situation,
+  // choose the outcome, open the content, ask for the price.
+  //
+  // No network request fires for any of it (§0.8). Everything goes into
+  // sessionStorage — routing answers alongside the disclosure state, under
+  // the one key svc_ui_v1, rather than a second competing mechanism.
   var serviceCards = document.querySelectorAll('[data-service]');
-  if (serviceCards.length) {
+  var router = document.querySelector('[data-router]');
+
+  if (serviceCards.length || router) {
     var SVC_KEY = 'svc_ui_v1';
     var HINT_CLOSED = 'לחצו להצגת תוכן השירות';
     var HINT_OPEN = 'לחצו לסגירת תוכן השירות';
-    var PRICE_SHOW = 'הצגת המחיר';
-    var PRICE_HIDE = 'הסתרת המחיר';
+    var PRICE_SHOW = 'להציג את המחיר';
+    var PRICE_HIDE = 'להסתיר את המחיר';
     var attribution = window.ATTRIBUTION;
 
-    // Which panels are open is UI state, not attribution, so it lives under
-    // its own key — never mixed into the record that travels with a lead.
-    // §0.6: "מצב החשיפה נשמר לאורך ה-session" — coming back from /check/ must not
-    // force the visitor to reopen everything.
+    // UI state, not attribution: it lives under its own key and never joins
+    // the record that travels with a lead. §0.8 — "מצב החשיפה נשמר לאורך
+    // ה-session", and coming back from /check/ must not reset the route.
     var loadSvcState = function () {
       var parsed = null;
       try {
@@ -176,9 +180,17 @@
       } catch (e) {
         parsed = null;
       }
+      var arr = function (v) {
+        return Object.prototype.toString.call(v) === '[object Array]' ? v : [];
+      };
+      var str = function (v) { return typeof v === 'string' ? v : ''; };
       return {
-        body: parsed && Object.prototype.toString.call(parsed.body) === '[object Array]' ? parsed.body : [],
-        price: parsed && Object.prototype.toString.call(parsed.price) === '[object Array]' ? parsed.price : []
+        body: arr(parsed && parsed.body),
+        price: arr(parsed && parsed.price),
+        // Added in 3.11. An older record simply has no answers, which is
+        // exactly the initial state, so nothing needs migrating.
+        q1: str(parsed && parsed.q1),
+        q2: str(parsed && parsed.q2)
       };
     };
 
@@ -188,8 +200,9 @@
       try {
         sessionStorage.setItem(SVC_KEY, JSON.stringify(svcState));
       } catch (e) {
-        // Private mode / quota: the panels still work, they just won't be
-        // restored on the next page. Never a reason to block the control.
+        // Private mode / quota: the router and the panels still work, they
+        // just will not be restored on the next page. Never a reason to
+        // block the control.
       }
     };
 
@@ -205,6 +218,9 @@
       }
     };
 
+    // Per-service handles, so the router can drive a card it does not own.
+    var cards = {};
+
     Array.prototype.forEach.call(serviceCards, function (card) {
       var id = card.getAttribute('data-service');
       var toggle = card.querySelector('[data-svc-toggle]');
@@ -213,13 +229,15 @@
       var price = card.querySelector('[data-svc-price]');
       var hint = card.querySelector('.svc__hint');
       var cta = card.querySelector('[data-service-interest]');
-      if (!id || !toggle || !body) { return; }
+      if (!id || !body) { return; }
 
       // `record` is false while restoring: replaying a saved state is not a
       // new interaction and must not inflate the event log.
       var setBody = function (open, record) {
         body.hidden = !open;
-        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (toggle) {
+          toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        }
         if (hint) { hint.textContent = open ? HINT_OPEN : HINT_CLOSED; }
         setMember(svcState.body, id, open);
         saveSvcState();
@@ -239,9 +257,11 @@
         if (open && record) { logSvc('service_price_reveal', id); }
       };
 
-      toggle.addEventListener('click', function () {
-        setBody(toggle.getAttribute('aria-expanded') !== 'true', true);
-      });
+      if (toggle) {
+        toggle.addEventListener('click', function () {
+          setBody(toggle.getAttribute('aria-expanded') !== 'true', true);
+        });
+      }
 
       if (reveal && price) {
         reveal.addEventListener('click', function () {
@@ -259,16 +279,136 @@
         });
       }
 
+      cards[id] = { setBody: setBody, setPrice: setPrice, hasToggle: !!toggle };
+
       // Restore. The price panel lives inside the body panel, so a restored
       // price implies a restored body — otherwise the saved state would be
       // unreachable.
       if (svcState.price.indexOf(id) !== -1) {
-        setBody(true, false);
+        if (toggle) { setBody(true, false); }
         setPrice(true, false);
-      } else if (svcState.body.indexOf(id) !== -1) {
+      } else if (toggle && svcState.body.indexOf(id) !== -1) {
         setBody(true, false);
       }
     });
+
+    // ---- Router --------------------------------------------------------
+    if (router) {
+      var qBlocks = {};
+      Array.prototype.forEach.call(router.querySelectorAll('[data-router-q]'), function (el) {
+        qBlocks[el.getAttribute('data-router-q')] = el;
+      });
+      var routeBlocks = router.querySelectorAll('[data-route]');
+      var intro = router.querySelectorAll('[data-router-intro]');
+      var answered = router.querySelector('[data-router-answered]');
+      var summary = router.querySelector('[data-router-summary]');
+      var resetBtn = router.querySelector('[data-router-reset]');
+      var feasToggle = router.querySelector('[data-feas-toggle]');
+      var feasPanel = router.querySelector('[data-feas]');
+
+      // The summary reuses each option's own approved label rather than
+      // inventing a sentence for it — no new copy, and it always matches
+      // what the visitor actually read when they chose.
+      var labelFor = function (name, value) {
+        var input = router.querySelector('input[name="' + name + '"][value="' + value + '"]');
+        var label = input && input.parentNode.querySelector('.rt__opt-label');
+        return label ? label.textContent.trim() : '';
+      };
+
+      var routeFor = function () {
+        if (svcState.q1 === 'yes') { return 'insurer_gap'; }
+        if (svcState.q1 === 'no' && svcState.q2) { return svcState.q2; }
+        return '';
+      };
+
+      var render = function () {
+        var active = routeFor();
+        var showQ2 = svcState.q1 === 'no' && !svcState.q2;
+        var anyAnswer = !!svcState.q1;
+
+        qBlocks.q1.hidden = anyAnswer;
+        if (qBlocks.q2) { qBlocks.q2.hidden = !showQ2; }
+
+        Array.prototype.forEach.call(intro, function (el) { el.hidden = anyAnswer; });
+
+        Array.prototype.forEach.call(routeBlocks, function (el) {
+          el.hidden = el.getAttribute('data-route') !== active;
+        });
+
+        if (answered && summary) {
+          answered.hidden = !anyAnswer;
+          var parts = [];
+          if (svcState.q1) { parts.push(labelFor('rt-q1', svcState.q1)); }
+          if (svcState.q2) { parts.push(labelFor('rt-q2', svcState.q2)); }
+          summary.textContent = parts.join(' · ');
+        }
+      };
+
+      Array.prototype.forEach.call(router.querySelectorAll('[data-router-input]'), function (input) {
+        input.addEventListener('change', function () {
+          if (!input.checked) { return; }
+          if (input.name === 'rt-q1') {
+            svcState.q1 = input.value;
+            svcState.q2 = '';
+            // Clear the other group so a reset-and-reanswer cannot leave a
+            // stale radio checked underneath a hidden fieldset.
+            Array.prototype.forEach.call(
+              router.querySelectorAll('input[name="rt-q2"]'),
+              function (o) { o.checked = false; }
+            );
+          } else {
+            svcState.q2 = input.value;
+          }
+          saveSvcState();
+          render();
+          // Choosing an answer records nothing about a service. §0.8:
+          // service_interest must never become remote_feasibility just
+          // because someone said they were not sure.
+        });
+      });
+
+      if (resetBtn) {
+        resetBtn.addEventListener('click', function () {
+          svcState.q1 = '';
+          svcState.q2 = '';
+          Array.prototype.forEach.call(
+            router.querySelectorAll('[data-router-input]'),
+            function (o) { o.checked = false; }
+          );
+          saveSvcState();
+          render();
+          // The button the visitor pressed is now hidden, so focus would
+          // fall to <body>. Send it to the question that replaced it —
+          // the expected destination, not a surprise.
+          var first = qBlocks.q1.querySelector('input');
+          if (first) { first.focus(); }
+          // Disclosure state is deliberately NOT cleared: §0.8 says a price
+          // already revealed in this session stays revealed.
+        });
+      }
+
+      // "What does a feasibility check include?" — the explicit interaction
+      // that §0.8 requires before remote_feasibility may be shown at all,
+      // and the only thing that records interest in it.
+      if (feasToggle && feasPanel) {
+        feasToggle.addEventListener('click', function () {
+          var open = feasToggle.getAttribute('aria-expanded') !== 'true';
+          feasPanel.hidden = !open;
+          feasToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+          setMember(svcState.body, 'remote_feasibility', open);
+          saveSvcState();
+          if (open) { logSvc('service_details_open', 'remote_feasibility'); }
+        });
+
+        if (svcState.body.indexOf('remote_feasibility') !== -1 ||
+            svcState.price.indexOf('remote_feasibility') !== -1) {
+          feasPanel.hidden = false;
+          feasToggle.setAttribute('aria-expanded', 'true');
+        }
+      }
+
+      render();
+    }
   }
 
   // Accordions — Batch 3.7 / OD-3.7-04, amended after the 31.08 QA pass.

@@ -40,6 +40,10 @@ h1, h2, h3, p { margin: 0; }
   padding-inline: var(--gutter);
 }
 
+[hidden] {
+  display: none !important;
+}
+
 .section { position: relative; }
 
 .skip {

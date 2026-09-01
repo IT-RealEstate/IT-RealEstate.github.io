@@ -32,11 +32,22 @@
 
   <noscript>
     <style>
+      [data-route][hidden],
+      [data-feas][hidden],
       .svc__body[hidden],
-      .svc__price-box[hidden] { display: block; }
-      .svc__hint,
+      .svc__price-box[hidden] { display: block !important; }
+      [data-router-q],
+      [data-router-answered],
+      [data-router-intro],
+      .rt__open,
+      .rt__more,
       .svc__chev,
       .svc__reveal { display: none; }
+      .rt__route + .rt__route {
+        margin-block-start: 40px;
+        padding-block-start: 32px;
+        border-block-start: 1px solid var(--hairline-dark);
+      }
     </style>
   </noscript>
 </head>
@@ -200,141 +211,255 @@
         </div>
 
 
-        <div class="dmg-pricing__primary" data-reveal>
-          <article class="svc" data-service="appraisal_only">
-            <h3 class="svc__head">
-              <button type="button" class="svc__toggle" data-svc-toggle
-                      aria-expanded="false" aria-controls="svc-appraisal_only-body">
-                <span class="svc__name">חוות דעת שמאית</span>
-                <span class="svc__hint">לחצו להצגת תוכן השירות</span>
-                <span class="svc__chev" aria-hidden="true"></span>
-              </button>
-            </h3>
-            <p class="svc__closed">בדיקה, כימות ומסמך מקצועי המרכז את הנזק ואת צורכי השיקום.</p>
+        <div class="rt" data-router data-reveal>
+          <h3 class="rt__title">מה מתאים למצב שלכם?</h3>
+          <p class="rt__lede" data-router-intro>לא צריך לבחור שירות מראש. ענו על שתי שאלות קצרות ונציג את המסלול שמתאים למצב שתיארתם.</p>
+          <p class="rt__disclaimer" data-router-intro>הבחירה כאן אינה הזמנה ואינה יוצרת התחייבות.</p>
 
-            <div class="svc__body" id="svc-appraisal_only-body" data-svc-body hidden>
-              <p class="svc__label">מה כולל השירות</p>
-              <ul class="svc__list">
-                <li>בחינת האירוע, המסמכים והממצאים.</li>
-                <li>תיעוד וכימות הנזק.</li>
-                <li>אומדן צורכי השיקום.</li>
-                <li>חוות דעת שמאית ממוקדת.</li>
-              </ul>
-              <p class="svc__outcome">בסיום מתקבלת חוות הדעת, ומכאן ניתן להמשיך באופן עצמאי.</p>
-              <p class="svc__excl">השירות אינו כולל ניהול שוטף מול חברת הביטוח.</p>
+          <noscript>
+            <p class="rt__lede">להלן המסלולים לפי מצב, עם המחירים. בשיחה נבדוק מה מתאים למקרה שלכם.</p>
+          </noscript>
 
-              <button type="button" class="svc__reveal" data-svc-reveal
-                      aria-expanded="false" aria-controls="svc-appraisal_only-price">הצגת המחיר</button>
-
-              <div class="svc__price-box" id="svc-appraisal_only-price" data-svc-price hidden>
-                <p class="svc__price"><bdi dir="rtl">1,500 ₪</bdi></p>
-                <p class="svc__caveat">המחיר מתייחס לחוות דעת ממוקדת בתיק סטנדרטי. היקף חריג יתומחר מראש בהצעה נפרדת.</p>
-                <a class="svc__cta" href="/check/" data-cta-location="pricing"
-                   data-service-interest="appraisal_only">לבדוק התאמה למסלול הזה</a>
-              </div>
+          <fieldset class="rt__q" data-router-q="q1">
+            <legend class="rt__q-title">כבר קיבלתם שומה או הצעת פיצוי?</legend>
+            <div class="rt__options">
+              <label class="rt__opt">
+                <input class="rt__radio" type="radio" name="rt-q1" value="yes" data-router-input>
+                <span class="rt__opt-in">
+                  <span class="rt__opt-mark" aria-hidden="true"></span>
+                  <span class="rt__opt-text">
+                    <span class="rt__opt-label">כן, כבר קיבלתי</span>
+                    <span class="rt__opt-sub">יש מסמך או סכום שאפשר לבדוק מול הנזק והחומר הקיים.</span>
+                  </span>
+                </span>
+              </label>
+              <label class="rt__opt">
+                <input class="rt__radio" type="radio" name="rt-q1" value="no" data-router-input>
+                <span class="rt__opt-in">
+                  <span class="rt__opt-mark" aria-hidden="true"></span>
+                  <span class="rt__opt-text">
+                    <span class="rt__opt-label">לא, עדיין לא</span>
+                    <span class="rt__opt-sub">עדיין אין שומה או הצעת פיצוי שאפשר להשוות אליהן.</span>
+                  </span>
+                </span>
+              </label>
             </div>
-          </article>
+          </fieldset>
 
-          <article class="svc" data-service="appraisal_managed">
-            <h3 class="svc__head">
-              <button type="button" class="svc__toggle" data-svc-toggle
-                      aria-expanded="false" aria-controls="svc-appraisal_managed-body">
-                <span class="svc__name">חוות דעת וניהול תיק סטנדרטי</span>
-                <span class="svc__hint">לחצו להצגת תוכן השירות</span>
-                <span class="svc__chev" aria-hidden="true"></span>
-              </button>
-            </h3>
-            <p class="svc__closed">חוות דעת שמאית וליווי מקצועי בהמשך ההתנהלות מול חברת הביטוח.</p>
-
-            <div class="svc__body" id="svc-appraisal_managed-body" data-svc-body hidden>
-              <p class="svc__label">מה כולל השירות</p>
-              <ul class="svc__list">
-                <li>כל רכיבי חוות הדעת השמאית.</li>
-                <li>בחינת עמדות, תגובות ושומות מטעם המבטחת.</li>
-                <li>מענה מקצועי והשלמות במסגרת שסוכמה.</li>
-                <li>מעקב אחר ההתקדמות המקצועית של התיק.</li>
-              </ul>
-              <p class="svc__outcome">אתם נשארים מעודכנים. אני מנהל את החלק המקצועי מול חברת הביטוח.</p>
-              <p class="svc__excl">השירות אינו כולל הליך משפטי, נזק חדש או הרחבת היקף שלא סוכמה.</p>
-
-              <button type="button" class="svc__reveal" data-svc-reveal
-                      aria-expanded="false" aria-controls="svc-appraisal_managed-price">הצגת המחיר</button>
-
-              <div class="svc__price-box" id="svc-appraisal_managed-price" data-svc-price hidden>
-                <p class="svc__price"><bdi dir="rtl">4,800 ₪</bdi></p>
-                <p class="svc__caveat">המחיר מתייחס לתיק סטנדרטי. תיק מורכב, רב־צדדי או בעל היקף חריג יתומחר מראש בהצעה נפרדת.</p>
-                <p class="svc__credit">אם כבר הוכנה חוות דעת באותו אירוע, הסכום ששולם עליה יקוזז ממחיר החבילה.</p>
-                <a class="svc__cta" href="/check/" data-cta-location="pricing"
-                   data-service-interest="appraisal_managed">לבדוק התאמה למסלול הזה</a>
-              </div>
+          <fieldset class="rt__q" data-router-q="q2" hidden>
+            <legend class="rt__q-title">מה תרצו לקבל מאיתנו?</legend>
+            <div class="rt__options rt__options--three">
+              <label class="rt__opt">
+                <input class="rt__radio" type="radio" name="rt-q2" value="appraisal_only" data-router-input>
+                <span class="rt__opt-in">
+                  <span class="rt__opt-mark" aria-hidden="true"></span>
+                  <span class="rt__opt-text">
+                    <span class="rt__opt-label">מסמך מקצועי — ומכאן אמשיך בעצמי</span>
+                    <span class="rt__opt-sub">בדיקה, כימות וחוות דעת מקצועית שתוכלו להמשיך ממנה בעצמכם.</span>
+                  </span>
+                </span>
+              </label>
+              <label class="rt__opt">
+                <input class="rt__radio" type="radio" name="rt-q2" value="appraisal_managed" data-router-input>
+                <span class="rt__opt-in">
+                  <span class="rt__opt-mark" aria-hidden="true"></span>
+                  <span class="rt__opt-text">
+                    <span class="rt__opt-label">מסמך מקצועי וניהול של התיק</span>
+                    <span class="rt__opt-sub">חוות דעת וגם ניהול של החלק המקצועי בהתנהלות מול חברת הביטוח.</span>
+                  </span>
+                </span>
+              </label>
+              <label class="rt__opt">
+                <input class="rt__radio" type="radio" name="rt-q2" value="unsure" data-router-input>
+                <span class="rt__opt-in">
+                  <span class="rt__opt-mark" aria-hidden="true"></span>
+                  <span class="rt__opt-text">
+                    <span class="rt__opt-label">עדיין לא ברור לי מה נדרש</span>
+                    <span class="rt__opt-sub">נתחיל בבדיקת התאמה ללא עלות ונבין מה חסר לפני שמחליטים.</span>
+                  </span>
+                </span>
+              </label>
             </div>
-          </article>
-        </div>
+          </fieldset>
 
-        <div class="dmg-pricing__diagnostic" data-reveal>
-          <article class="svc svc--diagnostic" data-service="remote_feasibility">
-            <h3 class="svc__head">
-              <button type="button" class="svc__toggle" data-svc-toggle
-                      aria-expanded="false" aria-controls="svc-remote_feasibility-body">
-                <span class="svc__name">בדיקת כדאיות מרחוק</span>
-                <span class="svc__hint">לחצו להצגת תוכן השירות</span>
-                <span class="svc__chev" aria-hidden="true"></span>
-              </button>
-            </h3>
-            <p class="svc__closed">כשהמקרה עדיין אינו ברור, בודקים את החומר לפני שמחליטים אם נדרשת חוות דעת.</p>
+          <div class="rt__answered" data-router-answered hidden>
+            <p class="rt__answered-text"><span class="rt__answered-label">התשובות שלכם:</span> <span data-router-summary></span></p>
+            <button type="button" class="rt__reset" data-router-reset>שינוי תשובה</button>
+          </div>
 
-            <div class="svc__body" id="svc-remote_feasibility-body" data-svc-body hidden>
-              <p class="svc__label">מה כולל השירות</p>
-              <ul class="svc__list">
-                <li>בחינת תמונות, מסמכים ותיאור האירוע.</li>
-                <li>זיהוי מידע או בדיקות שעדיין חסרים.</li>
-                <li>סיכום קצר בכתב.</li>
-                <li>המלצה אם וכיצד נכון להמשיך.</li>
-              </ul>
+          <div class="rt__route" data-route="insurer_gap" hidden>
+            <h4 class="rt__head">כבר יש שומה? בודקים מה נכלל ומה חסר</h4>
 
-              <button type="button" class="svc__reveal" data-svc-reveal
-                      aria-expanded="false" aria-controls="svc-remote_feasibility-price">הצגת המחיר</button>
+            <article class="rt__svc" data-service="insurer_gap">
+              <p class="rt__name">בדיקת פער לאחר שומת מבטחת</p>
 
-              <div class="svc__price-box" id="svc-remote_feasibility-price" data-svc-price hidden>
-                <p class="svc__price"><bdi dir="rtl">700 ₪</bdi></p>
-                <p class="svc__credit">אם ממשיכים באותו אירוע לחוות דעת או לניהול תיק, הסכום מתקזז במלואו.</p>
-                <a class="svc__cta" href="/check/" data-cta-location="pricing"
-                   data-service-interest="remote_feasibility">לבדוק התאמה למסלול הזה</a>
-              </div>
-            </div>
-          </article>
+              <p class="rt__label">מתאים לכם אם</p>
+              <p class="rt__text">כבר קיבלתם שומה או הצעת פיצוי ואתם רוצים לבדוק אם הנזק, הכמויות וצורכי השיקום קיבלו מענה.</p>
 
-          <article class="svc svc--diagnostic" data-service="insurer_gap">
-            <h3 class="svc__head">
-              <button type="button" class="svc__toggle" data-svc-toggle
+              <p class="rt__label">מה מקבלים</p>
+              <p class="rt__text">בדיקה של מה נכלל, מה חסר והאם קיימת הצדקה מקצועית להמשך.</p>
+
+              <p class="rt__note">זו אינה חוות דעת שמאית מלאה.</p>
+
+              <button type="button" class="rt__open" data-svc-toggle
                       aria-expanded="false" aria-controls="svc-insurer_gap-body">
-                <span class="svc__name">בדיקת פער לאחר שומת מבטחת</span>
-                <span class="svc__hint">לחצו להצגת תוכן השירות</span>
+                <span class="rt__open-label">לראות מה כוללת הבדיקה</span>
                 <span class="svc__chev" aria-hidden="true"></span>
               </button>
-            </h3>
-            <p class="svc__closed">כאשר כבר קיימת שומה או הצעת פיצוי, בודקים מה נכלל, מה חסר והאם קיימת הצדקה להמשך.</p>
 
-            <div class="svc__body" id="svc-insurer_gap-body" data-svc-body hidden>
-              <p class="svc__label">מה כולל השירות</p>
-              <ul class="svc__list">
-                <li>בחינת השומה או הצעת הפיצוי.</li>
-                <li>השוואה למסמכים ולממצאים הקיימים.</li>
-                <li>זיהוי רכיבים שלא קיבלו מענה מספק.</li>
-                <li>מסקנה מקצועית קצרה לגבי המשך הטיפול.</li>
-              </ul>
+              <div class="svc__body" id="svc-insurer_gap-body" data-svc-body hidden>
+                <p class="svc__label">מה כולל השירות</p>
+                <ul class="svc__list">
+                  <li>בחינת השומה או הצעת הפיצוי.</li>
+                  <li>השוואה למסמכים ולממצאים הקיימים.</li>
+                  <li>זיהוי רכיבים שלא קיבלו מענה מספק.</li>
+                  <li>מסקנה מקצועית קצרה לגבי המשך הטיפול.</li>
+                </ul>
 
-              <button type="button" class="svc__reveal" data-svc-reveal
-                      aria-expanded="false" aria-controls="svc-insurer_gap-price">הצגת המחיר</button>
+                <button type="button" class="svc__reveal" data-svc-reveal
+                        aria-expanded="false" aria-controls="svc-insurer_gap-price">להציג את המחיר</button>
 
-              <div class="svc__price-box" id="svc-insurer_gap-price" data-svc-price hidden>
-                <p class="svc__price"><bdi dir="rtl">1,500 ₪</bdi></p>
-                <p class="svc__credit">במקרה של המשך טיפול באותו אירוע, העבודה שכבר בוצעה תובא בחשבון בהצעה להמשך.</p>
-                <a class="svc__cta" href="/check/" data-cta-location="pricing"
-                   data-service-interest="insurer_gap">לבדוק התאמה למסלול הזה</a>
+                <div class="svc__price-box" id="svc-insurer_gap-price" data-svc-price hidden>
+                  <p class="svc__price"><bdi dir="rtl">1,500 ₪</bdi></p>
+                  <p class="svc__credit">במקרה של המשך טיפול באותו אירוע, העבודה שכבר בוצעה תובא בחשבון בהצעה להמשך.</p>
+                  <a class="svc__cta" href="/check/" data-cta-location="pricing"
+                     data-service-interest="insurer_gap">לבדוק התאמה למסלול הזה</a>
+                </div>
               </div>
+            </article>
+          </div>
+
+          <div class="rt__route" data-route="appraisal_only" hidden>
+            <h4 class="rt__head">מסמך מקצועי — ומכאן ממשיכים בעצמכם</h4>
+
+            <article class="rt__svc" data-service="appraisal_only">
+              <p class="rt__name">חוות דעת שמאית</p>
+
+              <p class="rt__label">מתאים לכם אם</p>
+              <p class="rt__text">אתם צריכים בדיקה, כימות ומסמך מקצועי, ומתכוונים לנהל בעצמכם את ההמשך לאחר קבלת חוות הדעת.</p>
+
+              <p class="rt__label">מה מקבלים</p>
+              <p class="rt__text">חוות דעת שמרכזת את הממצאים, הנזק, צורכי השיקום והאומדן המקצועי.</p>
+
+              <p class="rt__note">המשך ההתנהלות מול חברת הביטוח אינו כלול במסלול זה.</p>
+
+              <button type="button" class="rt__open" data-svc-toggle
+                      aria-expanded="false" aria-controls="svc-appraisal_only-body">
+                <span class="rt__open-label">לראות מה כוללת חוות הדעת</span>
+                <span class="svc__chev" aria-hidden="true"></span>
+              </button>
+
+              <div class="svc__body" id="svc-appraisal_only-body" data-svc-body hidden>
+                <p class="svc__label">מה כולל השירות</p>
+                <ul class="svc__list">
+                  <li>בחינת האירוע, המסמכים והממצאים.</li>
+                  <li>תיעוד וכימות הנזק.</li>
+                  <li>אומדן צורכי השיקום.</li>
+                  <li>חוות דעת שמאית ממוקדת.</li>
+                </ul>
+
+                <button type="button" class="svc__reveal" data-svc-reveal
+                        aria-expanded="false" aria-controls="svc-appraisal_only-price">להציג את המחיר</button>
+
+                <div class="svc__price-box" id="svc-appraisal_only-price" data-svc-price hidden>
+                  <p class="svc__price"><bdi dir="rtl">1,500 ₪</bdi></p>
+                  <p class="svc__caveat">המחיר מתייחס לחוות דעת ממוקדת בתיק סטנדרטי. היקף חריג יתומחר מראש בהצעה נפרדת.</p>
+                  <a class="svc__cta" href="/check/" data-cta-location="pricing"
+                     data-service-interest="appraisal_only">לבדוק התאמה למסלול הזה</a>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div class="rt__route" data-route="appraisal_managed" hidden>
+            <h4 class="rt__head">מסמך מקצועי וניהול של התיק</h4>
+
+            <article class="rt__svc" data-service="appraisal_managed">
+              <p class="rt__name">חוות דעת וניהול תיק סטנדרטי</p>
+
+              <p class="rt__label">מתאים לכם אם</p>
+              <p class="rt__text">אתם רוצים גם חוות דעת וגם ניהול מקצועי של ההמשך מול חברת הביטוח.</p>
+
+              <p class="rt__label">מה מקבלים</p>
+              <p class="rt__text">חוות דעת שמאית וניהול של החלק המקצועי בתיק, בהתאם להיקף שהוגדר מראש.</p>
+
+              <p class="rt__note">השירות אינו כולל הליך משפטי, נזק חדש או הרחבת היקף שלא סוכמה.</p>
+
+              <button type="button" class="rt__open" data-svc-toggle
+                      aria-expanded="false" aria-controls="svc-appraisal_managed-body">
+                <span class="rt__open-label">לראות מה כולל ניהול התיק</span>
+                <span class="svc__chev" aria-hidden="true"></span>
+              </button>
+
+              <div class="svc__body" id="svc-appraisal_managed-body" data-svc-body hidden>
+                <p class="svc__label">מה כולל השירות</p>
+                <ul class="svc__list">
+                  <li>כל רכיבי חוות הדעת השמאית.</li>
+                  <li>בחינת עמדות, תגובות ושומות מטעם המבטחת.</li>
+                  <li>מענה מקצועי והשלמות במסגרת שסוכמה.</li>
+                  <li>מעקב אחר ההתקדמות המקצועית של התיק.</li>
+                </ul>
+
+                <button type="button" class="svc__reveal" data-svc-reveal
+                        aria-expanded="false" aria-controls="svc-appraisal_managed-price">להציג את המחיר</button>
+
+                <div class="svc__price-box" id="svc-appraisal_managed-price" data-svc-price hidden>
+                  <p class="svc__price"><bdi dir="rtl">4,800 ₪</bdi></p>
+                  <p class="svc__caveat">המחיר מתייחס לתיק סטנדרטי. תיק מורכב, רב־צדדי או בעל היקף חריג יתומחר מראש בהצעה נפרדת.</p>
+                  <p class="svc__credit">אם כבר הוכנה חוות דעת באותו אירוע, הסכום ששולם עליה יקוזז ממחיר החבילה.</p>
+                  <a class="svc__cta" href="/check/" data-cta-location="pricing"
+                     data-service-interest="appraisal_managed">לבדוק התאמה למסלול הזה</a>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div class="rt__route" data-route="unsure" hidden>
+            <h4 class="rt__head">עדיין לא ברור מה נדרש?</h4>
+
+            <div class="rt__gate">
+              <p class="rt__gate-title">בדיקת התאמה ראשונית ללא עלות</p>
+              <p class="rt__text">נעבור בקצרה על מה שקרה, מה כבר ידוע ואיזה מידע עדיין חסר. המטרה היא להבין מה נכון לבדוק לפני שנכנסים לעבודה מלאה.</p>
+              <a class="btn" data-cta-location="pricing" href="/check/">לעשות סדר במקרה שלי</a>
             </div>
-          </article>
+
+            <p class="rt__maybe">אם לאחר הבדיקה עדיין לא יהיה אפשר להמליץ באחריות על חוות דעת מלאה, ייתכן שתוצע בדיקת כדאיות מרחוק.</p>
+
+            <button type="button" class="rt__more" data-feas-toggle
+                    aria-expanded="false" aria-controls="rt-feas">מה כוללת בדיקת כדאיות?</button>
+
+            <div class="rt__feas" id="rt-feas" data-feas hidden>
+              <article class="rt__svc rt__svc--quiet" data-service="remote_feasibility">
+                <p class="rt__name">בדיקת כדאיות מרחוק</p>
+
+                <p class="rt__label">מתאים לכם אם</p>
+                <p class="rt__text">המקרה עדיין אינו ברור ונדרשת בדיקה של החומר לפני שאפשר להחליט אם יש הצדקה לעבודה מלאה.</p>
+
+                <p class="rt__label">מה מקבלים</p>
+                <p class="rt__text">בדיקה ממוקדת של החומר ומסקנה לגבי הצעד הבא.</p>
+
+                <div class="svc__body" id="svc-remote_feasibility-body" data-svc-body>
+                  <p class="svc__label">מה כולל השירות</p>
+                  <ul class="svc__list">
+                    <li>בחינת תמונות, מסמכים ותיאור האירוע.</li>
+                    <li>זיהוי מידע או בדיקות שעדיין חסרים.</li>
+                    <li>סיכום קצר בכתב.</li>
+                    <li>המלצה אם וכיצד נכון להמשיך.</li>
+                  </ul>
+
+                  <button type="button" class="svc__reveal" data-svc-reveal
+                          aria-expanded="false" aria-controls="svc-remote_feasibility-price">להציג את המחיר</button>
+
+                  <div class="svc__price-box" id="svc-remote_feasibility-price" data-svc-price hidden>
+                    <p class="svc__price"><bdi dir="rtl">700 ₪</bdi></p>
+                    <p class="svc__credit">אם ממשיכים באותו אירוע לחוות דעת או לניהול תיק, הסכום מתקזז במלואו.</p>
+                    <a class="svc__cta" href="/check/" data-cta-location="pricing"
+                       data-service-interest="remote_feasibility">לבדוק התאמה למסלול הזה</a>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
         </div>
 
         <div class="dmg-pricing__close" data-reveal>
