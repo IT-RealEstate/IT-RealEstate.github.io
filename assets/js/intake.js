@@ -33,6 +33,9 @@
 
     var SUBMIT_TIMEOUT_MS = 10000;
     var RETRY_DELAY_MS = 2000;
+    // Dry-run only: long enough for the sending state to be seen and
+    // reviewed, short enough not to feel broken. Never used in 'live'.
+    var DRYRUN_DELAY_MS = 700;
 
     // Content Spec §8.1 — seven user-facing fields, no more. Six required,
     // short_description optional (validated by nobody, sent as typed).
@@ -369,7 +372,9 @@
         short_description: state.short_description,
         notice_version: LEGAL_RELEASE,
         policy_version: LEGAL_RELEASE,
-        request_token: window.INTAKE_CONFIG ? window.INTAKE_CONFIG.requestToken : '',
+        // Public protocol/version marker, not a credential. See
+        // intake-config.js and checkClientMarker_ in apps-script/Code.gs.
+        client_marker: window.INTAKE_CONFIG ? window.INTAKE_CONFIG.clientMarker : '',
         honeypot: honeypotInput ? honeypotInput.value : '',
         form_started_at: state.form_started_at,
         utm_source: attributionRecord.utm_source || '',
@@ -401,10 +406,29 @@
     function attemptPersist() {
       if (persistInFlight) return;
 
+      var config = window.INTAKE_CONFIG || {};
+
+      // Dry run — the public beta. NOT a hostname guess: an explicit flag,
+      // because a hostname heuristic quietly becomes "live" the day the beta
+      // moves. Nothing is sent, nothing is stored, and the flow still
+      // completes so the whole UI can be reviewed. The beta build also
+      // rewrites the success copy, so this state never claims a lead was
+      // received. Production ships mode:'live' and never reaches this.
+      if (config.mode === 'dryrun') {
+        persistInFlight = true;
+        setSubmitDisabled(true);
+        hideSubmitError();
+        showSendingStatus(true);
+        window.setTimeout(function () {
+          onPersistSuccess();
+        }, DRYRUN_DELAY_MS);
+        return;
+      }
+
       // No endpoint configured => the lead cannot be saved. That is a
       // failure, and it uses the approved generic failure state (§8.10.5) —
       // never a success message for something that was never sent.
-      var endpointUrl = window.INTAKE_CONFIG && window.INTAKE_CONFIG.endpointUrl;
+      var endpointUrl = config.endpointUrl;
       if (!endpointUrl) {
         onPersistFailure();
         return;

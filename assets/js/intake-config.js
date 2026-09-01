@@ -1,36 +1,48 @@
-// Intake client configuration boundary (Batch 6B).
+// Intake client configuration boundary.
 //
-// Deliberately the only place these two values live. Neither is a secret:
-// endpointUrl is a public Web App URL, and requestToken is a nuisance
-// filter visible to any visitor (see apps-script/README.md) — not
-// authentication, not a Google credential.
+// NOTHING IN THIS FILE IS OR MAY EVER BE A SECRET. It is served to every
+// visitor. Do not put a credential, an API key or a shared password here,
+// and do not let any server-side check depend on one being here.
 //
-// endpointUrl is the deployed Apps Script Web App URL supplied for MP-1
-// closure. requestToken is intentionally still empty: it must be the
-// exact REQUEST_TOKEN Script Property value set on that deployment
-// (apps-script/README.md step 4/9), and that value has never been
-// supplied to this repository. It is not invented here — inventing one
-// would just produce a token that fails checkNuisanceToken_ silently.
+// endpointUrl  the deployed Apps Script Web App URL. Public by design — a
+//              Web App URL is a write endpoint, not a credential. What
+//              protects it is enforcement in apps-script/Code.gs: body-size
+//              limit, field allow-listing, schema validation, the honeypot
+//              and fill-time heuristic, idempotency and a global rate limit.
 //
-// Consequence while requestToken is empty: intake.js sees a non-empty
-// endpointUrl (see attemptPersist in intake.js) and DOES attempt a real
-// network submission — it no longer shows the old dev-only placeholder
-// status. That real request reaches the live endpoint with
-// request_token: '', which the server rejects (code: invalid_token),
-// surfacing the real controlled-failure UI (retry button, phone
-// fallback) rather than a fabricated success. This is the intended,
-// honest degrade: BLOCKED — owner must supply the REQUEST_TOKEN value
-// from their Apps Script deployment's Script Properties before a real
-// submission can succeed end to end.
+// clientMarker a public protocol/version string, echoed in the request body
+//              and compared against CLIENT_MARKER in Code.gs. It turns away
+//              a blind POST to a /exec URL scraped from a log. It is NOT
+//              authentication and stops no determined attacker.
+//
+//              It replaces the old `requestToken`, which compared against a
+//              REQUEST_TOKEN Script Property this repository could not see.
+//              The two sides drifted — the shipped value was '' — so the
+//              server rejected EVERY valid lead with invalid_token. Both
+//              sides of the comparison now live in Git and deploy together.
+//              Keep this value identical to CLIENT_MARKER in Code.gs.
+//
+// mode         'live'   — submissions are sent to endpointUrl.
+//              'dryrun' — intake.js issues NO network request at all and
+//                         completes the flow locally, so the full UI can be
+//                         reviewed without a lead being created. The public
+//                         beta build sets this; production must not.
+//
+//              An explicit flag, deliberately not a hostname guess: a
+//              hostname heuristic silently turns into "live" the moment the
+//              beta moves to another host.
 // ---------------------------------------------------------------------
-// BETA BUILD - LEAD PERSISTENCE DELIBERATELY DISABLED.
+// BETA BUILD - LEAD SUBMISSION DELIBERATELY DISABLED, TWICE.
 //
-// endpointUrl is empty on purpose. intake.js checks it at the top of
-// attemptPersist() and returns before issuing any fetch, so nothing a
-// visitor types on /check/ ever leaves their browser. Do NOT paste the
+// mode:'dryrun'   intake.js returns before issuing any fetch and completes
+//                 the flow locally, so the success screen can be reviewed.
+// endpointUrl ''  and there is no URL to post to even if that flag is lost.
+//
+// Nothing a visitor types on /check/ leaves their browser. Do NOT paste the
 // live Apps Script URL back in: this build is for visual review only.
 // ---------------------------------------------------------------------
 window.INTAKE_CONFIG = {
   endpointUrl: '',
-  requestToken: ''
+  clientMarker: 'taviv-web-1',
+  mode: 'dryrun'
 };
