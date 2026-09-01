@@ -29,7 +29,7 @@
     // stay independently traceable while never drifting from each other by
     // accident (Legal Spec §3.2 point 1). The server whitelists exactly
     // this value for both fields and rejects anything else — Batch 6B.1.
-    var LEGAL_RELEASE = '2026-08-27.1';
+    var LEGAL_RELEASE = '2026-09-01.1';
 
     var SUBMIT_TIMEOUT_MS = 10000;
     var RETRY_DELAY_MS = 2000;
