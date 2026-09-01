@@ -163,11 +163,23 @@
 
   if (serviceCards.length || router) {
     var SVC_KEY = 'svc_ui_v1';
-    var HINT_CLOSED = 'לחצו להצגת תוכן השירות';
-    var HINT_OPEN = 'לחצו לסגירת תוכן השירות';
-    var PRICE_SHOW = 'להציג את המחיר';
-    var PRICE_HIDE = 'להסתיר את המחיר';
     var attribution = window.ATTRIBUTION;
+
+    // Batch 3.13C — disclosure is ONE-WAY. Opening content is progress the
+    // visitor asked for; a control that undoes it turns an answer back into a
+    // question, and a hide-the-price label is one this UI must never produce.
+    // So the control that was used is removed, and the content it revealed
+    // stays. There is no reverse control and no label to swap.
+    //
+    // Removing the control drops focus to <body>, which is exactly the
+    // surprise §0.6 forbids — so focus moves to what was just revealed
+    // instead. tabindex is set here rather than in the markup: it exists only
+    // to receive this one programmatic focus, never to add a tab stop.
+    var focusRevealed = function (el) {
+      if (!el) { return; }
+      if (!el.hasAttribute('tabindex')) { el.setAttribute('tabindex', '-1'); }
+      try { el.focus({ preventScroll: false }); } catch (e) { el.focus(); }
+    };
 
     // UI state, not attribution: it lives under its own key and never joins
     // the record that travels with a lead. §0.8 — "מצב החשיפה נשמר לאורך
@@ -227,46 +239,47 @@
       var body = card.querySelector('[data-svc-body]');
       var reveal = card.querySelector('[data-svc-reveal]');
       var price = card.querySelector('[data-svc-price]');
-      var hint = card.querySelector('.svc__hint');
       var cta = card.querySelector('[data-service-interest]');
       if (!id || !body) { return; }
 
       // `record` is false while restoring: replaying a saved state is not a
-      // new interaction and must not inflate the event log.
-      var setBody = function (open, record) {
-        body.hidden = !open;
+      // new interaction, so it logs nothing and never steals focus. A
+      // consumed control stays consumed across the session either way.
+      var openBody = function (record) {
+        body.hidden = false;
         if (toggle) {
-          toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+          toggle.setAttribute('aria-expanded', 'true');
+          toggle.hidden = true;
         }
-        if (hint) { hint.textContent = open ? HINT_OPEN : HINT_CLOSED; }
-        setMember(svcState.body, id, open);
+        setMember(svcState.body, id, true);
         saveSvcState();
-        if (open && record) { logSvc('service_details_open', id); }
+        if (record) {
+          logSvc('service_details_open', id);
+          focusRevealed(body);
+        }
       };
 
-      var setPrice = function (open, record) {
+      var openPrice = function (record) {
+        // remote_feasibility has neither control nor price box since Batch
+        // 3.13C, so this is a no-op for it and no price event can fire.
         if (!reveal || !price) { return; }
-        price.hidden = !open;
-        reveal.setAttribute('aria-expanded', open ? 'true' : 'false');
-        // The control stays put and becomes its own opposite. Hiding it
-        // instead would drop focus to <body> for anyone who pressed it with
-        // a keyboard, and §0.6 forbids a surprising focus change.
-        reveal.textContent = open ? PRICE_HIDE : PRICE_SHOW;
-        setMember(svcState.price, id, open);
+        price.hidden = false;
+        reveal.setAttribute('aria-expanded', 'true');
+        reveal.hidden = true;
+        setMember(svcState.price, id, true);
         saveSvcState();
-        if (open && record) { logSvc('service_price_reveal', id); }
+        if (record) {
+          logSvc('service_price_reveal', id);
+          focusRevealed(price);
+        }
       };
 
       if (toggle) {
-        toggle.addEventListener('click', function () {
-          setBody(toggle.getAttribute('aria-expanded') !== 'true', true);
-        });
+        toggle.addEventListener('click', function () { openBody(true); });
       }
 
       if (reveal && price) {
-        reveal.addEventListener('click', function () {
-          setPrice(reveal.getAttribute('aria-expanded') !== 'true', true);
-        });
+        reveal.addEventListener('click', function () { openPrice(true); });
       }
 
       // The CTA is an ordinary link to /check/. attribution.js records
@@ -279,16 +292,18 @@
         });
       }
 
-      cards[id] = { setBody: setBody, setPrice: setPrice, hasToggle: !!toggle };
+      cards[id] = { openBody: openBody, openPrice: openPrice, hasToggle: !!toggle };
 
       // Restore. The price panel lives inside the body panel, so a restored
       // price implies a restored body — otherwise the saved state would be
-      // unreachable.
+      // unreachable. Restoring also re-hides the consumed controls, so coming
+      // back to the section never puts a used button in front of the visitor
+      // again.
       if (svcState.price.indexOf(id) !== -1) {
-        if (toggle) { setBody(true, false); }
-        setPrice(true, false);
+        if (toggle) { openBody(false); }
+        openPrice(false);
       } else if (toggle && svcState.body.indexOf(id) !== -1) {
-        setBody(true, false);
+        openBody(false);
       }
     });
 
@@ -305,6 +320,9 @@
       var resetBtn = router.querySelector('[data-router-reset]');
       var feasToggle = router.querySelector('[data-feas-toggle]');
       var feasPanel = router.querySelector('[data-feas]');
+      // Lives in the section's closing block, outside the router, so it is
+      // found from the document rather than from `router`.
+      var closeCta = document.querySelector('[data-close-cta]');
 
       // The summary reuses each option's own approved label rather than
       // inventing a sentence for it — no new copy, and it always matches
@@ -334,6 +352,12 @@
         Array.prototype.forEach.call(routeBlocks, function (el) {
           el.hidden = el.getAttribute('data-route') !== active;
         });
+
+        // Batch 3.13C — the "unsure" route already opens with an entry-check
+        // button carrying this exact label, so showing the section's summary
+        // CTA below it repeated the same call to action on one screen. Hidden
+        // for that route only; every other route still ends on it.
+        if (closeCta) { closeCta.hidden = active === 'unsure'; }
 
         if (answered && summary) {
           answered.hidden = !anyAnswer;
@@ -391,19 +415,28 @@
       // that §0.8 requires before remote_feasibility may be shown at all,
       // and the only thing that records interest in it.
       if (feasToggle && feasPanel) {
-        feasToggle.addEventListener('click', function () {
-          var open = feasToggle.getAttribute('aria-expanded') !== 'true';
-          feasPanel.hidden = !open;
-          feasToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-          setMember(svcState.body, 'remote_feasibility', open);
+        // One-way, like every other disclosure control: it opens the
+        // explanation, then removes itself. There is no price behind it to
+        // reveal — remote_feasibility has carried no public figure since
+        // Batch 3.13C — so this is the last step in that route, and the
+        // visitor's next move is the entry-check button above.
+        var openFeas = function (record) {
+          feasPanel.hidden = false;
+          feasToggle.setAttribute('aria-expanded', 'true');
+          feasToggle.hidden = true;
+          setMember(svcState.body, 'remote_feasibility', true);
           saveSvcState();
-          if (open) { logSvc('service_details_open', 'remote_feasibility'); }
-        });
+          if (record) {
+            logSvc('service_details_open', 'remote_feasibility');
+            focusRevealed(feasPanel);
+          }
+        };
+
+        feasToggle.addEventListener('click', function () { openFeas(true); });
 
         if (svcState.body.indexOf('remote_feasibility') !== -1 ||
             svcState.price.indexOf('remote_feasibility') !== -1) {
-          feasPanel.hidden = false;
-          feasToggle.setAttribute('aria-expanded', 'true');
+          openFeas(false);
         }
       }
 
