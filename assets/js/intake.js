@@ -33,6 +33,9 @@
 
     var SUBMIT_TIMEOUT_MS = 10000;
     var RETRY_DELAY_MS = 2000;
+    // Batch 3.14C — the silent save. Two seconds of inactivity after the last
+    // change to a field that matters, never a save per keystroke.
+    var AUTOSAVE_DELAY_MS = 2000;
     // Dry-run only: long enough for the sending state to be seen and
     // reviewed, short enough not to feel broken. Never used in 'live'.
     var DRYRUN_DELAY_MS = 700;
@@ -65,6 +68,20 @@
 
     var persistInFlight = false;
     var failureCount = 0;
+
+    // ---- Batch 3.14C — silent-save engine state ----
+    // saveSeq rises with every attempt. A response carries the seq it was
+    // issued for, so a reply that arrives after the values moved on can be
+    // recognised and refused the right to call those newer values saved.
+    var autosaveTimer = null;
+    var saveSeq = 0;
+    var inFlightSeq = 0;
+    var leadCreated = false;          // the server confirmed a row exists
+    var savedSnapshot = null;         // the exact values that row was created from
+    var userInteracted = false;       // a real edit, not an autofill-on-load
+    var enrichSeq = 0;
+    var enrichInFlightFor = '';       // which question is being saved right now
+    var phase = 'contact';            // contact -> damage_type -> case_state -> done
 
     // ---- lead id (Handoff spec §3.1) — generated and stored locally,
     // never transmitted anywhere in this batch. ----
@@ -144,6 +161,25 @@
       // too-long one (§8.10.5, Batch 3.3-R2).
       short_description: { tooLong: 'ניתן להזין עד 1,000 תווים.' }
     };
+
+    // Batch 3.14C — the four states of the automatic save, in order. There is
+    // deliberately no message before the details are eligible: promising a
+    // save we are not about to perform is the one thing this area must never
+    // do, and the line above the fields already says when it happens.
+    var AUTOSAVE_MESSAGES = {
+      pending:   'הפרטים יישמרו אוטומטית',
+      saving:    'שומר את הפרטים…',
+      saved:     'בגרסת הבדיקה הפרטים נשמרים זמנית בדפדפן בלבד ואינם נשלחים.',
+      failed:    'לא הצלחנו לשמור כרגע. הפרטים נשארו כאן ואפשר לנסות שוב.'
+    };
+    var QUESTION_SAVING = 'שומר…';
+    var QUESTION_FAILED = 'לא הצלחנו לשמור את התשובה. אפשר לנסות שוב.';
+
+    // The order the questions are asked in, and the labels their collapsed
+    // summaries carry. Codes are the canonical enum values the server already
+    // accepts — no new value is introduced by this batch.
+    var QUESTIONS = ['damage_type', 'case_state'];
+    var QUESTION_TITLES = { damage_type: 'סוג הנזק', case_state: 'מצב המקרה' };
 
     // Unicode-aware length. String.length counts UTF-16 units, so an astral
     // character would otherwise cost two of the user's 1,000. Mirrors
@@ -243,6 +279,428 @@
       return true;
     }
 
+
+    // ======================================================================
+    // Batch 3.14C — silent save and one-tap qualification
+    // ======================================================================
+
+    function ui(event, id) {
+      if (window.ATTRIBUTION && typeof window.ATTRIBUTION.recordUiEvent === 'function') {
+        window.ATTRIBUTION.recordUiEvent(event, id, 'check');
+      }
+    }
+
+    function setAutosaveStatus(key) {
+      var el = form.querySelector('[data-autosave-status]');
+      if (!el) return;
+      if (!key) { el.hidden = true; el.textContent = ''; el.removeAttribute('data-state'); return; }
+      el.hidden = false;
+      el.textContent = AUTOSAVE_MESSAGES[key];
+      // The state is exposed as an attribute rather than a class so the
+      // success tick can be styled on confirmation alone — there is no
+      // selector that can draw it before the server has answered.
+      el.setAttribute('data-state', key);
+    }
+
+    // The two fields the lead cannot exist without. Read from the DOM, not
+    // from state, so an autofill that never fired a change event still counts.
+    function contactValues() {
+      var name = form.querySelector('#full_name');
+      var phone = form.querySelector('#phone_raw');
+      var email = form.querySelector('#email');
+      return {
+        full_name: name ? name.value.trim() : '',
+        phone_raw: phone ? phone.value.trim() : '',
+        email: email ? email.value.trim() : ''
+      };
+    }
+
+    function emailIsSendable(value) {
+      var input = form.querySelector('#email');
+      // An empty address is not an error and is simply not sent. A partial
+      // one is never transmitted: checkValidity() is the same test the field
+      // itself applies, so what we refuse to send is what the field marks bad.
+      if (value === '') return false;
+      return !!input && input.checkValidity();
+    }
+
+    // Eligibility, in the order the owner defined it. Any legally required
+    // acknowledgement is part of this gate: the notice on this screen is a
+    // statement rather than a checkbox today, so there is nothing to tick —
+    // but the check lives here so adding one later is a one-line change and
+    // cannot be forgotten.
+    function acknowledgementSatisfied() {
+      var box = form.querySelector('[data-legal-ack]');
+      return !box || box.checked;
+    }
+
+    function autosaveEligible() {
+      if (!userInteracted) return false;
+      if (!acknowledgementSatisfied()) return false;
+      var v = contactValues();
+      if (v.full_name === '') return false;
+      if (!isValidIsraeliPhone(v.phone_raw)) return false;
+      return true;
+    }
+
+    // A change to a field that matters restarts the clock. Anything typed
+    // during the two seconds cancels the pending save rather than racing it.
+    function scheduleAutosave() {
+      if (autosaveTimer) { window.clearTimeout(autosaveTimer); autosaveTimer = null; }
+
+      if (!autosaveEligible()) {
+        // Not eligible: no promise, no success message left standing from an
+        // earlier state. An already-created lead keeps its confirmation.
+        if (!leadCreated) setAutosaveStatus(null);
+        return;
+      }
+
+      if (!leadCreated) {
+        ui('contact_autosave_eligible', 'contact');
+        setAutosaveStatus('pending');
+      } else if (!emailChangedSinceSave() && !contactChangedSinceSave()) {
+        return;   // nothing new to send
+      }
+
+      autosaveTimer = window.setTimeout(function () {
+        autosaveTimer = null;
+        runAutosave();
+      }, AUTOSAVE_DELAY_MS);
+    }
+
+    function emailChangedSinceSave() {
+      if (!savedSnapshot) return false;
+      var v = contactValues();
+      return v.email !== savedSnapshot.email && emailIsSendable(v.email);
+    }
+
+    function contactChangedSinceSave() {
+      if (!savedSnapshot) return false;
+      var v = contactValues();
+      return v.full_name !== savedSnapshot.full_name || v.phone_raw !== savedSnapshot.phone_raw;
+    }
+
+    function runAutosave() {
+      if (!autosaveEligible()) return;
+
+      // An immutable snapshot: everything downstream compares against this,
+      // never against the live fields, so a value that moves while the
+      // request is open cannot be quietly claimed as saved.
+      var snapshot = contactValues();
+      saveSeq += 1;
+      var seq = saveSeq;
+
+      if (leadCreated) {
+        sendContactUpdate(snapshot, seq);
+        return;
+      }
+
+      if (persistInFlight) return;
+      persistInFlight = true;
+      inFlightSeq = seq;
+      setAutosaveStatus('saving');
+      hideSubmitError();
+      ui('contact_autosave_started', 'contact');
+
+      persistSnapshot(snapshot, seq);
+    }
+
+    // The create call. lead_id is the idempotency key: it is generated once,
+    // survives a reload in sessionStorage, and the server answers
+    // duplicate:true for one it already holds rather than inserting again.
+    function persistSnapshot(snapshot, seq) {
+      var config = window.INTAKE_CONFIG || {};
+
+      var finish = function (ok) {
+        persistInFlight = false;
+        if (ok) onAutosaveSuccess(snapshot, seq);
+        else onAutosaveFailure();
+      };
+
+      if (config.mode === 'dryrun') {
+        window.setTimeout(function () { finish(true); }, DRYRUN_DELAY_MS);
+        return;
+      }
+      if (!config.endpointUrl) { finish(false); return; }
+
+      sendLead()
+        .then(function (json) {
+          if (json && json.ok) { finish(true); return; }
+          return new Promise(function (r) { setTimeout(r, RETRY_DELAY_MS); })
+            .then(sendLead)
+            .then(function (j2) { finish(!!(j2 && j2.ok)); })
+            .catch(function () { finish(false); });
+        })
+        .catch(function () {
+          return new Promise(function (r) { setTimeout(r, RETRY_DELAY_MS); })
+            .then(sendLead)
+            .then(function (j2) { finish(!!(j2 && j2.ok)); })
+            .catch(function () { finish(false); });
+        });
+    }
+
+    function onAutosaveSuccess(snapshot, seq) {
+      // The row exists either way — record that first, so no later path can
+      // create a second one.
+      leadCreated = true;
+      failureCount = 0;
+      try { sessionStorage.removeItem(STORAGE_KEY); } catch (e) {}
+
+      var current = contactValues();
+      var stale = seq !== saveSeq ||
+                  current.full_name !== snapshot.full_name ||
+                  current.phone_raw !== snapshot.phone_raw;
+
+      savedSnapshot = snapshot;
+
+      if (stale) {
+        // A reply for values the visitor has already moved past. It may not
+        // claim the newer ones are saved, and it may not open the questions
+        // on them. The corrected values go up as an update to the same row.
+        setAutosaveStatus('pending');
+        scheduleAutosave();
+        return;
+      }
+
+      ui('contact_autosave_succeeded', 'contact');
+      setAutosaveStatus('saved');
+      revealQuestion('damage_type');
+
+      // An address typed while the first save was in flight belongs on the
+      // same row, and needs no further interaction to get there.
+      if (emailChangedSinceSave()) scheduleAutosave();
+    }
+
+    function onAutosaveFailure() {
+      failureCount += 1;
+      ui('contact_autosave_failed', 'contact');
+      setAutosaveStatus('failed');
+      var errorEl = form.querySelector('[data-submit-error]');
+      if (errorEl) {
+        errorEl.hidden = false;
+        var fb = form.querySelector('[data-submit-fallback]');
+        if (fb) fb.hidden = failureCount < 2;
+      }
+    }
+
+    // A later contact change updates the row that already exists. Never a
+    // second lead: same lead_id, op:'enrich'.
+    function sendContactUpdate(snapshot, seq) {
+      var payload = { lead_id: state.lead_id };
+      if (snapshot.email !== (savedSnapshot ? savedSnapshot.email : '') &&
+          emailIsSendable(snapshot.email)) {
+        payload.email = snapshot.email;
+      }
+      if (savedSnapshot && snapshot.full_name !== savedSnapshot.full_name) {
+        payload.full_name = snapshot.full_name;
+      }
+      if (savedSnapshot && snapshot.phone_raw !== savedSnapshot.phone_raw) {
+        payload.phone_raw = snapshot.phone_raw;
+      }
+      var keys = Object.keys(payload).filter(function (k) { return k !== 'lead_id'; });
+      if (!keys.length) return;
+
+      sendEnrichPayload(payload).then(function (result) {
+        // Same staleness rule: a reply for superseded values may not mark
+        // what is on screen now as saved.
+        if (seq !== saveSeq) return;
+        if (result.ok) {
+          savedSnapshot = snapshot;
+          if (phase === 'contact') setAutosaveStatus('saved');
+        }
+      });
+    }
+
+    // One transport for every update to an existing lead. Resolves
+    // {ok, enriched} and never throws, so callers branch on data rather than
+    // on exceptions.
+    function sendEnrichPayload(payload) {
+      var config = window.INTAKE_CONFIG || {};
+      var body = Object.assign({
+        op: 'enrich',
+        client_marker: config.clientMarker || ''
+      }, payload);
+
+      if (config.mode === 'dryrun') {
+        return new Promise(function (resolve) {
+          window.setTimeout(function () {
+            resolve({ ok: true, enriched: Object.keys(payload).filter(function (k) {
+              return k !== 'lead_id';
+            }) });
+          }, DRYRUN_DELAY_MS);
+        });
+      }
+      if (!config.endpointUrl) return Promise.resolve({ ok: false, enriched: [] });
+
+      return fetch(config.endpointUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(SUBMIT_TIMEOUT_MS)
+      })
+        .then(function (res) { return res.json(); })
+        .then(function (json) {
+          return { ok: !!(json && json.ok), enriched: (json && json.enriched) || [] };
+        })
+        .catch(function () { return { ok: false, enriched: [] }; });
+    }
+
+    // ---- the two questions ----
+
+    function questionSection(name) {
+      return form.querySelector('.intake-q[data-step="' + name + '"]');
+    }
+
+    function revealQuestion(name) {
+      var section = questionSection(name);
+      if (!section) return;
+      phase = name;
+      section.hidden = false;
+      // Focus the question itself, not its first option: a screen reader then
+      // hears what is being asked before it hears the choices.
+      var legend = section.querySelector('.intake-q__legend');
+      if (legend) legend.focus();
+    }
+
+    function setQuestionStatus(name, text) {
+      var el = form.querySelector('[data-q-status="' + name + '"]');
+      if (!el) return;
+      el.hidden = !text;
+      el.textContent = text || '';
+    }
+
+    function setQuestionRetry(name, visible) {
+      var btn = form.querySelector('[data-q-retry="' + name + '"]');
+      if (btn) btn.hidden = !visible;
+    }
+
+    // Saving an answer. The selection stays visible whatever happens; the
+    // flow advances only once the server confirms the field was written.
+    function saveAnswer(name, value, isRevision) {
+      if (enrichInFlightFor === name) return;
+      enrichInFlightFor = name;
+      enrichSeq += 1;
+      var seq = enrichSeq;
+
+      state[name] = value;
+      setQuestionRetry(name, false);
+      setQuestionStatus(name, QUESTION_SAVING);
+
+      var payload = { lead_id: state.lead_id };
+      payload[name] = value;
+
+      sendEnrichPayload(payload).then(function (result) {
+        if (seq !== enrichSeq) return;          // a newer choice supersedes this
+        enrichInFlightFor = '';
+
+        // ok:true alone is not confirmation. The server answers ok:true for a
+        // write it skipped, so the field has to appear in `enriched` before
+        // this counts as saved — otherwise a revision would advance the flow
+        // while the sheet still held the previous answer.
+        var confirmed = result.ok && result.enriched.indexOf(name) !== -1;
+        if (!confirmed) {
+          setQuestionStatus(name, QUESTION_FAILED);
+          setQuestionRetry(name, true);
+          // One automatic retry before asking the visitor to do anything.
+          if (!isRevision) {
+            window.setTimeout(function () {
+              if (state[name] === value && phase === name) saveAnswer(name, value, true);
+            }, RETRY_DELAY_MS);
+          }
+          return;
+        }
+
+        setQuestionStatus(name, '');
+        setQuestionRetry(name, false);
+        ui(name === 'damage_type' ? 'damage_type_saved' : 'case_status_saved', value.toLowerCase());
+        collapseQuestion(name, value);
+
+        var next = QUESTIONS[QUESTIONS.indexOf(name) + 1];
+        if (next && !state[next]) {
+          revealQuestion(next);
+        } else if (!next) {
+          ui('qualification_completed', 'check');
+          showCompletion();
+        } else {
+          // Revising an earlier answer when the later one is already given:
+          // go back to where the visitor was rather than asking again.
+          if (state.case_state) showCompletion();
+          else revealQuestion(next);
+        }
+      });
+    }
+
+    // An answered question becomes a one-line summary with a change control.
+    function collapseQuestion(name, value) {
+      var section = questionSection(name);
+      if (section) section.hidden = true;
+
+      var list = document.querySelector('[data-answers]');
+      if (!list) return;
+      list.hidden = false;
+
+      var id = 'answer-' + name;
+      var item = list.querySelector('#' + id);
+      if (!item) {
+        item = document.createElement('li');
+        item.className = 'intake-answer';
+        item.id = id;
+        list.appendChild(item);
+      }
+      var label = form.querySelector('#' + name + '_' + value + ' ~ .intake-option__label');
+      item.textContent = '';
+
+      var title = document.createElement('span');
+      title.className = 'intake-answer__title';
+      title.textContent = QUESTION_TITLES[name] + ': ';
+      var chosen = document.createElement('span');
+      chosen.className = 'intake-answer__value';
+      chosen.textContent = label ? label.textContent : value;
+      var change = document.createElement('button');
+      change.type = 'button';
+      change.className = 'intake-link-btn intake-answer__change';
+      change.textContent = 'שינוי';
+      change.setAttribute('aria-label', 'שינוי ' + QUESTION_TITLES[name]);
+      change.addEventListener('click', function () {
+        var completion = document.querySelector('[data-intake-success]');
+        if (completion) completion.hidden = true;
+        form.hidden = false;
+        item.remove();
+        if (!list.querySelector('.intake-answer')) list.hidden = true;
+        revealQuestion(name);
+      });
+
+      item.appendChild(title);
+      item.appendChild(chosen);
+      item.appendChild(document.createTextNode(' '));
+      item.appendChild(change);
+    }
+
+    function bindQuestions() {
+      QUESTIONS.forEach(function (name) {
+        var section = questionSection(name);
+        if (!section) return;
+        section.addEventListener('change', function (e) {
+          var t = e.target;
+          if (t.name !== name || !t.checked) return;
+          saveAnswer(name, t.value, !!state[name] && state[name] !== t.value);
+        });
+        var retry = form.querySelector('[data-q-retry="' + name + '"]');
+        if (retry) {
+          retry.addEventListener('click', function () {
+            var checked = section.querySelector('input[name="' + name + '"]:checked');
+            if (checked) saveAnswer(name, checked.value, true);
+          });
+        }
+      });
+    }
+
+    function showCompletion() {
+      phase = 'done';
+      form.hidden = true;
+      showSuccessState();
+    }
+
     function bindEvents() {
       // Single delegated listener: sync state, react to relationship
       // changes, and re-validate a field only if it already has an
@@ -267,23 +725,57 @@
         }
 
         saveState();
+        // Autofill delivers values through 'change' without a keystroke, and
+        // must reach the same validation and the same two-second clock.
+        if (t.type !== 'radio') { userInteracted = true; scheduleAutosave(); }
       });
 
+      // Batch 3.14C — the save is driven by typing, not by a button. 'input'
+      // rather than 'change' so the two-second clock starts from the last
+      // keystroke; autofill fires 'change' and is caught by the handler above,
+      // which calls the same scheduler.
+      form.addEventListener('input', function (e) {
+        var t = e.target;
+        if (!t.name || t.name === 'website') return;
+        if (t.type === 'radio') return;
+        state[t.name] = t.value;
+        userInteracted = true;
+        if (t.getAttribute('aria-invalid') === 'true') {
+          if (t.id === 'short_description') validateShortDescription();
+          else validateTextField(t);
+        }
+        saveState();
+        scheduleAutosave();
+      });
+
+      // The form has no submit button in the normal flow. This exists only so
+      // that Enter in a text field cannot navigate away mid-save.
       form.addEventListener('submit', function (e) {
         e.preventDefault();
-        if (!validateStep()) return;
-        attemptPersist();
       });
 
+      // Manual retry — reachable only from the error state, never part of the
+      // successful flow.
       form.querySelectorAll('[data-action="retry-submit"]').forEach(function (btn) {
         btn.addEventListener('click', function () {
-          // Fields stay editable while the error state is shown, so a
-          // manual retry re-validates rather than resubmitting stale/
-          // corrected-and-forgotten data blindly.
+          hideSubmitError();
           if (!validateStep()) return;
-          attemptPersist();
+          runAutosave();
         });
       });
+
+      bindQuestions();
+
+      // /check/ does not load main.js, so the generic WhatsApp links on this
+      // page are wired here. The URL is the bare number plus the prepared
+      // message — never a name, a phone number, an address or a lead id.
+      if (window.TAVIV_CONTACT && typeof window.TAVIV_CONTACT.whatsappUrl === 'function') {
+        var waUrl = window.TAVIV_CONTACT.whatsappUrl();
+        document.querySelectorAll('[data-wa-link]').forEach(function (a) {
+          a.setAttribute('href', waUrl);
+          a.addEventListener('click', function () { ui('whatsapp_click', 'escape'); });
+        });
+      }
     }
 
     // Post-save state — Batch 3.14. The lead exists: the server said so, and
@@ -322,7 +814,7 @@
           // UI channel, not service_log: the lead already exists and this
           // is a continuation choice, not interest in a service.
           if (window.ATTRIBUTION && typeof window.ATTRIBUTION.recordUiEvent === 'function') {
-            window.ATTRIBUTION.recordUiEvent('whatsapp_click', 'post_save', 'check');
+            window.ATTRIBUTION.recordUiEvent('post_save_whatsapp_clicked', 'check', 'check');
           }
         });
       }
@@ -419,18 +911,9 @@
         .catch(function () { done(false); });
     }
 
-    function setSubmitDisabled(disabled) {
-      form.querySelectorAll('button[type="submit"], [data-action="retry-submit"]').forEach(function (btn) {
-        btn.disabled = disabled;
-      });
-    }
-
-    function showSendingStatus(visible) {
-      form.querySelector('[data-sending-status]').hidden = !visible;
-    }
-
     function hideSubmitError() {
-      form.querySelector('[data-submit-error]').hidden = true;
+      var el = form.querySelector('[data-submit-error]');
+      if (el) el.hidden = true;
     }
 
     function buildPayload() {
@@ -504,98 +987,10 @@
       });
     }
 
-    function attemptPersist() {
-      if (persistInFlight) return;
-
-      var config = window.INTAKE_CONFIG || {};
-
-      // Dry run — the public beta. NOT a hostname guess: an explicit flag,
-      // because a hostname heuristic quietly becomes "live" the day the beta
-      // moves. Nothing is sent, nothing is stored, and the flow still
-      // completes so the whole UI can be reviewed. The beta build also
-      // rewrites the success copy, so this state never claims a lead was
-      // received. Production ships mode:'live' and never reaches this.
-      if (config.mode === 'dryrun') {
-        persistInFlight = true;
-        setSubmitDisabled(true);
-        hideSubmitError();
-        showSendingStatus(true);
-        window.setTimeout(function () {
-          onPersistSuccess();
-        }, DRYRUN_DELAY_MS);
-        return;
-      }
-
-      // No endpoint configured => the lead cannot be saved. The capability
-      // guard at init should have kept the form off the page entirely, so
-      // reaching here means the configuration changed under us. Still a
-      // failure, and still the approved generic failure state (§8.10.5) —
-      // never a success message for something that was never sent.
-      var endpointUrl = config.endpointUrl;
-      if (!endpointUrl) {
-        onPersistFailure();
-        return;
-      }
-
-      persistInFlight = true;
-      setSubmitDisabled(true);
-      hideSubmitError();
-      showSendingStatus(true);
-
-      sendLead()
-        .then(function (json) {
-          if (json && json.ok) {
-            onPersistSuccess();
-          } else {
-            return retryOnce();
-          }
-        })
-        .catch(function () {
-          return retryOnce();
-        });
-    }
-
-    // Exactly one automatic retry, same lead_id, after a 2s wait — on
-    // network error, timeout, or a response that isn't a valid ok:true.
-    function retryOnce() {
-      return new Promise(function (resolve) {
-        setTimeout(resolve, RETRY_DELAY_MS);
-      })
-        .then(sendLead)
-        .then(function (json) {
-          if (json && json.ok) {
-            onPersistSuccess();
-          } else {
-            onPersistFailure();
-          }
-        })
-        .catch(function () {
-          onPersistFailure();
-        });
-    }
-
-    function onPersistSuccess() {
-      persistInFlight = false;
-      failureCount = 0;
-      showSendingStatus(false);
-      setSubmitDisabled(false);
-      // The draft has served its purpose; leaving it would repopulate the
-      // form if the user returns to /check/ in the same tab.
-      try { sessionStorage.removeItem(STORAGE_KEY); } catch (e) {}
-      showSuccessState();
-    }
-
-    function onPersistFailure() {
-      persistInFlight = false;
-      failureCount += 1;
-      showSendingStatus(false);
-      setSubmitDisabled(false);
-
-      var errorEl = form.querySelector('[data-submit-error]');
-      errorEl.hidden = false;
-      form.querySelector('[data-submit-fallback]').hidden = failureCount < 2;
-      errorEl.focus();
-    }
+    // Batch 3.14C — the old submit-driven persistence path (attemptPersist,
+    // retryOnce, onPersistSuccess, onPersistFailure) is gone with the button
+    // that drove it. Creation now runs through runAutosave/persistSnapshot,
+    // and every later write through sendEnrichPayload.
 
     function restoreUIFromState() {
       RADIO_GROUPS.forEach(function (name) {

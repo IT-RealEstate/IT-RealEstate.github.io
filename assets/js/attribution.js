@@ -181,7 +181,16 @@
   var SERVICE_EVENTS = ['service_details_open', 'service_price_reveal', 'service_cta_click'];
 
   var UI_KEY = 'ui_events_v1';
-  var UI_EVENTS = ['faq_open', 'faq_close', 'whatsapp_click', 'callback_request', 'cta_click'];
+  // Batch 3.14C adds the silent-save lifecycle. These are lifecycle facts
+  // only — an id is a stable English slug (a phase name or an enum value in
+  // lower case), never a name, a phone number, an address, the Hebrew text of
+  // an answer, a lead id or a message body. recordUiEvent's own id pattern
+  // (/^[a-z0-9_]{1,48}$/) refuses anything that could carry one.
+  var UI_EVENTS = ['faq_open', 'faq_close', 'whatsapp_click', 'callback_request', 'cta_click',
+                   'contact_autosave_eligible', 'contact_autosave_started',
+                   'contact_autosave_succeeded', 'contact_autosave_failed',
+                   'damage_type_saved', 'case_status_saved', 'qualification_completed',
+                   'post_save_whatsapp_clicked'];
 
   function loadUi() {
     try {

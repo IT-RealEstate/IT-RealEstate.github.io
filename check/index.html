@@ -47,6 +47,16 @@
     </div>
 
     <div class="intake-app" data-intake-app hidden>
+
+      <p class="intake-escape">
+        <a class="intake-link intake-escape__wa" data-wa-link href="https://wa.me/972552617625" rel="noopener">
+          <svg class="wa-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" width="18" height="18">
+            <path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm0 18.17h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.19 8.19 0 0 1-1.26-4.4c0-4.54 3.7-8.23 8.25-8.23 2.2 0 4.27.86 5.83 2.41a8.19 8.19 0 0 1 2.41 5.83c0 4.54-3.7 8.25-8.24 8.25Zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.79.97-.14.16-.29.18-.54.06-.25-.13-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.5.11-.11.25-.29.37-.43.13-.15.17-.25.25-.41.08-.17.04-.31-.02-.44-.06-.12-.56-1.35-.77-1.84-.2-.49-.4-.42-.56-.43h-.47c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.21.89 2.39 1.01 2.55.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.2-.58.2-1.08.15-1.18-.06-.11-.23-.17-.48-.29Z"/>
+          </svg>
+          <span>מעדיפים לכתוב? אפשר להמשיך ב־WhatsApp</span>
+        </a>
+      </p>
+
       <form class="intake-form" data-intake-form novalidate>
 
         <h1 class="intake-form__title">בדיקת התאמה ראשונית</h1>
@@ -54,6 +64,8 @@
 
         <section class="intake-step" data-step="contact">
           <h2 class="intake-step__title" tabindex="-1">פרטי התקשרות</h2>
+
+          <p class="intake-autosave__promise">בגרסת הבדיקה הפרטים נשמרים זמנית בדפדפן בלבד ואינם נשלחים.</p>
 
           <div class="intake-field">
             <label class="intake-field__label" for="full_name">שם מלא</label>
@@ -73,6 +85,13 @@
             <p class="intake-field__error" id="email-error" role="alert"></p>
           </div>
 
+          <p class="intake-autosave" role="status" aria-live="polite" data-autosave-status hidden></p>
+
+          <div class="intake-submit-error" role="alert" data-submit-error tabindex="-1" hidden>
+            <button type="button" class="btn" data-action="retry-submit">לנסות שוב</button>
+            <p class="intake-submit-error__fallback" data-submit-fallback hidden>אפשר גם להתקשר: <a href="tel:+972552617625" dir="ltr">055-2617625</a></p>
+          </div>
+
           <div class="intake-honeypot" aria-hidden="true">
             <label for="website">Website</label>
             <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
@@ -89,26 +108,87 @@
             </p>
           </div>
 
-          <div class="intake-step__nav">
-            <button type="submit" class="btn" data-submit-lead>שמרו והמשיכו</button>
-          </div>
 
           <p class="intake-legal__validity">האתר אינו מאפשר רכישה, הזמנה או תשלום. שליחת הפרטים מיועדת לבדיקת התאמה וליצירת קשר בלבד ואינה יוצרת התקשרות מחייבת.</p>
 
-          <p class="intake-sending" role="status" aria-live="polite" data-sending-status hidden>שולחים את הפרטים…</p>
 
-          <div class="intake-submit-error" role="alert" data-submit-error tabindex="-1" hidden>
-            <h3 class="intake-submit-error__title">לא הצלחנו לשמור את הפרטים</h3>
-            <p class="intake-submit-error__body">הפרטים שהזנת נשארו כאן. אפשר לנסות שוב בעוד רגע.</p>
-            <button type="button" class="btn" data-action="retry-submit">לנסות שוב</button>
-            <p class="intake-submit-error__fallback" data-submit-fallback hidden>אפשר גם להתקשר: <a href="tel:+972552617625" dir="ltr">055-2617625</a></p>
-          </div>
         </section>
+
+        <section class="intake-step intake-q" data-step="damage_type" hidden>
+          <fieldset class="intake-q__set">
+            <legend class="intake-q__legend" tabindex="-1">מה סוג הנזק?</legend>
+            <div class="intake-options">
+            <label class="intake-option" for="damage_type_WATER">
+              <input class="intake-option__input" type="radio" id="damage_type_WATER" name="damage_type" value="WATER">
+              <span class="intake-option__label">מים או רטיבות</span>
+            </label>
+            <label class="intake-option" for="damage_type_FIRE">
+              <input class="intake-option__input" type="radio" id="damage_type_FIRE" name="damage_type" value="FIRE">
+              <span class="intake-option__label">אש או עשן</span>
+            </label>
+            <label class="intake-option" for="damage_type_BURGLARY">
+              <input class="intake-option__input" type="radio" id="damage_type_BURGLARY" name="damage_type" value="BURGLARY">
+              <span class="intake-option__label">פריצה</span>
+            </label>
+            <label class="intake-option" for="damage_type_STORM">
+              <input class="intake-option__input" type="radio" id="damage_type_STORM" name="damage_type" value="STORM">
+              <span class="intake-option__label">סערה או מזג אוויר</span>
+            </label>
+            <label class="intake-option" for="damage_type_STRUCTURAL">
+              <input class="intake-option__input" type="radio" id="damage_type_STRUCTURAL" name="damage_type" value="STRUCTURAL">
+              <span class="intake-option__label">סדקים או נזק מבני</span>
+            </label>
+            <label class="intake-option" for="damage_type_OTHER">
+              <input class="intake-option__input" type="radio" id="damage_type_OTHER" name="damage_type" value="OTHER">
+              <span class="intake-option__label">אחר / לא בטוח</span>
+            </label>
+            </div>
+          </fieldset>
+          <p class="intake-q__status" role="status" aria-live="polite" data-q-status="damage_type" hidden></p>
+          <button type="button" class="btn intake-q__retry" data-q-retry="damage_type" hidden>לנסות שוב</button>
+        </section>
+
+        <section class="intake-step intake-q" data-step="case_state" hidden>
+          <fieldset class="intake-q__set">
+            <legend class="intake-q__legend" tabindex="-1">מה מצב המקרה כרגע?</legend>
+            <div class="intake-options">
+            <label class="intake-option" for="case_state_RECENT_DAMAGE">
+              <input class="intake-option__input" type="radio" id="case_state_RECENT_DAMAGE" name="case_state" value="RECENT_DAMAGE">
+              <span class="intake-option__label">הנזק קרה עכשיו או לאחרונה</span>
+            </label>
+            <label class="intake-option" for="case_state_SOURCE_UNKNOWN">
+              <input class="intake-option__input" type="radio" id="case_state_SOURCE_UNKNOWN" name="case_state" value="SOURCE_UNKNOWN">
+              <span class="intake-option__label">מקור הנזק עדיין לא ידוע</span>
+            </label>
+            <label class="intake-option" for="case_state_SOURCE_FIXED_DAMAGE_REMAINS">
+              <input class="intake-option__input" type="radio" id="case_state_SOURCE_FIXED_DAMAGE_REMAINS" name="case_state" value="SOURCE_FIXED_DAMAGE_REMAINS">
+              <span class="intake-option__label">המקור אותר או תוקן ונשאר נזק</span>
+            </label>
+            <label class="intake-option" for="case_state_ASSESSMENT_OR_OFFER_RECEIVED">
+              <input class="intake-option__input" type="radio" id="case_state_ASSESSMENT_OR_OFFER_RECEIVED" name="case_state" value="ASSESSMENT_OR_OFFER_RECEIVED">
+              <span class="intake-option__label">כבר התקבלה שומה או הצעת פיצוי</span>
+            </label>
+            <label class="intake-option" for="case_state_ACTIVE_DISPUTE_OR_PROCEEDING">
+              <input class="intake-option__input" type="radio" id="case_state_ACTIVE_DISPUTE_OR_PROCEEDING" name="case_state" value="ACTIVE_DISPUTE_OR_PROCEEDING">
+              <span class="intake-option__label">קיים סכסוך או הליך פעיל</span>
+            </label>
+            <label class="intake-option" for="case_state_UNSURE">
+              <input class="intake-option__input" type="radio" id="case_state_UNSURE" name="case_state" value="UNSURE">
+              <span class="intake-option__label">איני בטוח מה מתאים</span>
+            </label>
+            </div>
+          </fieldset>
+          <p class="intake-q__status" role="status" aria-live="polite" data-q-status="case_state" hidden></p>
+          <button type="button" class="btn intake-q__retry" data-q-retry="case_state" hidden>לנסות שוב</button>
+        </section>
+
 
       </form>
 
+
       <section class="intake-success" data-intake-success tabindex="-1" role="status" aria-live="polite" hidden>
         <h1 class="intake-success__title">זהו המסך שיוצג לאחר שמירה. בגרסת הבדיקה הזו לא נשלח דבר, ולא הגיעה אלינו שום פנייה.</h1>
+        <p class="intake-success__lede">אפשר להמשיך עכשיו ב־WhatsApp ולשלוח תמונות, מסמכים או הודעה קולית.</p>
 
         <div class="intake-success__actions">
           <a class="btn intake-success__wa" data-continue-whatsapp href="#" rel="noopener"
@@ -120,6 +200,12 @@
           </a>
           <button type="button" class="btn btn--quiet" data-continue-callback>אפשר לחזור אליי</button>
         </div>
+
+        <p class="intake-success__secondary">
+          <a class="intake-link" href="tel:+972552617625" dir="ltr" data-success-call>055-2617625</a>
+          <span aria-hidden="true"> · </span>
+          <a class="intake-link" href="/">חזרה לאתר</a>
+        </p>
 
         <p class="intake-success__callback" data-callback-note role="status" aria-live="polite" hidden>מצוין. נחזור אליכם בטלפון שהשארתם.</p>
 
@@ -137,6 +223,8 @@
           <p class="intake-details__status" data-details-status role="status" aria-live="polite" hidden></p>
         </div>
       </section>
+
+      <ul class="intake-answers" data-answers hidden></ul>
     </div>
   </main>
 
