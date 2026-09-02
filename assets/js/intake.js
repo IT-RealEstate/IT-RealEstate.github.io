@@ -13,7 +13,7 @@
       throw new Error('intake form not found');
     }
 
-    var TOTAL_STEPS = 3;
+    var TOTAL_STEPS = 1;   // Batch 3.14 — one screen before the save.
     // v2: the v5 field contract dropped four fields and renamed two. A stale
     // v1 draft would restore values for inputs that no longer exist, so the
     // key is bumped rather than migrated — a half-filled draft is not worth
@@ -37,13 +37,16 @@
     // reviewed, short enough not to feel broken. Never used in 'live'.
     var DRYRUN_DELAY_MS = 700;
 
-    // Content Spec §8.1 — seven user-facing fields, no more. Six required,
-    // short_description optional (validated by nobody, sent as typed).
-    var RADIO_GROUPS = ['damage_type', 'case_state'];
+    // Batch 3.14 — lead-first. Two required fields and one optional, asked
+    // before anything else, so the lead exists before qualification does.
+    // damage_type, case_state and property_city are no longer asked here;
+    // they stay in the schema and can arrive later through enrichment or
+    // through the conversation.
+    var RADIO_GROUPS = [];
     // Must match FIELD_MAX_LENGTHS.short_description in apps-script/Code.gs.
     var SHORT_DESCRIPTION_MAX = 1000;
-    var TEXT_FIELDS = ['full_name', 'phone_raw', 'email', 'property_city'];
-    var OPTIONAL_TEXT_FIELDS = ['short_description'];
+    var TEXT_FIELDS = ['full_name', 'phone_raw'];
+    var OPTIONAL_TEXT_FIELDS = ['email', 'short_description'];
 
     var state = {
       lead_id: '',
@@ -186,7 +189,11 @@
       var ok = true;
       var message = '';
 
-      if (value === '') {
+      // Batch 3.14 — email is optional. Empty passes; a typo does not,
+      // because storing a malformed address is worse than storing none.
+      if (value === '' && OPTIONAL_TEXT_FIELDS.indexOf(input.id) !== -1) {
+        ok = true;
+      } else if (value === '') {
         ok = false;
         message = msgs.missing;
       } else if (input.id === 'phone_raw' && !isValidIsraeliPhone(value)) {
@@ -202,8 +209,8 @@
       return ok;
     }
 
-    function validateStep(n) {
-      var stepEl = form.querySelector('.intake-step[data-step="' + n + '"]');
+    function validateStep() {
+      var stepEl = form.querySelector('.intake-step[data-step="contact"]');
       var firstInvalid = null;
 
       RADIO_GROUPS.forEach(function (name) {
@@ -215,7 +222,12 @@
         }
       });
 
-      TEXT_FIELDS.forEach(function (name) {
+      // Required fields, then the optional ones. An optional field still has
+      // to be well formed when it is filled in — Batch 3.14: leaving the
+      // email out is fine, mistyping it is not, and catching that here is
+      // what keeps the visitor from meeting a generic server rejection with
+      // no idea which field was wrong.
+      TEXT_FIELDS.concat(OPTIONAL_TEXT_FIELDS).forEach(function (name) {
         var input = stepEl.querySelector('#' + name);
         if (!input || isHidden(input)) return;
         var ok = validateTextField(input);
@@ -224,11 +236,6 @@
         }
       });
 
-      var shortDesc = stepEl.querySelector('#short_description');
-      if (shortDesc && !isHidden(shortDesc) && !validateShortDescription() && !firstInvalid) {
-        firstInvalid = shortDesc;
-      }
-
       if (firstInvalid) {
         firstInvalid.focus();
         return false;
@@ -236,35 +243,7 @@
       return true;
     }
 
-    // ---- step navigation ----
-    function goToStep(n, opts) {
-      opts = opts || {};
-      state.step = n;
-      form.querySelectorAll('.intake-step').forEach(function (sec) {
-        sec.hidden = Number(sec.getAttribute('data-step')) !== n;
-      });
-      saveState();
-      if (opts.focus !== false) {
-        var heading = form.querySelector('.intake-step[data-step="' + n + '"] .intake-step__title');
-        if (heading) heading.focus();
-      }
-    }
-
     function bindEvents() {
-      form.querySelectorAll('[data-action="next"]').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          if (validateStep(state.step)) {
-            goToStep(Math.min(state.step + 1, TOTAL_STEPS));
-          }
-        });
-      });
-
-      form.querySelectorAll('[data-action="back"]').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          goToStep(Math.max(state.step - 1, 1), { focus: true });
-        });
-      });
-
       // Single delegated listener: sync state, react to relationship
       // changes, and re-validate a field only if it already has an
       // existing error (a11y spec §20 — validate on Next/submit/correction,
@@ -292,7 +271,7 @@
 
       form.addEventListener('submit', function (e) {
         e.preventDefault();
-        if (!validateStep(TOTAL_STEPS)) return;
+        if (!validateStep()) return;
         attemptPersist();
       });
 
@@ -301,21 +280,141 @@
           // Fields stay editable while the error state is shown, so a
           // manual retry re-validates rather than resubmitting stale/
           // corrected-and-forgotten data blindly.
-          if (!validateStep(TOTAL_STEPS)) return;
+          if (!validateStep()) return;
           attemptPersist();
         });
       });
     }
 
-    // Approved Success State — Content Spec §9. The form is hidden and the
-    // success section revealed, so exactly one <h1> is ever exposed. Nothing
-    // opens WhatsApp: AUTO_WHATSAPP_HANDOFF = DISABLED (§22). The flow ends
-    // here; the copy makes no SLA and no claim the case was accepted (C-65).
+    // Post-save state — Batch 3.14. The lead exists: the server said so, and
+    // nothing here is reached on any other path. The form is replaced in
+    // place, in the same component and viewport — no navigation, no reload —
+    // so exactly one <h1> is ever exposed.
+    //
+    // None of the three continuations is required. The visitor who closes the
+    // tab here has still left us a lead, which is the whole point of saving
+    // before asking.
     function showSuccessState() {
       var success = document.querySelector('[data-intake-success]');
+      var wa = success.querySelector('[data-continue-whatsapp]');
+      if (wa && window.TAVIV_CONTACT) {
+        // Generic by default. A server-issued public code would arrive in the
+        // save response and flow through the same call — never a
+        // client-invented token, and never the internal lead_id.
+        wa.setAttribute('href', window.TAVIV_CONTACT.continuationUrl(state.public_handoff_code));
+        wa.setAttribute('target', '_blank');
+      }
       form.hidden = true;
       success.hidden = false;
       success.focus();
+    }
+
+    // ---- continuation choices -------------------------------------------
+    function bindSuccessActions() {
+      var success = document.querySelector('[data-intake-success]');
+      if (!success) return;
+
+      var wa = success.querySelector('[data-continue-whatsapp]');
+      if (wa) {
+        wa.addEventListener('click', function () {
+          // A CTA event, not a lead: the lead was created at save time and
+          // opening WhatsApp neither creates nor completes one.
+          if (window.ATTRIBUTION && typeof window.ATTRIBUTION.recordServiceEvent === 'function') {
+            window.ATTRIBUTION.recordServiceEvent('whatsapp_continue', 'post_save');
+          }
+        });
+      }
+
+      var callback = success.querySelector('[data-continue-callback]');
+      var note = success.querySelector('[data-callback-note]');
+      if (callback && note) {
+        callback.addEventListener('click', function () {
+          // Nothing to send: the phone number is already on the lead. This
+          // only tells the visitor what will happen, so the screen does not
+          // end on an unanswered question.
+          callback.hidden = true;
+          note.hidden = false;
+          note.focus && note.focus();
+          if (window.ATTRIBUTION && typeof window.ATTRIBUTION.recordServiceEvent === 'function') {
+            window.ATTRIBUTION.recordServiceEvent('callback_request', 'post_save');
+          }
+        });
+      }
+
+      var toggle = success.querySelector('[data-details-toggle]');
+      var details = success.querySelector('[data-details]');
+      if (toggle && details) {
+        toggle.addEventListener('click', function () {
+          details.hidden = false;
+          toggle.setAttribute('aria-expanded', 'true');
+          toggle.hidden = true;
+          var field = details.querySelector('#short_description');
+          if (field) field.focus();
+        });
+      }
+
+      var save = success.querySelector('[data-details-save]');
+      if (save && details) {
+        save.addEventListener('click', function () { sendEnrichment(save, details); });
+      }
+    }
+
+    // Enrichment updates the lead that already exists — same lead_id, same
+    // row. It can never create a second one: the server's enrich path refuses
+    // a lead_id it cannot find rather than inserting.
+    var enrichInFlight = false;
+
+    function sendEnrichment(button, details) {
+      if (enrichInFlight) return;
+      var field = details.querySelector('#short_description');
+      var status = details.querySelector('[data-details-status]');
+      var value = (field && field.value.trim()) || '';
+      if (!value) return;
+
+      if (codePointLength(value) > SHORT_DESCRIPTION_MAX) {
+        status.hidden = false;
+        status.textContent = MESSAGES.short_description.tooLong;
+        return;
+      }
+
+      var config = window.INTAKE_CONFIG || {};
+      enrichInFlight = true;
+      button.disabled = true;
+      status.hidden = false;
+      status.textContent = 'שומרים…';
+
+      var done = function (ok) {
+        enrichInFlight = false;
+        button.disabled = false;
+        // The lead is already saved either way, so a failed enrichment is
+        // never presented as losing the enquiry — and never as a success.
+        status.textContent = ok
+          ? 'התיאור נשמר.'
+          : 'לא הצלחנו לשמור את התיאור, אבל הפרטים שלכם כבר אצלנו. אפשר לספר לנו בשיחה.';
+        if (ok) { field.readOnly = true; button.hidden = true; }
+      };
+
+      if (config.mode === 'dryrun' || config.mode === 'prelaunch') {
+        window.setTimeout(function () { done(true); }, DRYRUN_DELAY_MS);
+        return;
+      }
+      if (!config.endpointUrl) { done(false); return; }
+
+      fetch(config.endpointUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          op: 'enrich',
+          lead_id: state.lead_id,
+          client_marker: config.clientMarker || '',
+          short_description: value,
+          form_started_at: state.form_started_at
+        }),
+        signal: AbortSignal.timeout(SUBMIT_TIMEOUT_MS)
+      })
+        .then(function (res) { return res.json(); })
+        .then(function (json) { done(!!(json && json.ok)); })
+        .catch(function () { done(false); });
     }
 
     function setSubmitDisabled(disabled) {
@@ -425,8 +524,10 @@
         return;
       }
 
-      // No endpoint configured => the lead cannot be saved. That is a
-      // failure, and it uses the approved generic failure state (§8.10.5) —
+      // No endpoint configured => the lead cannot be saved. The capability
+      // guard at init should have kept the form off the page entirely, so
+      // reaching here means the configuration changed under us. Still a
+      // failure, and still the approved generic failure state (§8.10.5) —
       // never a success message for something that was never sent.
       var endpointUrl = config.endpointUrl;
       if (!endpointUrl) {
@@ -504,7 +605,6 @@
         var input = form.querySelector('#' + name);
         if (input && state[name]) input.value = state[name];
       });
-      goToStep(state.step || 1, { focus: false });
     }
 
     loadState();
@@ -512,7 +612,42 @@
     if (!state.form_started_at) state.form_started_at = new Date().toISOString();
     restoreUIFromState();
     bindEvents();
+    bindSuccessActions();
     saveState();
+
+    // ---- capability guard — Batch 3.14 -----------------------------------
+    //
+    // A form that takes a name and a phone number is a promise to do
+    // something with them. If nothing can be saved — no endpoint, or the
+    // build is prelaunch, or persistence was switched off — that promise
+    // cannot be kept, and showing the form anyway would collect details only
+    // to drop them. So the form is not offered at all: the fallback already
+    // on the page becomes the answer, with WhatsApp first and the phone
+    // second, both of which reach a human immediately.
+    //
+    // This is deliberately a capability check, not a mode check. It keeps
+    // working after the production endpoint is activated: switch
+    // leadPersistence to 'off' during an incident and the site degrades to
+    // contact-only instead of silently failing on submit.
+    var contact = window.TAVIV_CONTACT;
+    var canPersist = !contact || contact.leadPersistenceAvailable();
+
+    if (contact) {
+      var waFallback = fallback.querySelector('[data-fallback-whatsapp]');
+      if (waFallback) { waFallback.setAttribute('href', contact.whatsappUrl()); }
+    }
+
+    if (!canPersist) {
+      // Same fallback element, honest heading: nothing failed to load, we
+      // simply are not taking details right now.
+      var title = fallback.querySelector('.intake-fallback__title');
+      var body = fallback.querySelector('.intake-fallback__body');
+      if (title) { title.textContent = 'אפשר ליצור קשר ישירות'; }
+      if (body) { body.textContent = 'הטופס אינו פעיל כרגע. אפשר לכתוב בוואטסאפ או להתקשר, ונמשיך משם.'; }
+      fallback.hidden = false;
+      app.hidden = true;
+      return;
+    }
 
     // Everything above succeeded — reveal the real form, hide the fallback.
     fallback.hidden = true;

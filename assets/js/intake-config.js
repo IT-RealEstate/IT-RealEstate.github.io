@@ -1,36 +1,49 @@
-// Intake client configuration boundary.
+// Central CTA and intake configuration — Batch 3.14.
 //
-// NOTHING IN THIS FILE IS OR MAY EVER BE A SECRET. It is served to every
-// visitor. Do not put a credential, an API key or a shared password here,
-// and do not let any server-side check depend on one being here.
+// Everything the public site needs to know about where a lead goes and how a
+// visitor can reach us lives here, in one file, so a destination can change
+// without touching a button. Nothing here is a secret: see the note on
+// endpointUrl below.
 //
-// endpointUrl  the deployed Apps Script Web App URL. Public by design — a
-//              Web App URL is a write endpoint, not a credential. What
-//              protects it is enforcement in apps-script/Code.gs: body-size
-//              limit, field allow-listing, schema validation, the honeypot
-//              and fill-time heuristic, idempotency and a global rate limit.
+// FIELDS
 //
-// clientMarker a public protocol/version string, echoed in the request body
-//              and compared against CLIENT_MARKER in Code.gs. It turns away
-//              a blind POST to a /exec URL scraped from a log. It is NOT
-//              authentication and stops no determined attacker.
+// endpointUrl   the deployed Apps Script Web App URL. Public by design — a
+//               write-only append endpoint that accepts one shape of JSON and
+//               returns a typed code. Anyone who finds it can add a row and
+//               read nothing. It is not a credential and must never be
+//               described as one. Empty string = no persistence configured.
 //
-//              It replaces the old `requestToken`, which compared against a
-//              REQUEST_TOKEN Script Property this repository could not see.
-//              The two sides drifted — the shipped value was '' — so the
-//              server rejected EVERY valid lead with invalid_token. Both
-//              sides of the comparison now live in Git and deploy together.
-//              Keep this value identical to CLIENT_MARKER in Code.gs.
+// clientMarker  a protocol version tag the server whitelists. NOT
+//               authentication. Do not put a credential, an API key or a
+//               shared password in this file; it ships to every visitor.
 //
-// mode         'live'   — submissions are sent to endpointUrl.
-//              'dryrun' — intake.js issues NO network request at all and
-//                         completes the flow locally, so the full UI can be
-//                         reviewed without a lead being created. The public
-//                         beta build sets this; production must not.
+// mode          'live'      submissions are sent to endpointUrl.
+//               'dryrun'    the review beta: nothing is sent, the flow still
+//                           completes, and the build rewrites the success copy
+//                           so it never claims a lead was received.
+//               'prelaunch' the published-but-not-launched build: nothing is
+//                           sent and the form is not offered at all.
 //
-//              An explicit flag, deliberately not a hostname guess: a
-//              hostname heuristic silently turns into "live" the moment the
-//              beta moves to another host.
+// leadPersistence
+//               'auto'  availability follows mode + endpointUrl (the normal
+//                       setting).
+//               'off'   force the WhatsApp-first fallback even if an endpoint
+//                       is configured — for an incident, or while the backend
+//                       is being redeployed.
+//               There is deliberately no 'on': a build cannot assert that a
+//               backend works. Availability is derived, never declared.
+//
+// whatsappNumber / whatsappMessage
+//               the fast path. The prepared message carries no personal data,
+//               no form values and no lead id, because a wa.me URL is visible
+//               in the address bar, in history and to anything that logs it.
+//
+// handoffUrlTemplate
+//               reserved for the future App-generated secure handoff. When a
+//               server-issued public code exists, put a template containing
+//               {code} here and every post-save WhatsApp button follows it
+//               without any of them being rewritten. Empty = use the generic
+//               prepared message.
 // ---------------------------------------------------------------------
 // BETA BUILD - LEAD SUBMISSION DELIBERATELY DISABLED, TWICE.
 //
@@ -44,5 +57,46 @@
 window.INTAKE_CONFIG = {
   endpointUrl: '',
   clientMarker: 'taviv-web-1',
-  mode: 'dryrun'
+  mode: 'dryrun',
+  leadPersistence: 'auto',
+  whatsappNumber: '972552617625',
+  whatsappMessage: 'שלום, הגעתי מאתר טביב שמאות ואני רוצה לבדוק מקרה נזק.',
+  handoffUrlTemplate: ''
 };
+
+// Derived helpers, so every caller asks the same question the same way.
+window.TAVIV_CONTACT = (function () {
+  var cfg = window.INTAKE_CONFIG || {};
+
+  // Can a lead actually be saved right now? Three things have to hold, and a
+  // build can only ever answer "no" with confidence — a successful save is
+  // proved by the server's response, never by configuration.
+  function leadPersistenceAvailable() {
+    if (cfg.leadPersistence === 'off') { return false; }
+    if (cfg.mode === 'prelaunch') { return false; }
+    if (cfg.mode === 'dryrun') { return true; }   // the beta completes the flow on purpose
+    return typeof cfg.endpointUrl === 'string' && cfg.endpointUrl !== '';
+  }
+
+  // The generic fast path. No personal data, no form values, no lead id.
+  function whatsappUrl() {
+    var n = cfg.whatsappNumber || '';
+    var m = cfg.whatsappMessage || '';
+    return 'https://wa.me/' + n + (m ? '?text=' + encodeURIComponent(m) : '');
+  }
+
+  // The post-save button. Falls back to the generic link until a
+  // server-issued public code exists, and never invents one client-side.
+  function continuationUrl(publicCode) {
+    var t = cfg.handoffUrlTemplate;
+    if (t && publicCode) { return t.replace('{code}', encodeURIComponent(publicCode)); }
+    return whatsappUrl();
+  }
+
+  return {
+    leadPersistenceAvailable: leadPersistenceAvailable,
+    whatsappUrl: whatsappUrl,
+    continuationUrl: continuationUrl,
+    telUrl: 'tel:+972552617625'
+  };
+})();

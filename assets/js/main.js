@@ -27,6 +27,31 @@
     }, { passive: true });
   }
 
+  // WhatsApp links — Batch 3.14.
+  //
+  // Every wa.me link on the site is written from the one central config, so
+  // the number and the prepared message live in a single place and a future
+  // App-generated handoff replaces them without touching any button. The
+  // markup ships with a working generic href, so the link is correct even if
+  // this script never runs.
+  //
+  // The URL never carries a name, a phone number, a form value or a lead id:
+  // it is visible in the address bar, in browsing history, and to anything
+  // that logs a navigation.
+  var contact = window.TAVIV_CONTACT;
+  if (contact) {
+    var waUrl = contact.whatsappUrl();
+    Array.prototype.forEach.call(document.querySelectorAll('[data-wa-link]'), function (link) {
+      link.setAttribute('href', waUrl);
+      link.addEventListener('click', function () {
+        // A CTA event, never a lead: opening WhatsApp creates nothing.
+        if (window.ATTRIBUTION && typeof window.ATTRIBUTION.recordServiceEvent === 'function') {
+          window.ATTRIBUTION.recordServiceEvent('whatsapp_click', 'header');
+        }
+      });
+    });
+  }
+
   // Navigation menu — Batch 3.7 / OD-3.7-02.
   // No dependency, no library, no animation. The panel's visibility is the
   // `hidden` attribute and nothing else, so with JS off the menu is simply

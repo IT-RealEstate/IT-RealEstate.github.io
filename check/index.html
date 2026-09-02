@@ -34,95 +34,43 @@
     <div class="intake-fallback" data-intake-fallback>
       <h1 class="intake-fallback__title">לא ניתן לטעון את הבדיקה המקוונת כרגע</h1>
       <p class="intake-fallback__body">אפשר ליצור קשר ישירות ולהמשיך משם.</p>
-      <a class="btn" href="tel:+972552617625" dir="ltr">055-2617625</a>
+      <div class="intake-fallback__actions">
+        <a class="btn intake-success__wa" data-fallback-whatsapp href="https://wa.me/972552617625" rel="noopener"
+           aria-label="פנייה בוואטסאפ">
+          <svg class="wa-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" width="20" height="20">
+            <path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm0 18.17h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.19 8.19 0 0 1-1.26-4.4c0-4.54 3.7-8.23 8.25-8.23 2.2 0 4.27.86 5.83 2.41a8.19 8.19 0 0 1 2.41 5.83c0 4.54-3.7 8.25-8.24 8.25Zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.79.97-.14.16-.29.18-.54.06-.25-.13-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.5.11-.11.25-.29.37-.43.13-.15.17-.25.25-.41.08-.17.04-.31-.02-.44-.06-.12-.56-1.35-.77-1.84-.2-.49-.4-.42-.56-.43h-.47c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.21.89 2.39 1.01 2.55.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.2-.58.2-1.08.15-1.18-.06-.11-.23-.17-.48-.29Z"/>
+          </svg>
+          <span>פנייה בוואטסאפ</span>
+        </a>
+        <a class="btn btn--quiet" href="tel:+972552617625" dir="ltr">055-2617625</a>
+      </div>
     </div>
 
     <div class="intake-app" data-intake-app hidden>
       <form class="intake-form" data-intake-form novalidate>
 
         <h1 class="intake-form__title">בדיקת התאמה ראשונית</h1>
-        <p class="intake-form__lede">ללא עלות. כדי לעשות סדר במקרה, להבין מה עדיין חסר ולדעת מה נכון לעשות עכשיו.</p>
+        <p class="intake-form__lede">השאירו שם ומספר טלפון. מיד לאחר מכן תוכלו להמשיך בוואטסאפ או לבקש שנחזור אליכם.</p>
 
-        <section class="intake-step" data-step="1" hidden>
-          <p class="intake-step__progress">שלב 1 מתוך 3</p>
-          <h2 class="intake-step__title" tabindex="-1">סוג הנזק</h2>
-
-          <fieldset class="intake-fieldset" data-group="damage_type">
-            <legend class="sr-only">סוג הנזק</legend>
-            <div class="intake-options">
-              <label class="intake-option"><input type="radio" name="damage_type" value="WATER" required aria-required="true" aria-describedby="damage_type-error"><span>מים או רטיבות</span></label>
-              <label class="intake-option"><input type="radio" name="damage_type" value="FIRE" required aria-required="true" aria-describedby="damage_type-error"><span>אש או עשן</span></label>
-              <label class="intake-option"><input type="radio" name="damage_type" value="BURGLARY" required aria-required="true" aria-describedby="damage_type-error"><span>פריצה</span></label>
-              <label class="intake-option"><input type="radio" name="damage_type" value="STORM" required aria-required="true" aria-describedby="damage_type-error"><span>סערה או מזג אוויר</span></label>
-              <label class="intake-option"><input type="radio" name="damage_type" value="STRUCTURAL" required aria-required="true" aria-describedby="damage_type-error"><span>סדקים או נזק מבני</span></label>
-              <label class="intake-option"><input type="radio" name="damage_type" value="OTHER" required aria-required="true" aria-describedby="damage_type-error"><span>אחר / לא בטוח</span></label>
-            </div>
-            <p class="intake-error" id="damage_type-error"></p>
-          </fieldset>
-
-          <div class="intake-step__nav">
-            <button type="button" class="btn" data-action="next">הבא</button>
-          </div>
-        </section>
-
-        <section class="intake-step" data-step="2" hidden>
-          <p class="intake-step__progress">שלב 2 מתוך 3</p>
-          <h2 class="intake-step__title" tabindex="-1">מצב המקרה</h2>
-
-          <fieldset class="intake-fieldset" data-group="case_state" aria-describedby="case_state-help">
-            <legend class="sr-only">מצב המקרה</legend>
-            <p class="intake-field__help" id="case_state-help">אפשר לבחור את מה שהכי קרוב.</p>
-            <div class="intake-options">
-              <label class="intake-option"><input type="radio" name="case_state" value="RECENT_DAMAGE" required aria-required="true" aria-describedby="case_state-error"><span>הנזק קרה עכשיו או לאחרונה</span></label>
-              <label class="intake-option"><input type="radio" name="case_state" value="SOURCE_UNKNOWN" required aria-required="true" aria-describedby="case_state-error"><span>מקור הנזק עדיין לא ידוע</span></label>
-              <label class="intake-option"><input type="radio" name="case_state" value="SOURCE_FIXED_DAMAGE_REMAINS" required aria-required="true" aria-describedby="case_state-error"><span>המקור אותר או תוקן ונשאר נזק</span></label>
-              <label class="intake-option"><input type="radio" name="case_state" value="ASSESSMENT_OR_OFFER_RECEIVED" required aria-required="true" aria-describedby="case_state-error"><span>כבר התקבלה שומה או הצעת פיצוי</span></label>
-              <label class="intake-option"><input type="radio" name="case_state" value="ACTIVE_DISPUTE_OR_PROCEEDING" required aria-required="true" aria-describedby="case_state-error"><span>קיים סכסוך או הליך פעיל</span></label>
-              <label class="intake-option"><input type="radio" name="case_state" value="UNSURE" required aria-required="true" aria-describedby="case_state-error"><span>איני בטוח מה מתאים</span></label>
-            </div>
-            <p class="intake-error" id="case_state-error"></p>
-          </fieldset>
-
-          <div class="intake-step__nav intake-step__nav--split">
-            <button type="button" class="intake-btn-back" data-action="back">חזרה</button>
-            <button type="button" class="btn" data-action="next">הבא</button>
-          </div>
-        </section>
-
-        <section class="intake-step" data-step="3" hidden>
-          <p class="intake-step__progress">שלב 3 מתוך 3</p>
+        <section class="intake-step" data-step="contact">
           <h2 class="intake-step__title" tabindex="-1">פרטי התקשרות</h2>
 
           <div class="intake-field">
             <label class="intake-field__label" for="full_name">שם מלא</label>
             <input class="intake-field__input" type="text" id="full_name" name="full_name" autocomplete="name" required aria-required="true" aria-describedby="full_name-error">
-            <p class="intake-error" id="full_name-error"></p>
+            <p class="intake-field__error" id="full_name-error" role="alert"></p>
           </div>
 
           <div class="intake-field">
-            <label class="intake-field__label" for="phone_raw">טלפון</label>
+            <label class="intake-field__label" for="phone_raw">טלפון נייד</label>
             <input class="intake-field__input" type="tel" id="phone_raw" name="phone_raw" autocomplete="tel" inputmode="tel" dir="ltr" required aria-required="true" aria-describedby="phone_raw-error">
-            <p class="intake-error" id="phone_raw-error"></p>
+            <p class="intake-field__error" id="phone_raw-error" role="alert"></p>
           </div>
 
           <div class="intake-field">
-            <label class="intake-field__label" for="email">אימייל</label>
-            <input class="intake-field__input" type="email" id="email" name="email" autocomplete="email" inputmode="email" dir="ltr" required aria-required="true" aria-describedby="email-error">
-            <p class="intake-error" id="email-error"></p>
-          </div>
-
-          <div class="intake-field">
-            <label class="intake-field__label" for="property_city">יישוב הנכס</label>
-            <p class="intake-field__help" id="property_city-help">היישוב שבו נמצא הנכס. לא נדרשת כתובת מלאה.</p>
-            <input class="intake-field__input" type="text" id="property_city" name="property_city" autocomplete="address-level2" required aria-required="true" aria-describedby="property_city-help property_city-error">
-            <p class="intake-error" id="property_city-error"></p>
-          </div>
-
-          <div class="intake-field">
-            <label class="intake-field__label" for="short_description">תיאור קצר — לא חובה</label>
-            <p class="intake-field__help" id="short_description-help">כמה מילים, אם יש משהו שחשוב שנדע מראש.</p>
-            <textarea class="intake-field__input intake-field__textarea" id="short_description" name="short_description" rows="3" spellcheck="true" aria-describedby="short_description-help short_description-error"></textarea>
-            <p class="intake-error" id="short_description-error"></p>
+            <label class="intake-field__label" for="email">אימייל <span class="intake-field__optional">(לא חובה)</span></label>
+            <input class="intake-field__input" type="email" id="email" name="email" autocomplete="email" inputmode="email" dir="ltr" aria-describedby="email-error">
+            <p class="intake-field__error" id="email-error" role="alert"></p>
           </div>
 
           <div class="intake-honeypot" aria-hidden="true">
@@ -141,9 +89,8 @@
             </p>
           </div>
 
-          <div class="intake-step__nav intake-step__nav--split">
-            <button type="button" class="intake-btn-back" data-action="back">חזרה</button>
-            <button type="submit" class="btn">שליחת פרטים</button>
+          <div class="intake-step__nav">
+            <button type="submit" class="btn" data-submit-lead>שמרו והמשיכו</button>
           </div>
 
           <p class="intake-legal__validity">האתר אינו מאפשר רכישה, הזמנה או תשלום. שליחת הפרטים מיועדת לבדיקת התאמה וליצירת קשר בלבד ואינה יוצרת התקשרות מחייבת.</p>
@@ -161,8 +108,34 @@
       </form>
 
       <section class="intake-success" data-intake-success tabindex="-1" role="status" aria-live="polite" hidden>
-        <h1 class="intake-success__title">הפרטים התקבלו</h1>
-        <p class="intake-success__body">זהו המסך שיוצג לאחר שליחה. בגרסת הבדיקה הזו לא נשלח דבר, ולא הגיעה אלינו שום פנייה.</p>
+        <h1 class="intake-success__title">זהו המסך שיוצג לאחר שמירה. בגרסת הבדיקה הזו לא נשלח דבר, ולא הגיעה אלינו שום פנייה.</h1>
+
+        <div class="intake-success__actions">
+          <a class="btn intake-success__wa" data-continue-whatsapp href="#" rel="noopener"
+             aria-label="המשך עכשיו בוואטסאפ">
+            <svg class="wa-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" width="20" height="20">
+              <path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm0 18.17h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.19 8.19 0 0 1-1.26-4.4c0-4.54 3.7-8.23 8.25-8.23 2.2 0 4.27.86 5.83 2.41a8.19 8.19 0 0 1 2.41 5.83c0 4.54-3.7 8.25-8.24 8.25Zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.79.97-.14.16-.29.18-.54.06-.25-.13-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.5.11-.11.25-.29.37-.43.13-.15.17-.25.25-.41.08-.17.04-.31-.02-.44-.06-.12-.56-1.35-.77-1.84-.2-.49-.4-.42-.56-.43h-.47c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.21.89 2.39 1.01 2.55.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.2-.58.2-1.08.15-1.18-.06-.11-.23-.17-.48-.29Z"/>
+            </svg>
+            <span>המשך עכשיו ב־WhatsApp</span>
+          </a>
+          <button type="button" class="btn btn--quiet" data-continue-callback>אפשר לחזור אליי</button>
+        </div>
+
+        <p class="intake-success__callback" data-callback-note role="status" aria-live="polite" hidden>מצוין. נחזור אליכם בטלפון שהשארתם.</p>
+
+        <p class="intake-success__more">
+          <button type="button" class="intake-link-btn" data-details-toggle
+                  aria-expanded="false" aria-controls="intake-details">מעדיף להוסיף תיאור קצר באתר</button>
+        </p>
+
+        <div class="intake-details" id="intake-details" data-details hidden>
+          <label class="intake-field__label" for="short_description">בכמה מילים, מה קרה?</label>
+          <textarea class="intake-field__input intake-field__textarea" id="short_description" name="short_description" rows="3" spellcheck="true"></textarea>
+          <div class="intake-step__nav">
+            <button type="button" class="btn" data-details-save>שמירת התיאור</button>
+          </div>
+          <p class="intake-details__status" data-details-status role="status" aria-live="polite" hidden></p>
+        </div>
       </section>
     </div>
   </main>
