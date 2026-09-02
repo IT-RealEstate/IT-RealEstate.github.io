@@ -383,6 +383,12 @@
     function runAutosave() {
       if (!autosaveEligible()) return;
 
+      // The one moment a full-form check belongs: the save. An email that is
+      // present but malformed is not sent, so the visitor has to be told —
+      // otherwise it is silently dropped and they never learn it was ignored.
+      var emailInput = form.querySelector('#email');
+      if (emailInput && emailInput.value.trim() !== '') validateTextField(emailInput);
+
       // An immutable snapshot: everything downstream compares against this,
       // never against the live fields, so a value that moves while the
       // request is open cannot be quietly claimed as saved.
@@ -444,7 +450,11 @@
       // create a second one.
       leadCreated = true;
       failureCount = 0;
-      try { sessionStorage.removeItem(STORAGE_KEY); } catch (e) {}
+      // The draft is NOT cleared here. The visitor is still on this screen —
+      // the contact fields stay editable and two questions follow — so an
+      // accidental reload must not empty the form under them. lead_id travels
+      // in the same draft, so a reload resumes the same lead rather than
+      // creating a second one. It is cleared when the flow completes.
 
       var current = contactValues();
       var stale = seq !== saveSeq ||
@@ -697,6 +707,10 @@
 
     function showCompletion() {
       phase = 'done';
+      // Now the draft has served its purpose: the lead exists and both
+      // answers are on it. Leaving it would repopulate the form for the next
+      // visit in this tab.
+      try { sessionStorage.removeItem(STORAGE_KEY); } catch (e) {}
       form.hidden = true;
       showSuccessState();
     }
@@ -951,7 +965,11 @@
         case_state: state.case_state,
         full_name: state.full_name,
         phone_raw: state.phone_raw,
-        email: state.email,
+        // Batch 3.14C — an optional address is sent only when it is well
+        // formed. It never blocks the lead, and a partial one is never
+        // transmitted: storing a typo is worse than storing nothing, and the
+        // visitor is told about it rather than left to assume it was saved.
+        email: emailIsSendable(contactValues().email) ? state.email.trim() : '',
         property_city: state.property_city,
         short_description: state.short_description,
         notice_version: LEGAL_RELEASE,

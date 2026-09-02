@@ -699,6 +699,51 @@
   border-radius: 2px;
 }
 
+.rt__subhead {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 19px;
+  line-height: 1.35;
+  color: var(--text-primary);
+  max-width: var(--measure-head);
+}
+.rt__subhead + .rt__name { margin-block-start: 8px; }
+
+.svc__why {
+  margin-block-start: 10px;
+  font-size: 17px;
+  line-height: var(--lh-body);
+  color: var(--text-secondary);
+  max-width: var(--measure-body);
+}
+
+.svc__next,
+.svc__scope {
+  margin-block-start: 10px;
+  font-size: 17px;
+  line-height: var(--lh-body);
+  color: var(--text-secondary);
+  max-width: var(--measure-body);
+}
+
+.svc__body .svc__label + .svc__why,
+.svc__body .svc__label + .svc__next,
+.svc__body .svc__label + .svc__scope { margin-block-start: 10px; }
+.svc__body .svc__list + .svc__label,
+.svc__body .svc__why + .svc__label,
+.svc__body .svc__next + .svc__label,
+.svc__body .svc__scope + .svc__label { margin-block-start: 24px; }
+
+.svc__value {
+  margin-block-start: 24px;
+  padding-block-start: 20px;
+  border-block-start: 1px solid var(--hairline-dark);
+  font-size: 17px;
+  line-height: var(--lh-body);
+  color: var(--text-primary);
+  max-width: var(--measure-body);
+}
+
 .svc__price-box { margin-block-start: 18px; }
 
 .svc__price {
