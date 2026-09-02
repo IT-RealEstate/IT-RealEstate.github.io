@@ -27,6 +27,43 @@
     }, { passive: true });
   }
 
+  // Which page an interaction happened on, as a short stable slug. Never a
+  // full URL: a query string can carry things a log should not.
+  function pageSlug() {
+    var path = location.pathname.replace(/\/index\.html$/, '/');
+    if (path === '/' || path === '') { return 'home'; }
+    return path.replace(/^\/|\/$/g, '').replace(/[^a-z0-9/_-]/gi, '').toLowerCase();
+  }
+
+  // FAQ — Batch 3.14 FAQ addendum.
+  //
+  // <details> already gives the whole component its behaviour: the summary is
+  // a real button, keyboard operable, with correct expanded state exposed to
+  // assistive tech, and the answer text is in the DOM whether it is open or
+  // not. Nothing here creates or replaces any of that — it only records which
+  // answers people open, so the copy can be judged on what it does.
+  //
+  // No answer text and no personal data leave the page: an event name, the
+  // stable question id from content/faq.json, and the page slug.
+  Array.prototype.forEach.call(document.querySelectorAll('[data-faq-item]'), function (item) {
+    item.addEventListener('toggle', function () {
+      if (!window.ATTRIBUTION || typeof window.ATTRIBUTION.recordUiEvent !== 'function') { return; }
+      window.ATTRIBUTION.recordUiEvent(item.open ? 'faq_open' : 'faq_close',
+        item.getAttribute('data-faq-id') || '', pageSlug());
+    });
+  });
+
+  // The FAQ closing CTA. Its lead attribution rides the existing
+  // data-cta-location mechanism; this only adds the finer-grained record of
+  // where the click came from, which the lead enum has no value for.
+  Array.prototype.forEach.call(document.querySelectorAll('[data-ui-location]:not([data-wa-link])'), function (el) {
+    el.addEventListener('click', function () {
+      if (window.ATTRIBUTION && typeof window.ATTRIBUTION.recordUiEvent === 'function') {
+        window.ATTRIBUTION.recordUiEvent('cta_click', el.getAttribute('data-ui-location'), pageSlug());
+      }
+    });
+  });
+
   // WhatsApp links — Batch 3.14.
   //
   // Every wa.me link on the site is written from the one central config, so
@@ -44,9 +81,12 @@
     Array.prototype.forEach.call(document.querySelectorAll('[data-wa-link]'), function (link) {
       link.setAttribute('href', waUrl);
       link.addEventListener('click', function () {
-        // A CTA event, never a lead: opening WhatsApp creates nothing.
-        if (window.ATTRIBUTION && typeof window.ATTRIBUTION.recordServiceEvent === 'function') {
-          window.ATTRIBUTION.recordServiceEvent('whatsapp_click', 'header');
+        // A CTA event, never a lead: opening WhatsApp creates nothing. It
+        // goes to the UI channel rather than service_log — that column is
+        // part of the lead record and means "which service was looked at".
+        if (window.ATTRIBUTION && typeof window.ATTRIBUTION.recordUiEvent === 'function') {
+          var where = link.getAttribute('data-ui-location') || 'header';
+          window.ATTRIBUTION.recordUiEvent('whatsapp_click', where, pageSlug());
         }
       });
     });

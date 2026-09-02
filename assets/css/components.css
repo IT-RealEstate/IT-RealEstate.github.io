@@ -22,6 +22,15 @@
   opacity: 0.85;
 }
 
+.btn--quiet {
+  background: none;
+  border: 1px solid var(--hairline-dark);
+  color: var(--text-primary);
+}
+.btn--quiet:hover {
+  border-color: var(--accent);
+}
+
 .btn--compact {
   height: 44px;
   padding-inline: 22px;
@@ -134,6 +143,98 @@
   }
   .accordion__summary:focus-visible {
     outline: 2px solid Highlight;
+  }
+}
+
+.dmg-faq {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  padding-block: 94px;
+}
+@media (max-width: 767px) {
+  .dmg-faq { padding-block: 62px; }
+  .dmg-faq__list { margin-block-start: 28px; }
+}
+
+.dmg-faq__title {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: var(--size-section-h);
+  line-height: var(--lh-section-h);
+  max-width: var(--measure-head);
+}
+
+.dmg-faq__list {
+  margin: 0;
+  margin-block-start: 40px;
+  max-width: var(--measure-body);
+}
+
+.dmg-faq__a {
+  margin-inline: 0;
+  font-size: 17px;
+  line-height: var(--lh-body);
+  color: var(--text-secondary);
+}
+
+.dmg-faq__intro {
+  margin-block-start: 16px;
+  max-width: var(--measure-body);
+  font-size: 18px;
+  line-height: var(--lh-body);
+  color: var(--text-secondary);
+}
+
+.accordion__panel .dmg-faq__a + .dmg-faq__a {
+  margin-block-start: 14px;
+}
+
+.dmg-faq__close {
+  margin-block-start: 56px;
+  max-width: var(--measure-body);
+}
+.dmg-faq__close-title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 22px;
+  line-height: 1.35;
+  color: var(--text-primary);
+}
+.dmg-faq__close-body {
+  margin-block-start: 12px;
+  font-size: 17px;
+  line-height: var(--lh-body);
+  color: var(--text-secondary);
+}
+.dmg-faq__close-actions {
+  margin-block-start: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.dmg-faq__more {
+  margin-block-start: 32px;
+  font-size: 17px;
+  line-height: var(--lh-body);
+  color: var(--text-secondary);
+}
+.dmg-faq__more a {
+  color: var(--text-primary);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.dmg-faq__more a:hover {
+  text-decoration-thickness: 2px;
+}
+
+@media (max-width: 767px) {
+  .dmg-faq__close-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .dmg-faq__close-actions .btn {
+    text-align: center;
   }
 }
 

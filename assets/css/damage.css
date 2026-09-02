@@ -757,33 +757,6 @@
   }
 }
 
-.dmg-faq {
-  background: var(--bg-base);
-  color: var(--text-primary);
-  padding-block: 94px;
-}
-
-.dmg-faq__title {
-  font-family: var(--font-sans);
-  font-weight: 300;
-  font-size: var(--size-section-h);
-  line-height: var(--lh-section-h);
-  max-width: var(--measure-head);
-}
-
-.dmg-faq__list {
-  margin: 0;
-  margin-block-start: 40px;
-  max-width: var(--measure-body);
-}
-
-.dmg-faq__a {
-  margin-inline: 0;
-  font-size: 17px;
-  line-height: var(--lh-body);
-  color: var(--text-secondary);
-}
-
 .dmg-cta {
   background: var(--bg-base);
   color: var(--text-primary);
@@ -850,9 +823,6 @@
   .rt__route { margin-block-start: 24px; }
   .dmg-pricing__gate { margin-block-start: 36px; padding-block-start: 26px; }
   .dmg-pricing__close { margin-block-start: 40px; padding-block-start: 26px; }
-
-  .dmg-faq { padding-block: 62px; }
-  .dmg-faq__list { margin-block-start: 28px; }
 
   .dmg-cta { padding-block: 80px; }
   .dmg-cta .btn { margin-block-start: 32px; }

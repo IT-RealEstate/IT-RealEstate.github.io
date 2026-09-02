@@ -319,8 +319,10 @@
         wa.addEventListener('click', function () {
           // A CTA event, not a lead: the lead was created at save time and
           // opening WhatsApp neither creates nor completes one.
-          if (window.ATTRIBUTION && typeof window.ATTRIBUTION.recordServiceEvent === 'function') {
-            window.ATTRIBUTION.recordServiceEvent('whatsapp_continue', 'post_save');
+          // UI channel, not service_log: the lead already exists and this
+          // is a continuation choice, not interest in a service.
+          if (window.ATTRIBUTION && typeof window.ATTRIBUTION.recordUiEvent === 'function') {
+            window.ATTRIBUTION.recordUiEvent('whatsapp_click', 'post_save', 'check');
           }
         });
       }
@@ -335,8 +337,8 @@
           callback.hidden = true;
           note.hidden = false;
           note.focus && note.focus();
-          if (window.ATTRIBUTION && typeof window.ATTRIBUTION.recordServiceEvent === 'function') {
-            window.ATTRIBUTION.recordServiceEvent('callback_request', 'post_save');
+          if (window.ATTRIBUTION && typeof window.ATTRIBUTION.recordUiEvent === 'function') {
+            window.ATTRIBUTION.recordUiEvent('callback_request', 'post_save', 'check');
           }
         });
       }

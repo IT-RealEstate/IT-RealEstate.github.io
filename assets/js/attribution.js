@@ -180,6 +180,40 @@
   // revealed. It travels with the lead only when the form is submitted.
   var SERVICE_EVENTS = ['service_details_open', 'service_price_reveal', 'service_cta_click'];
 
+  var UI_KEY = 'ui_events_v1';
+  var UI_EVENTS = ['faq_open', 'faq_close', 'whatsapp_click', 'callback_request', 'cta_click'];
+
+  function loadUi() {
+    try {
+      var raw = sessionStorage.getItem(UI_KEY);
+      var parsed = raw ? JSON.parse(raw) : null;
+      return parsed && typeof parsed === 'object' ? parsed : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function recordUiEvent(eventName, id, page) {
+    if (UI_EVENTS.indexOf(eventName) === -1) { return; }
+    // ids are stable, author-controlled slugs; anything else is a caller bug
+    // and is dropped rather than stored.
+    if (typeof id !== 'string' || !/^[a-z0-9_]{1,48}$/.test(id)) { return; }
+    var record = loadUi();
+    var log = typeof record.log === 'string' && record.log ? record.log.split(',') : [];
+    // Order is the signal, so append rather than de-duplicate; capped so a
+    // visitor toggling panels cannot grow the record without bound.
+    if (log.length >= 60) { return; }
+    var route = typeof page === 'string' && /^[a-z0-9/_-]{0,40}$/.test(page) ? page : '';
+    log.push(eventName + ':' + id + (route ? '@' + route : ''));
+    record.log = log.join(',');
+    try {
+      sessionStorage.setItem(UI_KEY, JSON.stringify(record));
+    } catch (e) {
+      // Private mode / quota. The interaction still works; only the local
+      // record of it is lost, which is never a reason to block a control.
+    }
+  }
+
   function recordServiceEvent(eventName, serviceId) {
     if (SERVICE_EVENTS.indexOf(eventName) === -1) return;
     if (SERVICE_INTERESTS.indexOf(serviceId) === -1) return;
@@ -271,6 +305,24 @@
       return typeof r.service_log === 'string' ? r.service_log : '';
     },
     recordServiceEvent: recordServiceEvent,
-    recordCtaLocation: recordCtaLocation
+    recordCtaLocation: recordCtaLocation,
+
+    // ---- UI interaction events — Batch 3.14 -------------------------------
+    //
+    // Deliberately a SEPARATE channel from service_log. That column is part
+    // of the lead record and has a defined meaning — which service a visitor
+    // looked at, and whether they asked for its price. Opening an FAQ answer
+    // or tapping WhatsApp is neither, and folding those into it would change
+    // what a stored row means for anyone reading the sheet later.
+    //
+    // So these live under their own sessionStorage key and never join the
+    // lead payload. No answer text and no personal data: an event name, a
+    // stable id and the page, which is all a question like "which answers do
+    // people open" needs.
+    recordUiEvent: recordUiEvent,
+    uiLog: function () {
+      var r = loadUi();
+      return r.log || '';
+    }
   };
 })();
