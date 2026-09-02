@@ -144,6 +144,13 @@
 .site-header__menu-btn:hover {
   border-color: var(--hairline-dark);
 }
+
+.site-header__menu-symbol {
+  display: none;
+}
+.site-header__menu-label {
+  display: inline;
+}
 .site-header__menu-btn[aria-expanded="true"] {
   background: var(--bg-graphite);
   border-color: var(--hairline-dark);
@@ -213,7 +220,7 @@ body.menu-open {
     display: grid;
     grid-template-columns: max-content minmax(0, 1fr);
     grid-template-areas:
-      "brand menu"
+      "menu  brand"
       "phone cta";
     align-items: center;
     height: auto;
@@ -230,34 +237,31 @@ body.menu-open {
   .brand {
     grid-area: brand;
     display: grid;
-    grid-template-columns: max-content minmax(0, max-content);
+    grid-template-columns: minmax(0, max-content);
     grid-template-rows: 23px 23px;
-    column-gap: 8px;
+    column-gap: 0;
     row-gap: 0;
     align-items: center;
+    justify-self: start;
     min-width: 0;
   }
   .brand__divider {
     display: none;
   }
   .brand__symbol {
-    grid-column: 1;
-    grid-row: 1 / 3;
-    align-self: center;
-    inline-size: 59px;
-    block-size: auto;
+    display: none;
   }
   .brand__text {
     display: contents;
   }
   .brand__primary {
-    grid-column: 2;
+    grid-column: 1;
     grid-row: 1;
     font-size: 18px;
     align-self: end;
   }
   .brand__secondary {
-    grid-column: 2;
+    grid-column: 1;
     grid-row: 2;
     display: block;
     max-height: none;
@@ -273,12 +277,33 @@ body.menu-open {
 
   .site-header__menu-btn {
     grid-area: menu;
-    justify-self: end;
-    padding-inline: 12px;
+    justify-self: start;
+    padding: 0;
+    border: 0;
+    min-inline-size: 44px;
+    min-block-size: 44px;
+    background: none;
+  }
+  .site-header__menu-btn:hover,
+  .site-header__menu-btn[aria-expanded="true"] {
+    background: none;
+    border: 0;
+  }
+  .site-header__menu-symbol {
+    display: block;
+    inline-size: 59px;
+    block-size: auto;
+    object-fit: contain;
+    mix-blend-mode: lighten;
+    flex: none;
+  }
+  .site-header__menu-label {
+    display: none;
   }
 
   .site-header__phone {
-    grid-area: phone;
+    grid-row: 2;
+    grid-column: 1 / -1;
     justify-self: start;
     display: inline-flex;
     align-items: center;
@@ -286,7 +311,8 @@ body.menu-open {
   }
 
   .site-header__actions .btn--compact {
-    grid-area: cta;
+    grid-row: 2;
+    grid-column: 1 / -1;
     justify-self: end;
     padding-inline: 14px;
     padding-block: 6px;
