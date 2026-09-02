@@ -24,12 +24,70 @@
   height: var(--header-height-compact);
 }
 
+.site-header__lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
 .brand {
   display: inline-flex;
   align-items: center;
   gap: 16px;
   min-width: 0;
 }
+.brand--mark {
+  flex: none;
+  min-block-size: 44px;
+}
+.brand--text {
+  min-width: 0;
+  min-block-size: 44px;
+}
+
+.site-header__burger {
+  flex: none;
+  inline-size: 44px;
+  block-size: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid var(--hairline-dark);
+  border-radius: 2px;
+  background: none;
+  cursor: pointer;
+}
+.site-header__burger:hover { border-color: var(--text-secondary); }
+.site-header__burger:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+.site-header__burger[aria-expanded="true"] {
+  background: var(--bg-graphite);
+  border-color: var(--hairline-dark);
+}
+
+.site-header__burger-bars,
+.site-header__burger-bars::before,
+.site-header__burger-bars::after {
+  display: block;
+  inline-size: 20px;
+  block-size: 2px;
+  background: var(--text-primary);
+}
+.site-header__burger-bars {
+  position: relative;
+}
+.site-header__burger-bars::before,
+.site-header__burger-bars::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+}
+.site-header__burger-bars::before { inset-block-start: -6px; }
+.site-header__burger-bars::after  { inset-block-start: 6px; }
 
 .brand__symbol {
   inline-size: 68px;
@@ -122,40 +180,6 @@
   }
 }
 
-.site-header__menu-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-block-size: 44px;
-  min-inline-size: 44px;
-  padding-inline: 14px;
-  margin: 0;
-  border: 1px solid transparent;
-  border-radius: 2px;
-  background: none;
-  font-family: var(--font-sans);
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 1;
-  color: var(--text-primary);
-  cursor: pointer;
-  white-space: nowrap;
-}
-.site-header__menu-btn:hover {
-  border-color: var(--hairline-dark);
-}
-
-.site-header__menu-symbol {
-  display: none;
-}
-.site-header__menu-label {
-  display: inline;
-}
-.site-header__menu-btn[aria-expanded="true"] {
-  background: var(--bg-graphite);
-  border-color: var(--hairline-dark);
-}
-
 .site-menu {
   position: absolute;
   inset-inline: 0;
@@ -195,16 +219,6 @@
 }
 
 @media (min-width: 768px) {
-  .site-menu__list {
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0 32px;
-    padding-block: 4px;
-  }
-  .site-menu__list li + li .site-menu__link {
-    border-block-start: 0;
-  }
   .site-menu__link {
     min-block-size: 44px;
   }
@@ -218,102 +232,38 @@ body.menu-open {
   .site-header__inner,
   .site-header.is-compact .site-header__inner {
     display: grid;
-    grid-template-columns: max-content minmax(0, 1fr);
-    grid-template-areas:
-      "menu  brand"
-      "phone cta";
+    grid-template-columns: minmax(0, 1fr);
     align-items: center;
     height: auto;
     row-gap: 2px;
-    column-gap: 8px;
     padding-block: 6px;
     padding-inline: 12px;
   }
 
-  .site-header__actions {
-    display: contents;
-  }
-
-  .brand {
-    grid-area: brand;
-    display: grid;
-    grid-template-columns: minmax(0, max-content);
-    grid-template-rows: 23px 23px;
-    column-gap: 0;
-    row-gap: 0;
-    align-items: center;
-    justify-self: start;
+  .site-header__lockup {
     min-width: 0;
-  }
-  .brand__divider {
-    display: none;
-  }
-  .brand__symbol {
-    display: none;
-  }
-  .brand__text {
-    display: contents;
-  }
-  .brand__primary {
-    grid-column: 1;
-    grid-row: 1;
-    font-size: 18px;
-    align-self: end;
-  }
-  .brand__secondary {
-    grid-column: 1;
-    grid-row: 2;
-    display: block;
-    max-height: none;
-    opacity: 1;
-    overflow: visible;
-    white-space: nowrap;
-    align-self: start;
-  }
-  .site-header.is-compact .brand__secondary {
-    opacity: 1;
-    max-height: none;
+    gap: 10px;
   }
 
-  .site-header__menu-btn {
-    grid-area: menu;
-    justify-self: start;
-    padding: 0;
-    border: 0;
-    min-inline-size: 44px;
-    min-block-size: 44px;
-    background: none;
-  }
-  .site-header__menu-btn:hover,
-  .site-header__menu-btn[aria-expanded="true"] {
-    background: none;
-    border: 0;
-  }
-  .site-header__menu-symbol {
-    display: block;
+  .brand--mark .brand__symbol {
     inline-size: 59px;
-    block-size: auto;
-    object-fit: contain;
-    mix-blend-mode: lighten;
-    flex: none;
   }
-  .site-header__menu-label {
-    display: none;
+
+  .site-header__actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-width: 0;
   }
 
   .site-header__phone {
-    grid-row: 2;
-    grid-column: 1 / -1;
-    justify-self: start;
     display: inline-flex;
     align-items: center;
     min-block-size: 44px;
   }
 
   .site-header__actions .btn--compact {
-    grid-row: 2;
-    grid-column: 1 / -1;
-    justify-self: end;
     padding-inline: 14px;
     padding-block: 6px;
     block-size: auto;
@@ -368,9 +318,6 @@ body.menu-open {
 
 @media (max-width: 767px) {
   .site-header__wa {
-    grid-row: 2;
-    grid-column: 1 / -1;
-    justify-self: center;
     padding-inline: 10px;
   }
 }

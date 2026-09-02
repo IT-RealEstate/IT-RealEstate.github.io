@@ -162,8 +162,10 @@
   accent-color: var(--text-primary);
 }
 
-.intake-error {
-  margin-block-start: 8px;
+.intake-error,
+.intake-field__error {
+  margin-block-start: 6px;
+  min-block-size: 20px;
   font-size: var(--size-microcopy);
   line-height: var(--lh-microcopy);
   font-weight: 400;

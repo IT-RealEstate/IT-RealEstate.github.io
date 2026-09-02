@@ -50,22 +50,26 @@
 
   <header class="site-header" data-header>
     <div class="site-header__inner wrap">
-      <a class="brand" href="/">
-        <img class="brand__symbol" src="assets/brand/tabib-logo-192.png" alt="" width="192" height="148">
-        <span class="brand__divider" aria-hidden="true"></span>
-        <span class="brand__text">
-          <span class="brand__primary">טביב <span class="brand__accent-word">שמאות</span></span>
-          <span class="brand__secondary">שמאות רכוש עצמאית</span>
-        </span>
-      </a>
-      <div class="site-header__actions">
-        <button class="site-header__menu-btn" type="button" data-menu-toggle
+      <div class="site-header__lockup">
+        <a class="brand brand--mark" href="/" aria-label="טביב שמאות — לדף הבית">
+          <img class="brand__symbol" src="assets/brand/tabib-logo-192.png" alt="" width="192" height="148">
+        </a>
+
+        <button class="site-header__burger" type="button" data-menu-toggle
                 aria-expanded="false" aria-controls="site-menu"
                 aria-label="פתיחת תפריט">
-          <img class="site-header__menu-symbol" src="assets/brand/tabib-logo-192.png"
-               alt="" width="192" height="148">
-          <span class="site-header__menu-label">תפריט</span>
+          <span class="site-header__burger-bars" aria-hidden="true"></span>
         </button>
+
+        <a class="brand brand--text" href="/">
+          <span class="brand__text">
+            <span class="brand__primary">טביב <span class="brand__accent-word">שמאות</span></span>
+            <span class="brand__secondary">שמאות רכוש עצמאית</span>
+          </span>
+        </a>
+      </div>
+
+      <div class="site-header__actions">
         <a class="site-header__wa" data-wa-link href="https://wa.me/972552617625" rel="noopener"
            aria-label="פנייה בוואטסאפ לטביב שמאות"><svg class="wa-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" width="18" height="18"><path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm0 18.17h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.19 8.19 0 0 1-1.26-4.4c0-4.54 3.7-8.23 8.25-8.23 2.2 0 4.27.86 5.83 2.41a8.19 8.19 0 0 1 2.41 5.83c0 4.54-3.7 8.25-8.24 8.25Zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.79.97-.14.16-.29.18-.54.06-.25-.13-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.5.11-.11.25-.29.37-.43.13-.15.17-.25.25-.41.08-.17.04-.31-.02-.44-.06-.12-.56-1.35-.77-1.84-.2-.49-.4-.42-.56-.43h-.47c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.21.89 2.39 1.01 2.55.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.2-.58.2-1.08.15-1.18-.06-.11-.23-.17-.48-.29Z"/></svg><span class="site-header__wa-text">וואטסאפ</span></a>
         <a class="site-header__phone" href="tel:+972552617625" dir="ltr" aria-label="חיוג לטביב שמאות: 055-2617625">055-2617625</a>
@@ -103,7 +107,7 @@
             <p>בהוכחת נזק, אין פרט שולי.</p>
           </div>
 
-          <a class="btn" data-cta-location="hero" href="/check/">לעשות סדר במקרה שלי</a>
+          <a class="btn" data-cta-location="hero" href="/check/">בדיקת התאמה ראשונית</a>
 
           <p class="s1-hero__reassurance">בדיקת התאמה ראשונית ללא עלות.</p>
         </div>
@@ -247,7 +251,40 @@
         <p class="dmg-faq__intro" data-reveal>מי מטפל במקור הנזק, מי בודק את מה שנשאר — ומתי שמאי רכוש יכול לשנות את התמונה?</p>
 
         <div class="dmg-faq__list" data-reveal>
-          <details class="accordion" data-faq-item data-faq-id="founder_purpose_and_balance" open>
+          <details class="accordion" data-faq-item data-faq-id="repair_vs_appraisal" open>
+            <summary class="accordion__summary">
+              <span class="accordion__label">כבר הזמנתי מאתר נזילות או שרברב והתקלה תוקנה. למה צריך גם שמאי רכוש?</span>
+              <span class="accordion__marker" aria-hidden="true"></span>
+            </summary>
+            <div class="accordion__panel">
+              <p class="dmg-faq__a">מאתר הנזילות והשרברב ממלאים תפקיד חיוני: לאתר את מקור התקלה ולעצור אותה. שמאי הרכוש בוחן שאלה אחרת — מה נפגע בעקבות האירוע, מה נדרש כדי להשיב את המצב לקדמותו ומהי העלות הסבירה לכך.</p>
+              <p class="dmg-faq__a">לעיתים הצינור כבר תוקן, אבל נותרו רטיבות כלואה או פגיעות בטיח, בצבע, בריצוף, בארונות ובתכולה. אלה תפקידים משלימים: הטיפול הטכני עוצר את המקור; השמאות בודקת, מתעדת ומכמתת את היקף נזקי הרכוש.</p>
+            </div>
+          </details>
+
+          <details class="accordion" data-faq-item data-faq-id="neighbor_damage_documentation">
+            <summary class="accordion__summary">
+              <span class="accordion__label">יש נזק מדירה סמוכה והשכן לא מטפל. איך מתקדמים בלי להישאר בוויכוח?</span>
+              <span class="accordion__marker" aria-hidden="true"></span>
+            </summary>
+            <div class="accordion__panel">
+              <p class="dmg-faq__a">לא מתחילים מהאשמה — מתחילים מעובדות ומתיעוד. לפי הצורך, בעל מקצוע טכני מאתר את מקור הכשל; שמאי הרכוש מתעד את הנזק בדירה, מעריך את היקף השיקום ומרכז בסיס מקצועי לדרישה.</p>
+              <p class="dmg-faq__a">התקנון המצוי מאפשר לבעל דירה לדרוש תיקון כאשר אי־ביצועו עלול לפגוע בדירתו. אם המחלוקת נמשכת, חוות דעת שמאית יכולה לתמוך בפנייה מסודרת, במשא ומתן ובהליך מתאים בליווי משפטי. היא אינה מחליפה ייעוץ משפטי — היא נותנת למחלוקת בסיס מקצועי במקום ויכוח בלבד.</p>
+            </div>
+          </details>
+
+          <details class="accordion" data-faq-item data-faq-id="independent_insurance_review">
+            <summary class="accordion__summary">
+              <span class="accordion__label">חברת הביטוח שלחה שמאי או הציעה פיצוי נמוך. מתי כדאי לפנות לשמאי רכוש מטעמי?</span>
+              <span class="accordion__marker" aria-hidden="true"></span>
+            </summary>
+            <div class="accordion__panel">
+              <p class="dmg-faq__a">לא כל הצעה מצדיקה חוות דעת נגדית. בדיקה עצמאית נעשית רלוונטית כאשר קיים חשש שפריטי נזק לא תועדו, שהיקף השיקום אינו מלא, שקיימת מחלוקת לגבי העלויות או שהדחייה אינה מתיישבת לכאורה עם הממצאים ותנאי הפוליסה.</p>
+              <p class="dmg-faq__a">לשמאי מטעם המבטחת ולשמאי מטעמכם יש מסגרות מינוי שונות. שמאי מטעמכם מספק לכם בסיס מקצועי עצמאי: תיעוד, אומדן מנומק והצגה מסודרת של הפערים. המטרה אינה לייצר עימות — אלא לוודא שההחלטה מתקבלת על בסיס תמונה מלאה.</p>
+            </div>
+          </details>
+
+          <details class="accordion" data-faq-item data-faq-id="founder_purpose_and_balance">
             <summary class="accordion__summary">
               <span class="accordion__label">מי עומד מאחורי טביב שמאות — ולמה בחרת לעסוק בשמאות רכוש?</span>
               <span class="accordion__marker" aria-hidden="true"></span>
@@ -271,7 +308,16 @@
           </details>
         </div>
 
-        <p class="dmg-faq__more" data-reveal><a href="/damage/#dmg-faq">לכל השאלות על נזקי רכוש</a></p>
+        <div class="dmg-faq__close" data-reveal>
+          <h3 class="dmg-faq__close-title">לא בטוחים אם המקרה מצדיק שמאי?</h3>
+          <p class="dmg-faq__close-body">אפשר להתחיל בתיאור קצר או בכמה תמונות, בלי להתחייב לחוות דעת מלאה.</p>
+          <div class="dmg-faq__close-actions">
+            <a class="btn" data-cta-location="closing" data-ui-location="faq" href="/check/">בדיקת התאמה ראשונית</a>
+            <a class="btn btn--quiet dmg-faq__wa" data-wa-link data-ui-location="faq"
+               href="https://wa.me/972552617625" rel="noopener"
+               aria-label="שאלה מהירה ב־WhatsApp">שאלה מהירה ב־WhatsApp</a>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -310,9 +356,6 @@
           </div>
         </div>
 
-        <a id="s6-final-cta" class="btn" data-cta-location="closing" href="/check/">לעשות סדר במקרה שלי</a>
-
-        <p class="s6-urgency__reassurance">השארת הפרטים אינה הזמנת חוות דעת ואינה כרוכה בתשלום.</p>
       </div>
     </section>
 

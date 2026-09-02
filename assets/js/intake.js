@@ -124,6 +124,15 @@
     // ---- phone validation — accepts common Israeli mobile entry forms.
     // This is a shape check only; server-side E.164 normalization is a
     // Batch 6B concern (Handoff spec §7.3). ----
+    // A local mobile that is exactly one digit short of the ten it needs.
+    // Deliberately narrow: it says a digit is missing only when that is the
+    // only thing wrong, so the generic message still covers everything else.
+    function phoneLooksShort(raw) {
+      var digits = (raw || '').replace(/[\s\-()+]/g, '');
+      if (/^972/.test(digits)) digits = '0' + digits.slice(3);
+      return /^05\d{7}$/.test(digits);
+    }
+
     function isValidIsraeliPhone(raw) {
       var digits = (raw || '').replace(/[\s\-()]/g, '');
       return /^05\d{8}$/.test(digits) ||
@@ -151,7 +160,8 @@
     var MESSAGES = {
       full_name:      { missing: 'צריך שם מלא כדי שנדע למי לפנות.' },
       phone_raw:      { missing: 'צריך מספר טלפון כדי שנוכל לחזור אליך.',
-                        invalid: 'המספר לא נראה שלם. כדאי לבדוק שוב.' },
+                        short:   'נראה שחסרה ספרה במספר הטלפון.',
+                        invalid: 'הזינו מספר טלפון נייד תקין בן 10 ספרות.' },
       email:          { missing: 'צריך כתובת אימייל.',
                         invalid: 'כתובת האימייל לא נראית תקינה. כדאי לבדוק שוב.' },
       property_city:  { missing: 'צריך להזין את יישוב הנכס.' },
@@ -234,6 +244,14 @@
         message = msgs.missing;
       } else if (input.id === 'phone_raw' && !isValidIsraeliPhone(value)) {
         ok = false;
+        // Batch 3.14D — a nine-digit local number is the common case (the
+        // owner's own screenshot), and "invalid" tells someone who typed
+        // 055912384 nothing they can act on. Nothing is ever completed or
+        // corrected for them: the message says what is missing, they fix it.
+        message = phoneLooksShort(value) ? msgs.short : msgs.invalid;
+        input.setAttribute('aria-invalid', 'true');
+        if (errorEl) errorEl.textContent = message;
+        return false;
         message = msgs.invalid;
       } else if (input.id === 'email' && !input.checkValidity()) {
         ok = false;
@@ -467,6 +485,7 @@
         // A reply for values the visitor has already moved past. It may not
         // claim the newer ones are saved, and it may not open the questions
         // on them. The corrected values go up as an update to the same row.
+        setContinueBusy(false);
         setAutosaveStatus('pending');
         scheduleAutosave();
         return;
@@ -474,6 +493,7 @@
 
       ui('contact_autosave_succeeded', 'contact');
       setAutosaveStatus('saved');
+      setContinueBusy(false);
       revealQuestion('damage_type');
 
       // An address typed while the first save was in flight belongs on the
@@ -482,6 +502,7 @@
     }
 
     function onAutosaveFailure() {
+      setContinueBusy(false);
       failureCount += 1;
       ui('contact_autosave_failed', 'contact');
       setAutosaveStatus('failed');
@@ -553,6 +574,69 @@
           return { ok: !!(json && json.ok), enriched: (json && json.enriched) || [] };
         })
         .catch(function () { return { ok: false, enriched: [] }; });
+    }
+
+
+    // ---- המשך — the visible route, Batch 3.14D --------------------------
+    //
+    // Everything the timer does, on demand. It cannot produce a second lead:
+    // it goes through the same runAutosave/persistSnapshot path keyed on the
+    // same lead_id, and it refuses to start while a save is already running.
+    var continueBusy = false;
+
+    function continueButton() {
+      return form.querySelector('[data-continue]');
+    }
+
+    function setContinueBusy(busy) {
+      var btn = continueButton();
+      continueBusy = busy;
+      if (!btn) return;
+      btn.disabled = busy;
+      btn.setAttribute('aria-busy', busy ? 'true' : 'false');
+      btn.textContent = busy ? 'שומר...' : 'המשך';
+    }
+
+    function continueNow() {
+      if (continueBusy || persistInFlight) return;
+
+      // Cancel the pending timer: the visitor asked for this now, and two
+      // routes firing would be two attempts at the same thing.
+      if (autosaveTimer) { window.clearTimeout(autosaveTimer); autosaveTimer = null; }
+
+      userInteracted = true;
+      if (!validateContact()) return;
+
+      // Already saved — the button just moves on to what is next.
+      if (leadCreated) {
+        if (phase === 'contact') revealQuestion('damage_type');
+        return;
+      }
+
+      setContinueBusy(true);
+      runAutosave();
+    }
+
+    // The contact screen's own validation: the two required fields plus a
+    // filled-in optional one. Focus lands on the first field that is wrong,
+    // which is the one moment focus should move.
+    function validateContact() {
+      var firstInvalid = null;
+      ['full_name', 'phone_raw', 'email'].forEach(function (id) {
+        var input = form.querySelector('#' + id);
+        if (!input) return;
+        if (id === 'email' && input.value.trim() === '') return;
+        if (!validateTextField(input) && !firstInvalid) firstInvalid = input;
+      });
+      if (firstInvalid) {
+        // Deferred by a tick: a real mouse click focuses the button it lands
+        // on AFTER the handler runs, so a synchronous focus() here is undone
+        // a moment later and the visitor is left on the button with an error
+        // they have to hunt for.
+        window.setTimeout(function () { firstInvalid.focus(); }, 0);
+        return false;
+      }
+      return true;
     }
 
     // ---- the two questions ----
@@ -762,10 +846,14 @@
         scheduleAutosave();
       });
 
-      // The form has no submit button in the normal flow. This exists only so
-      // that Enter in a text field cannot navigate away mid-save.
+      // Batch 3.14D — Enter in a contact field and a click on המשך are the
+      // same act, so they share one handler. It validates, then runs the very
+      // same save the timer would have run: same lead_id, same endpoint, same
+      // idempotency. A pending timer is cancelled first so the two routes can
+      // never both fire.
       form.addEventListener('submit', function (e) {
         e.preventDefault();
+        continueNow();
       });
 
       // Manual retry — reachable only from the error state, never part of the
@@ -775,6 +863,17 @@
           hideSubmitError();
           if (!validateStep()) return;
           runAutosave();
+        });
+      });
+
+      // Validate on blur once something has been typed — not while the field
+      // is still empty and untouched, and not on every keystroke
+      // (accessibility spec §20).
+      ['full_name', 'phone_raw', 'email'].forEach(function (id) {
+        var input = form.querySelector('#' + id);
+        if (!input) return;
+        input.addEventListener('blur', function () {
+          if (input.value.trim() !== '') validateTextField(input);
         });
       });
 
