@@ -33,22 +33,28 @@
 
     var SUBMIT_TIMEOUT_MS = 10000;
     var RETRY_DELAY_MS = 2000;
-    // Batch 3.14C — the silent save. Two seconds of inactivity after the last
-    // change to a field that matters, never a save per keystroke.
+    // Batch 3.14F — the initial lead is created by an explicit שלח and by
+    // nothing else. 3.14C's two-second silent save is RETIRED for the contact
+    // details: saving a name and a phone number while the visitor is still
+    // deciding whether to send them takes the decision away from them.
+    // The debounce survives for one narrower job — a contact field edited
+    // AFTER the lead exists still updates the same row without a second
+    // button — and scheduleAutosave() is a no-op until then.
     var AUTOSAVE_DELAY_MS = 2000;
     // Dry-run only: long enough for the sending state to be seen and
     // reviewed, short enough not to feel broken. Never used in 'live'.
     var DRYRUN_DELAY_MS = 700;
 
-    // Batch 3.14 — lead-first. Two required fields and one optional, asked
-    // before anything else, so the lead exists before qualification does.
-    // damage_type, case_state and property_city are no longer asked here;
-    // they stay in the schema and can arrive later through enrichment or
-    // through the conversation.
+    // Batch 3.14F — lead-first, with the property's town. Three required
+    // fields and one optional, asked before anything else, so the lead exists
+    // before qualification does. property_city returns to the form because it
+    // decides whether the case is inside the service area at all; the server
+    // has accepted and persisted it on the create path since Batch 3.3, so it
+    // needs no schema change and no new column.
     var RADIO_GROUPS = [];
     // Must match FIELD_MAX_LENGTHS.short_description in apps-script/Code.gs.
     var SHORT_DESCRIPTION_MAX = 1000;
-    var TEXT_FIELDS = ['full_name', 'phone_raw'];
+    var TEXT_FIELDS = ['full_name', 'phone_raw', 'property_city'];
     var OPTIONAL_TEXT_FIELDS = ['email', 'short_description'];
 
     var state = {
@@ -172,13 +178,12 @@
       short_description: { tooLong: 'ניתן להזין עד 1,000 תווים.' }
     };
 
-    // Batch 3.14C — the four states of the automatic save, in order. There is
-    // deliberately no message before the details are eligible: promising a
-    // save we are not about to perform is the one thing this area must never
-    // do, and the line above the fields already says when it happens.
+    // Batch 3.14F — two states, not four. With an explicit button the
+    // in-progress state belongs on the button itself (שולח...), so the status
+    // region carries only the outcome: one region, one message, and success
+    // and failure can never be on screen together. 3.14C's 'pending' and
+    // 'saving' lines are retired with the silent save that produced them.
     var AUTOSAVE_MESSAGES = {
-      pending:   'הפרטים יישמרו אוטומטית',
-      saving:    'שומר את הפרטים…',
       saved:     'בגרסת הבדיקה הפרטים נשמרים זמנית בדפדפן בלבד ואינם נשלחים.',
       failed:    'לא הצלחנו לשמור כרגע. הפרטים נשארו כאן ואפשר לנסות שוב.'
     };
@@ -320,16 +325,19 @@
       el.setAttribute('data-state', key);
     }
 
-    // The two fields the lead cannot exist without. Read from the DOM, not
-    // from state, so an autofill that never fired a change event still counts.
+    // The fields the lead cannot exist without, plus the optional address.
+    // Read from the DOM, not from state, so a browser autofill that never
+    // fired an input or change event still counts.
     function contactValues() {
       var name = form.querySelector('#full_name');
       var phone = form.querySelector('#phone_raw');
       var email = form.querySelector('#email');
+      var city = form.querySelector('#property_city');
       return {
         full_name: name ? name.value.trim() : '',
         phone_raw: phone ? phone.value.trim() : '',
-        email: email ? email.value.trim() : ''
+        email: email ? email.value.trim() : '',
+        property_city: city ? city.value.trim() : ''
       };
     }
 
@@ -352,33 +360,29 @@
       return !box || box.checked;
     }
 
+    // What a create call requires. Since Batch 3.14F this is a precondition
+    // of the save, not a trigger for one: nothing fires it but the button.
     function autosaveEligible() {
-      if (!userInteracted) return false;
       if (!acknowledgementSatisfied()) return false;
       var v = contactValues();
       if (v.full_name === '') return false;
+      if (v.property_city === '') return false;
       if (!isValidIsraeliPhone(v.phone_raw)) return false;
       return true;
     }
 
-    // A change to a field that matters restarts the clock. Anything typed
-    // during the two seconds cancels the pending save rather than racing it.
+    // Batch 3.14F — this schedules UPDATES ONLY. Before the lead exists it
+    // returns immediately, so no amount of typing can create one: the only
+    // path to a create call is continueNow(), which the שלח button and Enter
+    // both run. After the lead exists, a corrected name, phone, address or
+    // town still reaches the same row two seconds later without asking the
+    // visitor to press anything a second time.
     function scheduleAutosave() {
       if (autosaveTimer) { window.clearTimeout(autosaveTimer); autosaveTimer = null; }
 
-      if (!autosaveEligible()) {
-        // Not eligible: no promise, no success message left standing from an
-        // earlier state. An already-created lead keeps its confirmation.
-        if (!leadCreated) setAutosaveStatus(null);
-        return;
-      }
-
-      if (!leadCreated) {
-        ui('contact_autosave_eligible', 'contact');
-        setAutosaveStatus('pending');
-      } else if (!emailChangedSinceSave() && !contactChangedSinceSave()) {
-        return;   // nothing new to send
-      }
+      if (!leadCreated) return;
+      if (!autosaveEligible()) return;
+      if (!emailChangedSinceSave() && !contactChangedSinceSave()) return;
 
       autosaveTimer = window.setTimeout(function () {
         autosaveTimer = null;
@@ -395,7 +399,9 @@
     function contactChangedSinceSave() {
       if (!savedSnapshot) return false;
       var v = contactValues();
-      return v.full_name !== savedSnapshot.full_name || v.phone_raw !== savedSnapshot.phone_raw;
+      return v.full_name !== savedSnapshot.full_name ||
+             v.phone_raw !== savedSnapshot.phone_raw ||
+             v.property_city !== savedSnapshot.property_city;
     }
 
     function runAutosave() {
@@ -422,7 +428,10 @@
       if (persistInFlight) return;
       persistInFlight = true;
       inFlightSeq = seq;
-      setAutosaveStatus('saving');
+      // No 'saving' line: the button says שולח... and is disabled, which is
+      // where the visitor is already looking. Two in-progress messages on one
+      // screen read as two things happening.
+      setAutosaveStatus(null);
       hideSubmitError();
       ui('contact_autosave_started', 'contact');
 
@@ -477,16 +486,18 @@
       var current = contactValues();
       var stale = seq !== saveSeq ||
                   current.full_name !== snapshot.full_name ||
-                  current.phone_raw !== snapshot.phone_raw;
+                  current.phone_raw !== snapshot.phone_raw ||
+                  current.property_city !== snapshot.property_city;
 
       savedSnapshot = snapshot;
 
       if (stale) {
         // A reply for values the visitor has already moved past. It may not
         // claim the newer ones are saved, and it may not open the questions
-        // on them. The corrected values go up as an update to the same row.
+        // on them. The corrected values go up as an update to the same row —
+        // the lead exists now, so scheduleAutosave() will send them.
         setContinueBusy(false);
-        setAutosaveStatus('pending');
+        setAutosaveStatus(null);
         scheduleAutosave();
         return;
       }
@@ -494,6 +505,19 @@
       ui('contact_autosave_succeeded', 'contact');
       setAutosaveStatus('saved');
       setContinueBusy(false);
+
+      // Batch 3.14F — the contact block recedes once it is done. Two things
+      // happen: the submit control is removed, because pressing it again does
+      // nothing and an inert primary button beside a live question is the
+      // clearest way to make a visitor press the wrong thing; and the section
+      // is marked saved so it reads as completed rather than as a second
+      // section competing with the question. The fields stay editable — a
+      // correction still reaches the same row through scheduleAutosave.
+      var contact = form.querySelector('.intake-step[data-step="contact"]');
+      if (contact) { contact.setAttribute('data-saved', 'true'); }
+      var nav = contact && contact.querySelector('.intake-step__nav');
+      if (nav) { nav.hidden = true; }
+
       revealQuestion('damage_type');
 
       // An address typed while the first save was in flight belongs on the
@@ -588,20 +612,26 @@
       return form.querySelector('[data-continue]');
     }
 
+    // Batch 3.14F — שלח / שולח... / back to שלח on failure. Disabled while a
+    // request is open, which together with the persistInFlight guard is what
+    // makes a double click impossible to turn into two leads.
     function setContinueBusy(busy) {
       var btn = continueButton();
       continueBusy = busy;
       if (!btn) return;
       btn.disabled = busy;
       btn.setAttribute('aria-busy', busy ? 'true' : 'false');
-      btn.textContent = busy ? 'שומר...' : 'המשך';
+      btn.textContent = busy ? 'שולח...' : 'שלח';
     }
 
+    // The only path that creates the initial lead. Validation first, then the
+    // request; the questions are revealed by onAutosaveSuccess and by nothing
+    // else, so nothing can be answered into a lead that does not exist.
     function continueNow() {
       if (continueBusy || persistInFlight) return;
 
-      // Cancel the pending timer: the visitor asked for this now, and two
-      // routes firing would be two attempts at the same thing.
+      // Cancel any pending update timer: the visitor asked for this now, and
+      // two routes firing would be two attempts at the same thing.
       if (autosaveTimer) { window.clearTimeout(autosaveTimer); autosaveTimer = null; }
 
       userInteracted = true;
@@ -617,12 +647,13 @@
       runAutosave();
     }
 
-    // The contact screen's own validation: the two required fields plus a
+    // The contact screen's own validation: the three required fields plus a
     // filled-in optional one. Focus lands on the first field that is wrong,
-    // which is the one moment focus should move.
+    // which is the one moment focus should move. An empty optional email is
+    // skipped entirely — it only has to be valid if something was typed.
     function validateContact() {
       var firstInvalid = null;
-      ['full_name', 'phone_raw', 'email'].forEach(function (id) {
+      ['full_name', 'phone_raw', 'email', 'property_city'].forEach(function (id) {
         var input = form.querySelector('#' + id);
         if (!input) return;
         if (id === 'email' && input.value.trim() === '') return;
@@ -650,10 +681,31 @@
       if (!section) return;
       phase = name;
       section.hidden = false;
+
+      // Batch 3.14F — the fast WhatsApp route is absent from the initial
+      // contact screen and returns with the first question, so it is present
+      // for both questions and the completion screen exactly as before.
+      var escape = document.querySelector('[data-escape]');
+      if (escape) escape.hidden = false;
+
       // Focus the question itself, not its first option: a screen reader then
       // hears what is being asked before it hears the choices.
       var legend = section.querySelector('.intake-q__legend');
       if (legend) legend.focus();
+
+      // Bring it into view without a jump. focus() alone scrolls abruptly and
+      // can leave the new question under the sticky header. prefers-reduced-
+      // motion gets an instant scroll, never a smooth one — the movement is
+      // the thing that is being asked to stop, not the scrolling.
+      if (section.scrollIntoView) {
+        var reduce = window.matchMedia &&
+                     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        try {
+          section.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest' });
+        } catch (e) {
+          section.scrollIntoView();
+        }
+      }
     }
 
     function setQuestionStatus(name, text) {
@@ -869,7 +921,7 @@
       // Validate on blur once something has been typed — not while the field
       // is still empty and untouched, and not on every keystroke
       // (accessibility spec §20).
-      ['full_name', 'phone_raw', 'email'].forEach(function (id) {
+      ['full_name', 'phone_raw', 'email', 'property_city'].forEach(function (id) {
         var input = form.querySelector('#' + id);
         if (!input) return;
         input.addEventListener('blur', function () {
@@ -1062,14 +1114,19 @@
         browser_context: detectBrowserContext(),
         damage_type: state.damage_type,
         case_state: state.case_state,
-        full_name: state.full_name,
-        phone_raw: state.phone_raw,
+        // Batch 3.14F — read from the DOM, not from state. A browser or
+        // password manager can fill several fields at once without firing an
+        // input or change event on every one of them, and a payload built
+        // from state would then send the values the visitor never typed over
+        // and the ones the browser supplied would be missing.
+        full_name: contactValues().full_name,
+        phone_raw: contactValues().phone_raw,
         // Batch 3.14C — an optional address is sent only when it is well
         // formed. It never blocks the lead, and a partial one is never
         // transmitted: storing a typo is worse than storing nothing, and the
         // visitor is told about it rather than left to assume it was saved.
-        email: emailIsSendable(contactValues().email) ? state.email.trim() : '',
-        property_city: state.property_city,
+        email: emailIsSendable(contactValues().email) ? contactValues().email : '',
+        property_city: contactValues().property_city,
         short_description: state.short_description,
         notice_version: LEGAL_RELEASE,
         policy_version: LEGAL_RELEASE,

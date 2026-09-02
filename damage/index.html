@@ -34,15 +34,13 @@
     <style>
       [data-route][hidden],
       [data-feas][hidden],
-      .svc__body[hidden],
-      .svc__price-box[hidden] { display: block !important; }
+      .svc__body[hidden] { display: block !important; }
       [data-router-q],
       [data-router-answered],
       [data-router-intro],
       .rt__open,
       .rt__more,
-      .svc__chev,
-      .svc__reveal { display: none; }
+      .svc__chev { display: none; }
       .rt__route + .rt__route {
         margin-block-start: 40px;
         padding-block-start: 32px;
@@ -328,7 +326,7 @@
 
               <button type="button" class="rt__open" data-svc-toggle
                       aria-expanded="false" aria-controls="svc-insurer_gap-body">
-                <span class="rt__open-label">לראות מה כוללת הבדיקה</span>
+                <span class="rt__open-label">מה כולל</span>
                 <span class="svc__chev" aria-hidden="true"></span>
               </button>
 
@@ -352,16 +350,14 @@
                 <p class="svc__label">מה אפשר לעשות לאחר הבדיקה?</p>
                 <p class="svc__next">על בסיס המסקנה תוכלו להחליט אם להסתפק במענה הקיים, לבקש הבהרות, להמתין או לבחון חוות דעת שמאית מלאה. אם יידרש ביסוס רחב יותר או ליווי מתמשך, ניתן יהיה לבחון את מסלול ההמשך המתאים.</p>
 
-                <p class="svc__value">המחיר משקף בחינה מקצועית של המסמך הקיים מול חומר הנזק ומסקנה ממוקדת לגבי ההמשך — לפני שנכנסים לעבודה רחבה יותר. הבחירה במסלול באתר אינה הזמנה ואינה יוצרת התחייבות.</p>
+                <p class="svc__value">המחיר משקף בחינה מקצועית של המסמך הקיים מול חומר הנזק ומסקנה ממוקדת לגבי ההמשך — לפני שנכנסים לעבודה רחבה יותר.</p>
 
-                <button type="button" class="svc__reveal" data-svc-reveal
-                        aria-expanded="false" aria-controls="svc-insurer_gap-price">להציג את המחיר</button>
-
-                <div class="svc__price-box" id="svc-insurer_gap-price" data-svc-price hidden>
+                <div class="svc__price-box" id="svc-insurer_gap-price" data-svc-price>
                   <p class="svc__price"><bdi dir="rtl">1,500 ₪</bdi></p>
                   <p class="svc__credit">במקרה של המשך טיפול באותו אירוע, העבודה שכבר בוצעה תובא בחשבון בהצעה להמשך.</p>
                   <a class="svc__cta" href="/check/" data-cta-location="pricing"
-                     data-service-interest="insurer_gap">לבדוק התאמה למסלול הזה</a>
+                     data-service-interest="insurer_gap">לבדוק התאמה למסלול הזה — ללא עלות</a>
+                  <p class="svc__cta-note">בדיקת ההתאמה הראשונית ללא עלות וללא התחייבות.</p>
                 </div>
               </div>
             </article>
@@ -381,7 +377,7 @@
 
               <button type="button" class="rt__open" data-svc-toggle
                       aria-expanded="false" aria-controls="svc-appraisal_only-body">
-                <span class="rt__open-label">לראות מה כוללת חוות הדעת</span>
+                <span class="rt__open-label">מה כולל</span>
                 <span class="svc__chev" aria-hidden="true"></span>
               </button>
 
@@ -405,16 +401,14 @@
                 <p class="svc__label">איך אפשר להמשיך?</p>
                 <p class="svc__next">לאחר קבלת חוות הדעת תוכלו להמשיך את ההתנהלות בעצמכם. אם בהמשך תעדיפו ליווי מקצועי גם בהתנהלות מול חברת הביטוח, ניתן יהיה לבחון את המשך הטיפול במסגרת מסלול ניהול התיק, בהתאם למצב התיק ולהיקף הנדרש.</p>
 
-                <p class="svc__value">המחיר משקף את עבודת הבדיקה, הכימות וגיבוש המסקנות המקצועיות — ולא רק את הפקת המסמך הסופי. הוא נקבע מראש, לאחר בדיקת התאמה ראשונית ללא עלות. הבחירה במסלול באתר אינה הזמנה ואינה יוצרת התחייבות.</p>
+                <p class="svc__value">המחיר משקף את עבודת הבדיקה, הכימות וגיבוש המסקנות המקצועיות — ולא רק את הפקת המסמך הסופי. הוא נקבע מראש, לאחר בדיקת התאמה ראשונית ללא עלות.</p>
 
-                <button type="button" class="svc__reveal" data-svc-reveal
-                        aria-expanded="false" aria-controls="svc-appraisal_only-price">להציג את המחיר</button>
-
-                <div class="svc__price-box" id="svc-appraisal_only-price" data-svc-price hidden>
+                <div class="svc__price-box" id="svc-appraisal_only-price" data-svc-price>
                   <p class="svc__price"><bdi dir="rtl">1,500 ₪</bdi></p>
                   <p class="svc__caveat">המחיר מתייחס לחוות דעת ממוקדת בתיק סטנדרטי. היקף חריג יתומחר מראש בהצעה נפרדת.</p>
                   <a class="svc__cta" href="/check/" data-cta-location="pricing"
-                     data-service-interest="appraisal_only">לבדוק התאמה למסלול הזה</a>
+                     data-service-interest="appraisal_only">לבדוק התאמה למסלול הזה — ללא עלות</a>
+                  <p class="svc__cta-note">בדיקת ההתאמה הראשונית ללא עלות וללא התחייבות.</p>
                 </div>
               </div>
             </article>
@@ -436,7 +430,7 @@
 
               <button type="button" class="rt__open" data-svc-toggle
                       aria-expanded="false" aria-controls="svc-appraisal_managed-body">
-                <span class="rt__open-label">לראות מה כולל ניהול התיק</span>
+                <span class="rt__open-label">מה כולל</span>
                 <span class="svc__chev" aria-hidden="true"></span>
               </button>
 
@@ -467,17 +461,15 @@
                 <p class="svc__label">היקף הטיפול</p>
                 <p class="svc__scope">המסלול מיועד לתיק סטנדרטי ובהיקף שמוגדר מראש. מקרים מורכבים או חריגים נבחנים ומתומחרים בנפרד.</p>
 
-                <p class="svc__value">המחיר משקף גם את הכנת חוות הדעת וגם את העבודה המקצועית המתמשכת לאחריה, בהתאם להיקף שנקבע מראש. הבחירה במסלול באתר אינה הזמנה ואינה יוצרת התחייבות.</p>
+                <p class="svc__value">המחיר משקף גם את הכנת חוות הדעת וגם את העבודה המקצועית המתמשכת לאחריה, בהתאם להיקף שנקבע מראש.</p>
 
-                <button type="button" class="svc__reveal" data-svc-reveal
-                        aria-expanded="false" aria-controls="svc-appraisal_managed-price">להציג את המחיר</button>
-
-                <div class="svc__price-box" id="svc-appraisal_managed-price" data-svc-price hidden>
+                <div class="svc__price-box" id="svc-appraisal_managed-price" data-svc-price>
                   <p class="svc__price"><bdi dir="rtl">4,800 ₪</bdi></p>
                   <p class="svc__caveat">המחיר מתייחס לתיק סטנדרטי. תיק מורכב, רב־צדדי או בעל היקף חריג יתומחר מראש בהצעה נפרדת.</p>
                   <p class="svc__credit">אם כבר הוכנה חוות דעת באותו אירוע, הסכום ששולם עליה יקוזז ממחיר החבילה.</p>
                   <a class="svc__cta" href="/check/" data-cta-location="pricing"
-                     data-service-interest="appraisal_managed">לבדוק התאמה למסלול הזה</a>
+                     data-service-interest="appraisal_managed">לבדוק התאמה למסלול הזה — ללא עלות</a>
+                  <p class="svc__cta-note">בדיקת ההתאמה הראשונית ללא עלות וללא התחייבות.</p>
                 </div>
               </div>
             </article>
@@ -537,7 +529,6 @@
         <div class="dmg-pricing__close" data-reveal>
           <p class="dmg-pricing__close-line">כל המחירים המוצגים הם המחירים הסופיים לתשלום.</p>
           <p class="dmg-pricing__close-line">בשיחה נבדוק מה נדרש ונאשר את היקף העבודה לפני שמתחילים.</p>
-          <a class="btn" data-cta-location="pricing" href="/check/" data-close-cta>בדיקת התאמה ראשונית</a>
         </div>
       </div>
     </section>

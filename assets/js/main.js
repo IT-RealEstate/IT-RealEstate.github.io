@@ -302,7 +302,9 @@
       var id = card.getAttribute('data-service');
       var toggle = card.querySelector('[data-svc-toggle]');
       var body = card.querySelector('[data-svc-body]');
-      var reveal = card.querySelector('[data-svc-reveal]');
+      // Batch 3.14F — there is no [data-svc-reveal] any more. The price lives
+      // inside the one panel the toggle opens, so the handle is kept only to
+      // tell whether this service has a price at all.
       var price = card.querySelector('[data-svc-price]');
       var cta = card.querySelector('[data-service-interest]');
       if (!id || !body) { return; }
@@ -317,34 +319,25 @@
           toggle.hidden = true;
         }
         setMember(svcState.body, id, true);
+        // The price is revealed by this same click now, so the price state is
+        // recorded here too. Without it a restored session would re-collapse
+        // a service whose price the visitor had already seen.
+        if (price) { setMember(svcState.price, id, true); }
         saveSvcState();
         if (record) {
           logSvc('service_details_open', id);
+          // Both events still fire, with their existing names and ids, so the
+          // enum and the Apps Script contract are untouched. It is honest:
+          // the panel that just opened does contain the price. A service with
+          // no public price (remote_feasibility) logs no price event, exactly
+          // as before.
+          if (price) { logSvc('service_price_reveal', id); }
           focusRevealed(body);
-        }
-      };
-
-      var openPrice = function (record) {
-        // remote_feasibility has neither control nor price box since Batch
-        // 3.13C, so this is a no-op for it and no price event can fire.
-        if (!reveal || !price) { return; }
-        price.hidden = false;
-        reveal.setAttribute('aria-expanded', 'true');
-        reveal.hidden = true;
-        setMember(svcState.price, id, true);
-        saveSvcState();
-        if (record) {
-          logSvc('service_price_reveal', id);
-          focusRevealed(price);
         }
       };
 
       if (toggle) {
         toggle.addEventListener('click', function () { openBody(true); });
-      }
-
-      if (reveal && price) {
-        reveal.addEventListener('click', function () { openPrice(true); });
       }
 
       // The CTA is an ordinary link to /check/. attribution.js records
@@ -357,17 +350,12 @@
         });
       }
 
-      cards[id] = { openBody: openBody, openPrice: openPrice, hasToggle: !!toggle };
+      cards[id] = { openBody: openBody, hasToggle: !!toggle };
 
-      // Restore. The price panel lives inside the body panel, so a restored
-      // price implies a restored body — otherwise the saved state would be
-      // unreachable. Restoring also re-hides the consumed controls, so coming
-      // back to the section never puts a used button in front of the visitor
-      // again.
-      if (svcState.price.indexOf(id) !== -1) {
-        if (toggle) { openBody(false); }
-        openPrice(false);
-      } else if (toggle && svcState.body.indexOf(id) !== -1) {
+      // Restore. One panel, so one state to restore. Restoring also re-hides
+      // the consumed control, so coming back to the section never puts a used
+      // button in front of the visitor again.
+      if (toggle && (svcState.body.indexOf(id) !== -1 || svcState.price.indexOf(id) !== -1)) {
         openBody(false);
       }
     });
@@ -385,10 +373,6 @@
       var resetBtn = router.querySelector('[data-router-reset]');
       var feasToggle = router.querySelector('[data-feas-toggle]');
       var feasPanel = router.querySelector('[data-feas]');
-      // Lives in the section's closing block, outside the router, so it is
-      // found from the document rather than from `router`.
-      var closeCta = document.querySelector('[data-close-cta]');
-
       // The summary reuses each option's own approved label rather than
       // inventing a sentence for it — no new copy, and it always matches
       // what the visitor actually read when they chose.
@@ -422,7 +406,6 @@
         // button carrying this exact label, so showing the section's summary
         // CTA below it repeated the same call to action on one screen. Hidden
         // for that route only; every other route still ends on it.
-        if (closeCta) { closeCta.hidden = active === 'unsure'; }
 
         if (answered && summary) {
           answered.hidden = !anyAnswer;
