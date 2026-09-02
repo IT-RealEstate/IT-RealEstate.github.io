@@ -184,7 +184,7 @@
   position: absolute;
   inset-inline: 0;
   inset-block-start: 100%;
-  background: var(--bg-deep);
+  background: var(--bg-graphite);
   border-block-end: 1px solid var(--hairline-dark);
   max-block-size: calc(100svh - var(--header-height));
   overflow-y: auto;
@@ -199,6 +199,10 @@
   padding-block: 8px;
   display: flex;
   flex-direction: column;
+}
+
+.site-menu__list li {
+  max-inline-size: 360px;
 }
 
 .site-menu__link {

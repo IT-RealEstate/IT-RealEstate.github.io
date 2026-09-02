@@ -329,8 +329,8 @@
           // Both events still fire, with their existing names and ids, so the
           // enum and the Apps Script contract are untouched. It is honest:
           // the panel that just opened does contain the price. A service with
-          // no public price (remote_feasibility) logs no price event, exactly
-          // as before.
+          // no public price would log no price event — since Batch 3.14G all
+          // four carry one, so all four log both.
           if (price) { logSvc('service_price_reveal', id); }
           focusRevealed(body);
         }
@@ -464,18 +464,24 @@
       // and the only thing that records interest in it.
       if (feasToggle && feasPanel) {
         // One-way, like every other disclosure control: it opens the
-        // explanation, then removes itself. There is no price behind it to
-        // reveal — remote_feasibility has carried no public figure since
-        // Batch 3.13C — so this is the last step in that route, and the
-        // visitor's next move is the entry-check button above.
+        // explanation, then removes itself.
+        //
+        // Batch 3.14G restored this route's price, so this one click now
+        // reveals the details AND the figure, exactly as [data-svc-toggle]
+        // does for the other three. The price element is looked up rather
+        // than assumed: if the route ever carries no public price again the
+        // bookkeeping and the price event simply do not fire.
+        var feasPrice = feasPanel.querySelector('[data-svc-price]');
         var openFeas = function (record) {
           feasPanel.hidden = false;
           feasToggle.setAttribute('aria-expanded', 'true');
           feasToggle.hidden = true;
           setMember(svcState.body, 'remote_feasibility', true);
+          if (feasPrice) { setMember(svcState.price, 'remote_feasibility', true); }
           saveSvcState();
           if (record) {
             logSvc('service_details_open', 'remote_feasibility');
+            if (feasPrice) { logSvc('service_price_reveal', 'remote_feasibility'); }
             focusRevealed(feasPanel);
           }
         };
